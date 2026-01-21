@@ -4,7 +4,7 @@ using MADP.Models;
 
 namespace MADP.Services
 {
-    public class UnitSpawnerService
+    public class UnitGenerationService
     {
         public Dictionary<TeamColor, List<UnitModel>> CreateAllUnits()
         {

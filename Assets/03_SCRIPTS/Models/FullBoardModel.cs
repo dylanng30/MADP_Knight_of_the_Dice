@@ -2,9 +2,10 @@
 
 namespace MADP.Models
 {
-    public class BoardModel
+    public class FullBoardModel
     {
-        public List<CellModel> cell;
+        public List<CellModel> AroundCells;
+        public Dictionary<TeamColor, List<CellModel>> HomeCells;
     }
 }
 

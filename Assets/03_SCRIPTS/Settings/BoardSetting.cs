@@ -4,7 +4,7 @@ using UnityEngine;
 namespace MADP.Settings
 {
     [Serializable]
-    public struct BoardSettings
+    public struct BoardSetting
     {
         [Header("--- SPEACIAL CELL SETTING ---")]
         public int RedCellCount;

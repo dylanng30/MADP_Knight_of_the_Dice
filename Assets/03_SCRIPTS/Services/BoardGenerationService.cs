@@ -6,30 +6,80 @@ using UnityEngine;
 
 namespace MADP.Services
 {
-    public class BoardService
+    public class BoardGenerationService
     {
         private HashSet<int> _redIndexes;
         private HashSet<int> _yellowIndexes;
         private HashSet<int> _purpleIndexes;
 
-        public List<CellModel> CreateBoard(Transform container, int redCount, int yellowCount, int purpleCount)
+        public FullBoardModel CreateFullBoard(int redCount, int yellowCount, int purpleCount)
+        {
+            FullBoardModel fullBoardModel = new FullBoardModel();
+            
+            fullBoardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount);
+            
+            fullBoardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
+            fullBoardModel.HomeCells.Add(TeamColor.Red, CreateHomeCells(TeamColor.Red));
+            fullBoardModel.HomeCells.Add(TeamColor.Blue, CreateHomeCells(TeamColor.Blue));
+            fullBoardModel.HomeCells.Add(TeamColor.Yellow, CreateHomeCells(TeamColor.Yellow));
+            fullBoardModel.HomeCells.Add(TeamColor.Green, CreateHomeCells(TeamColor.Green));
+            
+            return fullBoardModel;
+        }
+        
+        private List<CellModel> CreateAroundCells(int redCount, int yellowCount, int purpleCount)
         {
             List<CellModel> models = new();
 
             Reset();
             CreateSpecialCellIndexes(redCount, yellowCount, purpleCount);
             
-            for (int i = 0; i < Constants.DefaultCellCount; i++)
+            for (int i = 0; i < 56; i++)
             {
-                CellType type = GetCellTypeByIndex(i);
-                TeamColor color = GetTeamColorByIndex(i);
-                CellModel model = new CellModel(i, type, color);
-                models.Add(model);
+                (CellStructure structure, TeamColor owner) = IdentifyStructure(i);
+                CellAttribute attribute = IdentifyAttribute(i);
+                models.Add(new CellModel(i, structure, attribute, owner));
             }
             
             return models;
         }
-
+        
+        private List<CellModel> CreateHomeCells(TeamColor color)
+        {
+            List<CellModel> homeCells = new List<CellModel>();
+            
+            for (int i = 0; i < 6; i++)
+            {
+                homeCells.Add(new CellModel(i, CellStructure.Home, CellAttribute.None, color));
+            }
+            
+            return homeCells;
+        }
+        
+        private (CellStructure, TeamColor) IdentifyStructure(int index)
+        {
+            //RED
+            if (index == 0) return (CellStructure.Spawn, TeamColor.Red);
+            if (index == 55) return (CellStructure.Gate, TeamColor.Red);
+            //GREEN
+            if (index == 14) return (CellStructure.Spawn, TeamColor.Green);
+            if (index == 13) return (CellStructure.Gate, TeamColor.Green);
+            //YELLO
+            if (index == 28) return (CellStructure.Spawn, TeamColor.Yellow);
+            if (index == 27) return (CellStructure.Gate, TeamColor.Yellow);
+            //BLUE
+            if (index == 42) return (CellStructure.Spawn, TeamColor.Blue);
+            if (index == 41) return (CellStructure.Gate, TeamColor.Blue);
+            
+            return (CellStructure.Normal, TeamColor.None);
+        }
+        private CellAttribute IdentifyAttribute(int index)
+        {
+            if (_redIndexes.Contains(index)) return CellAttribute.Red;
+            if (_yellowIndexes.Contains(index)) return CellAttribute.Yellow;
+            if (_purpleIndexes.Contains(index)) return CellAttribute.Purple;
+            return CellAttribute.None;
+        }
         private void Reset()
         {
             if (_redIndexes == null) _redIndexes = new HashSet<int>();
@@ -45,7 +95,7 @@ namespace MADP.Services
         {
             List<int> availableIndexes = new List<int>();
 
-            for (int i = 0; i < Constants.DefaultCellCount; i++)
+            for (int i = 0; i < 56; i++)
             {
                 int except = i % 14;
                 if (except == 0 || except == 13)
@@ -87,33 +137,6 @@ namespace MADP.Services
                     _purpleIndexes.Add(availableIndexes[redCount + yellowCount + i]);
                 }
             }
-        }
-        
-        private CellType GetCellTypeByIndex(int index)
-        {
-            if(_redIndexes.Contains(index)) return CellType.Red;
-            if(_yellowIndexes.Contains(index)) return CellType.Yellow;
-            if(_purpleIndexes.Contains(index)) return CellType.Purple;
-            
-            int typeIndex = index % 14;
-            if(typeIndex == 0) return CellType.Home;
-            if(typeIndex == 13) return CellType.Spawn;
-
-            return CellType.Normal;
-        }
-        
-        private TeamColor GetTeamColorByIndex(int index)
-        {
-            if(index == 0 || index == 55)
-                return TeamColor.Red;
-            if(index == 14 || index == 13)
-                return TeamColor.Green;
-            if(index == 28 || index == 27)
-                return TeamColor.Yellow;    
-            if(index == 42 || index == 41)
-                return TeamColor.Blue;
-            
-            return TeamColor.None;
         }
     }
 }
