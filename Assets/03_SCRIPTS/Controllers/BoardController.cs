@@ -32,7 +32,8 @@ namespace MADP.Controllers
         private void Start()
         {
             _cellViewMapper =  new Dictionary<CellModel, CellView>();
-            
+            _unitViewMapper = new Dictionary<UnitModel, UnitView>();
+
             _boardGenerationService = new BoardGenerationService();
             _boardLayoutService = new BoardLayoutService();
             _boardRotationService = new BoardRotationService();
@@ -40,6 +41,7 @@ namespace MADP.Controllers
             _unitGenerationService = new UnitGenerationService();
             
             GenerateBoard();
+            CreateUnits();
         }
 
         private void Update()
@@ -167,8 +169,24 @@ namespace MADP.Controllers
         private void CreateUnitView(UnitModel model)
         {
             UnitView unitView = Instantiate(unitPrefab, container);
+            Vector3 pos = _boardLayoutService.GetUnitSpawnPosition(model.TeamOwner, model.Id);
+            unitView.transform.localPosition = pos;
+            unitView.Setup(model);
+            unitView.Renderer.material = GetUnitMaterial(model.TeamOwner);
+            _unitViewMapper.Add(model, unitView);
         }
 
+        private Material GetUnitMaterial(TeamColor color)
+        {
+            switch (color)
+            {
+                case TeamColor.Red: return _materialSetting.RedHome;
+                case TeamColor.Blue: return _materialSetting.BlueHome;
+                case TeamColor.Yellow: return _materialSetting.YellowHome;
+                case TeamColor.Green: return _materialSetting.GreenHome;
+                default: return _materialSetting.Normal;
+            }
+        }
         #endregion
     }
 }

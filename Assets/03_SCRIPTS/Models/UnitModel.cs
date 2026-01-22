@@ -2,11 +2,6 @@
 
 namespace MADP.Models
 {
-    public enum UnitType
-    {
-        One, Two, Three, Four
-    }
-
     public enum UnitState
     {
         InCage,
@@ -15,7 +10,7 @@ namespace MADP.Models
     }
     public class UnitModel
     {
-        public UnitType Type { get; private set; } = UnitType.One;
+        public int Id { get; private set; }
         public TeamColor TeamOwner { get; private set; }
         public UnitStatModel Stat { get; private set; }
         public UnitState State { get; private set; } = UnitState.InCage;
@@ -23,9 +18,9 @@ namespace MADP.Models
         public int StepsMoved { get; private set; }
         public int CurrentIndex { get; private set; }
 
-        public UnitModel(UnitType type, TeamColor teamOwner)
+        public UnitModel(int id, TeamColor teamOwner)
         {
-            Type = type;
+            Id = id;
             TeamOwner = teamOwner;
         }
 

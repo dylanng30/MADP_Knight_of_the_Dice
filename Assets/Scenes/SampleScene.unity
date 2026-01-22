@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -156,7 +156,6 @@ MonoBehaviour:
     RedCellCount: 1
     YellowCellCount: 1
     PurpleCellCount: 1
-    Offset: {x: 0, y: 0, z: 7}
   _materialSetting:
     RedSpawn: {fileID: 2100000, guid: 515e456cffaeb5044afbdfd6f67ce185, type: 2}
     BlueSpawn: {fileID: 2100000, guid: 53f4b13c14bcb4444a5cf22683cce59f, type: 2}
@@ -171,7 +170,8 @@ MonoBehaviour:
     Yellow: {fileID: 2100000, guid: 1d0e427050ca2b64c86292dfd0316f8f, type: 2}
     Purple: {fileID: 2100000, guid: 80df623d5da345e4ab21a6d270f718b0, type: 2}
   cellPrefab: {fileID: 4458282822056727695, guid: 14b386531158ba4458ef430082b950a8, type: 3}
-  cellContainer: {fileID: 1692382254}
+  unitPrefab: {fileID: 9179222918187092414, guid: 40f2596b5e44e1e4bb69c82113f5615f, type: 3}
+  container: {fileID: 1692382254}
 --- !u!4 &33901810
 Transform:
   m_ObjectHideFlags: 0

@@ -21,9 +21,10 @@ namespace MADP.Services
         private List<UnitModel> CreateTeamUnit(TeamColor teamColor)
         {
             List<UnitModel> teamUnits = new List<UnitModel>();
-            foreach (UnitType type in Enum.GetValues(typeof(UnitType)))
+
+            for(int i = 0; i < 4; i++)
             {
-                UnitModel model = new UnitModel(type, teamColor);
+                UnitModel model = new UnitModel(i, teamColor);
                 teamUnits.Add(model);
             }
             
