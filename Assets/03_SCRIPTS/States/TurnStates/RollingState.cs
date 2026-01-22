@@ -1,29 +1,36 @@
 ﻿using MADP.Controllers;
-using MADP.States.TurnStates.Interfaces;
+using UnityEngine;
 
 namespace MADP.States.TurnStates
 {
-    public class WaitingForDiceRollState  : ITurnState
+    public class RollingState  : BaseTurnState
     {
-        private TurnController _controller;
-        
-        public WaitingForDiceRollState(TurnController controller)
+        public RollingState(TurnController controller) : base(controller)
         {
-            _controller = controller;
         }
-        public void EnterTurn()
+        public override void EnterTurn()
         {
-            
+            base.EnterTurn();
+            if (_turnController.IsPlayerTurn)
+            {
+                //_turnController.ShowDiceView(true);
+            }
+            else
+            {
+                // Nếu là Bot -> Tự động Roll sau vài giây (Implement sau)
+            }
         }
-
-        public void ExecuteTurn()
+        public override void ExecuteTurn()
         {
-
+            if (_turnController.IsPlayerTurn && Input.GetKeyDown(KeyCode.Space))
+            {
+                _turnController.RollDice();
+            }
         }
-
-        public void ExitTurn()
+        public override void ExitTurn()
         {
-            
+            base.ExitTurn();
+            //_turnController.ShowDiceView(false);
         }
     }
 }

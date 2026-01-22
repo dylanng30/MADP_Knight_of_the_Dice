@@ -1,4 +1,4 @@
-﻿namespace MADP.States.TurnStates
+﻿namespace MADP.States.TurnStates.Interfaces
 {
     public interface ITurnState
     {

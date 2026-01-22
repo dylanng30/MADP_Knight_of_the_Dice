@@ -1,6 +1,8 @@
-﻿namespace MADP.Managers
+﻿using UnityEngine;
+
+namespace MADP.Managers
 {
-    public class UIManager
+    public class UIManager : MonoBehaviour
     {
         
     }

@@ -1,6 +1,10 @@
-﻿namespace DefaultNamespace;
+﻿using UnityEngine;
 
-public class GameManager
+namespace MADP.Managers
 {
-    
+    public class GameManager : MonoBehaviour
+    {
+        
+    }
 }
+
