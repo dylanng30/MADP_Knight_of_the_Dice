@@ -1,4 +1,4 @@
-﻿using MADP.Models;
+using MADP.Models;
 
 namespace MADP.Models
 {

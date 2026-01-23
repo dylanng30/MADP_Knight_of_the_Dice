@@ -1,4 +1,4 @@
-﻿using MADP.Models;
+using MADP.Models;
 using TMPro;
 using UnityEngine;
 
