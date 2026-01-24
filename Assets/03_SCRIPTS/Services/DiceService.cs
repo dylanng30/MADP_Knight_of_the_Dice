@@ -6,8 +6,15 @@ namespace MADP.Services
     {
         public int Roll()
         {
-            return 6;
-            //return Random.Range(1, 7);
+            //return 6;
+            /*int index = Random.Range(1, 3);
+            if (index == 1)
+                return 6;
+            else
+            {
+                return 1;
+            }*/
+            return Random.Range(1, 7);
         }
 
         public bool CanRollAgain(int diceValue) 

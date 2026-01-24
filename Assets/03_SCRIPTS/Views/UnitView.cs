@@ -1,3 +1,4 @@
+using System.Collections;
 using MADP.Models;
 using TMPro;
 using UnityEngine;
@@ -22,6 +23,17 @@ namespace MADP.Views
         {
             //Temp
             transform.position = position;
+        }
+
+        public IEnumerator MoveTo(Vector3 targetPosition)
+        {
+            while (Vector3.Distance(transform.position, targetPosition) > 0.05f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.1f);
+                yield return null;
+            }
+            
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

@@ -70,17 +70,17 @@ namespace MADP.Services
                     direction = Vector3.forward; 
                     break;
                 case TeamColor.Blue:
-                    direction = Vector3.left;
+                    direction = Vector3.right;
                     break;
                 case TeamColor.Yellow:
                     direction = Vector3.back;
                     break;
                 case TeamColor.Green:
-                    direction = Vector3.right;
+                    direction = Vector3.left;
                     break;
             }
             
-            return startPos + (direction * (stepIndex + 1) * _cellSize);
+            return startPos + (direction * (6 - stepIndex) * _cellSize);
         }
     }
 }

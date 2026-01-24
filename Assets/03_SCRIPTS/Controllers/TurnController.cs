@@ -17,7 +17,7 @@ namespace MADP.Controllers
     }
     public class TurnController : MonoBehaviour
     {
-        [SerializeField] private BoardController _boardController;
+        [SerializeField] private BoardController boardController;
         [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
         
@@ -25,6 +25,7 @@ namespace MADP.Controllers
             TeamColor.Red, TeamColor.Green, TeamColor.Yellow, TeamColor.Blue 
         };
         private DiceService _diceService;
+        private BotDecisionService _botDecisionService;
         private Dictionary<TurnState, ITurnState> _turnStates;
 
         public TeamColor CurrentTeam => _turnOrder[_currentTeamIndex];
@@ -39,12 +40,13 @@ namespace MADP.Controllers
         private CellModel _lastChosenCell;
         
         private UnitModel _selectedUnit;
-        private CellModel _potentialDestination;
+        private List<CellModel> _potentialDestination;
         private ITurnState _currentTurnState;
         
         private void Start()
         {
             _diceService = new DiceService();
+            _botDecisionService = new BotDecisionService(boardController);
             PlayerColor = TeamColor.Red;
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
@@ -70,16 +72,17 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = _diceService.Roll();
+            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
         private void OnDiceRollCompleted()
         {
-            bool canMoveAny = _boardController.CheckIfAnyMovePossible(CurrentTeam, CurrentDiceValue);
+            bool canMoveAny = boardController.CheckIfAnyMovePossible(CurrentTeam, CurrentDiceValue);
             
             if (!canMoveAny)
             {
-                Debug.Log($"Team {CurrentTeam} không đi được quân nào với {CurrentDiceValue} điểm -> End Turn.");
+                //Debug.Log($"Team {CurrentTeam} không đi được quân nào với {CurrentDiceValue} điểm -> End Turn.");
                 EndTurn();
             }
             else
@@ -93,24 +96,30 @@ namespace MADP.Controllers
             if(unit.TeamOwner != PlayerColor)
                 return;
             
-            _boardController.SpawnUnit(unit, EndTurn);
+            boardController.SpawnUnit(unit, EndTurn);
         }
         
         public void HandleCellClicked(CellModel clickedCell)
         {
             // TRƯỜNG HỢP 1: Click vào ô Đích (để di chuyển)
             // Điều kiện: Đang có Unit được chọn VÀ Click đúng vào ô đích đã tính toán
-            if (_selectedUnit != null && clickedCell == _potentialDestination)
+            if (_selectedUnit != null)
             {
-                ExecuteMove(_selectedUnit, clickedCell);
-                return;
+                foreach (var cell in _potentialDestination)
+                {
+                    if (cell == clickedCell)
+                    {
+                        ExecuteMove(_selectedUnit, clickedCell);
+                        return;
+                    }
+                }
             }
 
             // TRƯỜNG HỢP 2: Click vào Quân mình (để chọn)
             if (clickedCell.HasUnit && clickedCell.Unit.TeamOwner == CurrentTeam)
             {
                 // Kiểm tra quân này có đi được với xúc xắc hiện tại không
-                if (_boardController.CanUnitMove(clickedCell.Unit, CurrentDiceValue))
+                if (boardController.CanInteract(clickedCell.Unit, CurrentDiceValue))
                 {
                     SelectUnit(clickedCell.Unit);
                 }
@@ -133,21 +142,21 @@ namespace MADP.Controllers
             _selectedUnit = unit;
 
             // 2. Tính toán đích đến
-            _potentialDestination = _boardController.GetDestinationCell(unit, CurrentDiceValue);
+            _potentialDestination = boardController.GetPotentialDestinationCell(unit, CurrentDiceValue);
 
             // 3. Highlight ô đích
-            _boardController.HighlightCell(_potentialDestination, true);
+            boardController.HighlightCells(_potentialDestination);
 
             // 4. Show UI Info (Gọi UIManager)
             // _uiManager.ShowUnitInfo(unit);
             
-            Debug.Log($"Đã chọn Unit {unit.Id}. Click vào ô {_potentialDestination?.Index} để di chuyển.");
+            //Debug.Log($"Đã chọn Unit {unit.Id}. Click vào ô {_potentialDestination?.Index} để di chuyển.");
         }
 
         public void DeselectCurrent()
         {
             // Ẩn Highlight
-            _boardController.ClearAllHighlights();
+            boardController.ClearAllHighlights();
             
             // Ẩn UI Info
             // _uiManager.HideUnitInfo();
@@ -160,7 +169,7 @@ namespace MADP.Controllers
         {
             //DeselectCurrent(); // Dọn dẹp highlight trước khi đi
             
-            _boardController.MoveUnit(unitModel, _potentialDestination, () => 
+            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => 
             {
                 EndTurn();
             });
@@ -173,8 +182,6 @@ namespace MADP.Controllers
             }
             
             _selectedUnit = null;
-            // Check xem lượt tiếp theo là của ai để set IsPlayerTurn
-            // IsPlayerTurn = ...
             SwitchState(TurnState.Rolling);
         }
         
@@ -186,7 +193,45 @@ namespace MADP.Controllers
                 { TurnState.Choosing, new ChoosingState(this) }
             };
         }
-
         
+        //BOT - Temp
+
+        public void HandleBotTurn()
+        {
+            StartCoroutine(BotThinkingProcecss());
+        }
+        private IEnumerator BotThinkingProcecss()
+        {
+            yield return new WaitForSeconds(3f);
+            UnitModel bestUnit = _botDecisionService.GetBestUnitToMove(CurrentTeam, CurrentDiceValue);
+
+            if (bestUnit != null)
+            {
+                if (bestUnit.State == UnitState.InNest)
+                {
+                    boardController.SpawnUnit(bestUnit, EndTurn);
+                }
+                else
+                {
+                    var destCells = boardController.GetPotentialDestinationCell(bestUnit, CurrentDiceValue);
+                    if (destCells.Count > 0)
+                    {
+                        CellModel target = destCells[0]; 
+                
+                        Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestUnit.Id} đến {target.Index}");
+                        ExecuteMove(bestUnit, target); 
+                    }
+                    else
+                    {
+                        EndTurn();
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ.");
+                EndTurn();
+            }
+        }
     }
 }

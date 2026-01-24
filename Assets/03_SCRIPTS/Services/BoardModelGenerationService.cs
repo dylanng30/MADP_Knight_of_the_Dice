@@ -2,34 +2,38 @@
 using MADP.Models;
 using MADP.Settings;
 using MADP.Utilities;
+using MADP.Views;
 using UnityEngine;
 
 namespace MADP.Services
 {
-    public class BoardGenerationService
+    public class BoardModelGenerationService
     {
         private HashSet<int> _redIndexes;
         private HashSet<int> _yellowIndexes;
         private HashSet<int> _purpleIndexes;
 
-        public FullBoardModel CreateFullBoard(int redCount, int yellowCount, int purpleCount)
+        public BoardModel CreateFullBoard(int redCount, int yellowCount, int purpleCount)
         {
-            FullBoardModel fullBoardModel = new FullBoardModel();
+            BoardModel boardModel = new BoardModel();
             
-            fullBoardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount);
+            var (aroundCells, aroundCellsExceptSpawns) = CreateAroundCells(redCount, yellowCount, purpleCount);
+
+            boardModel.AroundCells = aroundCells;
+            boardModel.AroundCellsExceptSpawns = aroundCellsExceptSpawns;
             
-            fullBoardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
-            fullBoardModel.HomeCells.Add(TeamColor.Red, CreateHomeCells(TeamColor.Red));
-            fullBoardModel.HomeCells.Add(TeamColor.Blue, CreateHomeCells(TeamColor.Blue));
-            fullBoardModel.HomeCells.Add(TeamColor.Yellow, CreateHomeCells(TeamColor.Yellow));
-            fullBoardModel.HomeCells.Add(TeamColor.Green, CreateHomeCells(TeamColor.Green));
-            
-            return fullBoardModel;
+            boardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
+            boardModel.HomeCells.Add(TeamColor.Red, CreateHomeCells(TeamColor.Red));
+            boardModel.HomeCells.Add(TeamColor.Blue, CreateHomeCells(TeamColor.Blue));
+            boardModel.HomeCells.Add(TeamColor.Yellow, CreateHomeCells(TeamColor.Yellow));
+            boardModel.HomeCells.Add(TeamColor.Green, CreateHomeCells(TeamColor.Green));
+            return boardModel;
         }
         
-        private List<CellModel> CreateAroundCells(int redCount, int yellowCount, int purpleCount)
+        private (List<CellModel>, List<CellModel>) CreateAroundCells(int redCount, int yellowCount, int purpleCount)
         {
-            List<CellModel> models = new();
+            List<CellModel> aroundCells = new List<CellModel>();
+            List<CellModel> aroundCellsExceptSpawns = new List<CellModel>();
 
             Reset();
             CreateSpecialCellIndexes(redCount, yellowCount, purpleCount);
@@ -38,10 +42,15 @@ namespace MADP.Services
             {
                 (CellStructure structure, TeamColor owner) = IdentifyStructure(i);
                 CellAttribute attribute = IdentifyAttribute(i);
-                models.Add(new CellModel(i, structure, attribute, owner));
+                var newCellModel = new CellModel(i, structure, attribute, owner);
+                
+                if (structure != CellStructure.Spawn)
+                    aroundCellsExceptSpawns.Add(newCellModel);
+                
+                aroundCells.Add(newCellModel);
             }
             
-            return models;
+            return (aroundCells, aroundCellsExceptSpawns);
         }
         
         private List<CellModel> CreateHomeCells(TeamColor color)

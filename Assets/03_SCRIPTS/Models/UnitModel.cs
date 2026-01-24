@@ -4,7 +4,7 @@ namespace MADP.Models
 {
     public enum UnitState
     {
-        InCage,
+        InNest,
         Moving,
         InHome
     }
@@ -13,7 +13,7 @@ namespace MADP.Models
         public int Id { get; private set; }
         public TeamColor TeamOwner { get; private set; }
         public UnitStatModel Stat { get; private set; }
-        public UnitState State { get; private set; } = UnitState.InCage;
+        public UnitState State { get; private set; } = UnitState.InNest;
         
         public int StepsMoved { get; private set; }
         public int CurrentIndex { get; private set; }
@@ -26,7 +26,7 @@ namespace MADP.Models
 
         public void Reset()
         {
-            State = UnitState.InCage;
+            State = UnitState.InNest;
             StepsMoved = 0;
             CurrentIndex = -1;
         }

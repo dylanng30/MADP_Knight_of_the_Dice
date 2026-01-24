@@ -21,7 +21,7 @@ namespace MADP.Systems
         {
             int dmgAmount = dealDamageUA.Amount;
             var target = dealDamageUA.TargetUnitModel;
-            target.TakeDamage(dmgAmount);
+            //target.TakeDamage(dmgAmount);
             yield return null;
         }
     }

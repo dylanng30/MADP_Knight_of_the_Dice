@@ -14,7 +14,7 @@ namespace MADP.States.TurnStates
 
         public virtual void EnterTurn()
         {
-            Debug.Log($"Entering {GetType().Name} turn's {_turnController.CurrentTeam}");
+            //Debug.Log($"Entering {GetType().Name} turn's {_turnController.CurrentTeam}");
         }
 
         public virtual void ExecuteTurn()

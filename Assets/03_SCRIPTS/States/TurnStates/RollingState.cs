@@ -1,4 +1,5 @@
-﻿using MADP.Controllers;
+﻿using System.Collections;
+using MADP.Controllers;
 using UnityEngine;
 
 namespace MADP.States.TurnStates
@@ -26,6 +27,15 @@ namespace MADP.States.TurnStates
             {
                 _turnController.RollDice();
             }
+            else if (!_turnController.IsPlayerTurn)
+            {
+                _turnController.RollDice();
+            }
+
+            /*if (Input.GetKeyDown(KeyCode.Space))
+            {
+                _turnController.RollDice();
+            }*/
         }
         public override void ExitTurn()
         {
