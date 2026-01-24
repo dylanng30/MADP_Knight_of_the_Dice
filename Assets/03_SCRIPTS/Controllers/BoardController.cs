@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using MADP.Models;
+using MADP.Models.UnitActions;
 using MADP.Services;
 using MADP.Settings;
-using MADP.Utilities;
+using MADP.Systems;
 using MADP.Views;
 using UnityEngine;
 
@@ -14,177 +15,26 @@ namespace MADP.Controllers
     {
         [SerializeField] private BoardSetting _boardSetting;
         [SerializeField] private CellMaterialSetting _materialSetting;
-        
-        [Header("--- REFERENCES ---")]
         [SerializeField] private CellView cellPrefab;
         [SerializeField] private UnitView unitPrefab;
         [SerializeField] private Transform container;
         
-        //SERVICES
-        private BoardGenerationService _boardGenerationService;
-        private BoardLayoutService _boardLayoutService;
-        private BoardRotationService _boardRotationService;
-        private UnitGenerationService _unitGenerationService;
-        
-        
-        private DiceService _diceService;
-        private CellView _currentHighlightedCell;
-        
-        //MAPPERS
-        private Dictionary<CellModel, CellView> _cellViewMapper;
-        private Dictionary<UnitModel, UnitView> _unitViewMapper;
-        
+        private Dictionary<CellModel, CellView> _cellViewMapper = new();
+        private Dictionary<UnitModel, UnitView> _unitViewMapper = new();
         private Dictionary<TeamColor, List<UnitModel>> _allUnits;
-        private bool _canRoll = true;
+        private List<CellView> _currentHighlightedCells = new();
 
-        private void Awake()
-        {
-            _cellViewMapper =  new Dictionary<CellModel, CellView>();
-            _unitViewMapper = new Dictionary<UnitModel, UnitView>();
-            
-            _boardGenerationService = new BoardGenerationService();
-            _boardLayoutService = new BoardLayoutService();
-            _boardRotationService = new BoardRotationService();
-            _unitGenerationService = new UnitGenerationService();
-            _diceService = new DiceService();
-        }
+        private BoardModel _boardModel;
+
+        private BoardModelGenerationService _boardModelGenerationService = new();
+        private BoardLayoutService _boardLayoutService = new();
+        private UnitGenerationService _unitGenerationService = new();
 
         private void Start()
         {
             StartGame();
         }
 
-        private void Update()
-        {
-            if(container == null  || _boardRotationService == null) 
-                return;
-            _boardRotationService.Update(container);
-            
-        }
-
-        public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, Action OnMoveCompleted)
-        {
-            foreach (var cellModel in _cellViewMapper.Keys)
-            {
-                if (cellModel.Unit == unitModel)
-                {
-                    Debug.Log($"{unitModel.Id} rời {cellModel.Index}");
-                    cellModel.Clear();
-                    break;
-                }
-            }
-            
-            targetCellModel.Register(unitModel);
-            unitModel.MoveTo(targetCellModel.Index);
-            
-            var unitView = _unitViewMapper[unitModel];
-            var cellView = _cellViewMapper[targetCellModel];
-            unitView.transform.SetParent(cellView.transform);
-            var targetPos = cellView.GetUnitPosition();
-            unitView.MoveToPosition(targetPos);
-            cellView.SetHighlight(false);
-            OnMoveCompleted.Invoke();
-        }
-
-        public void SpawnUnit(UnitModel unitModel, Action OnSpawnCompleted)
-        {
-            foreach (CellModel cellModel in _cellViewMapper.Keys)
-            {
-                if (cellModel.Structure == CellStructure.Spawn && 
-                    cellModel.TeamOwner == unitModel.TeamOwner &&
-                    !cellModel.HasUnit)
-                {
-                    CellView cellView = _cellViewMapper[cellModel];
-                    var unitView = _unitViewMapper[unitModel];
-                    unitView.transform.SetParent(cellView.transform);
-                    var spawnPos = cellView.GetUnitPosition();
-                    unitView.MoveToPosition(spawnPos);
-                    cellModel.Register(unitModel);
-                    unitModel.SetState(UnitState.Moving);
-                    unitView.Collider.enabled = false;
-                    OnSpawnCompleted.Invoke();
-                    break;
-                }
-            }
-        }
-        
-        public bool CheckIfAnyMovePossible(TeamColor team, int diceValue)
-        {
-            List<UnitModel> units = _allUnits[team];
-            
-            foreach (var unit in units)
-            {
-                if (CanUnitMove(unit, diceValue)) return true;
-            }
-            return false;
-        }
-        public bool CanUnitMove(UnitModel unit, int diceValue)
-        {
-            if (unit.State == UnitState.InCage)
-            {
-                return _diceService.CanSpawnUnit(diceValue);
-            }
-            if (unit.State == UnitState.Moving)
-            {
-                // TODO: Thêm logic kiểm tra có bị chặn bởi quân địch hay quá đường về đích không
-                // Tạm thời trả về true nếu đang đi trên bàn cờ
-                return true; 
-            }
-            return false;
-        }
-        public CellModel GetDestinationCell(UnitModel unit, int diceValue)
-        {
-            // Case 1: Ra quân
-            if (unit.State == UnitState.InCage)
-            {
-                // Tìm ô Spawn của màu này
-                // (Logic này nên tối ưu bằng cách cache spawn index, ở đây tôi ví dụ tìm trong list)
-                return _cellViewMapper.Keys.FirstOrDefault(c => c.Structure == CellStructure.Spawn && c.TeamOwner == unit.TeamOwner);
-            }
-
-            // Case 2: Đang di chuyển
-            if (unit.State == UnitState.Moving)
-            {
-                // Giả định logic đi vòng quanh (cần thay bằng logic Path thật của bạn)
-                int nextIndex = (unit.CurrentIndex + diceValue) % 56; 
-                Debug.Log(nextIndex);
-                
-                // Tìm CellModel tại index đó
-                foreach(var cell in _cellViewMapper.Keys)
-                {
-                    if (cell.Index == nextIndex && 
-                        cell.Structure != CellStructure.Home &&
-                        !cell.HasUnit) 
-                        return cell;
-                }
-            }
-            
-            Debug.Log("Không tìm thấy ô tiềm năng");
-            return null;
-        }
-        
-        public void HighlightCell(CellModel cellModel, bool isOn)
-        {
-            if (cellModel == null) return;
-            
-            if (_cellViewMapper.TryGetValue(cellModel, out CellView view))
-            {
-                view.SetHighlight(isOn); 
-                
-                if(isOn) _currentHighlightedCell = view;
-                else _currentHighlightedCell = null;
-            }
-        }
-
-        public void ClearAllHighlights()
-        {
-            if (_currentHighlightedCell != null)
-            {
-                _currentHighlightedCell.SetHighlight(false);
-                _currentHighlightedCell = null;
-            }
-        }
-        
         public void StartGame()
         {
             Reset();
@@ -205,23 +55,301 @@ namespace MADP.Controllers
             _cellViewMapper.Clear();
         }
 
-        #region ---BOARD---
+        public CellView GetCellView(CellModel cellModel)
+        {
+            if (_cellViewMapper.ContainsKey(cellModel))
+                return _cellViewMapper[cellModel];
+
+            return null;
+        }
+
+        public UnitView GetUnitView(UnitModel unitModel)
+        {
+            if (_unitViewMapper.ContainsKey(unitModel))
+                return _unitViewMapper[unitModel];
+
+            return null;
+        }
+
+        #region --- VFX ---
+        public void HighlightCells(List<CellModel> cellModels)
+        {
+            _currentHighlightedCells.Clear();
+
+            if (cellModels.Count <= 0)
+            {
+                ClearAllHighlights();
+                return;
+            }
+
+            foreach (var cellModel in cellModels)
+            {
+                var cellView = GetCellView(cellModel);
+                _currentHighlightedCells.Add(cellView);
+                cellView.SetHighlight(true);
+            }
+        }
+
+        public void ClearAllHighlights()
+        {
+            foreach (var cellView in _currentHighlightedCells)
+            {
+                cellView.SetHighlight(false);
+            }
+            _currentHighlightedCells.Clear();
+        }
+        #endregion
+
+        #region --- GAMEPLAY LOGIC ---
+        
+        public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, Action OnMoveCompleted)
+        {
+            CellModel currentTargetCellModel = null;
+            
+            foreach (var cellModel in _cellViewMapper.Keys)
+            {
+                if (cellModel.Unit == unitModel)
+                {
+                    Debug.Log($"{unitModel.Id} rời {cellModel.Index}");
+                    currentTargetCellModel = cellModel; 
+                    currentTargetCellModel.Clear();
+                    break;
+                }
+            }
+            
+            targetCellModel.Register(unitModel);
+            unitModel.MoveTo(targetCellModel.Index);
+
+            var unitView = _unitViewMapper[unitModel];
+            if (currentTargetCellModel != null)
+            {
+                var path = GetPath(currentTargetCellModel, 6);
+                var cellView = _cellViewMapper[targetCellModel];
+                cellView.SetHighlight(false);
+                unitView.transform.SetParent(cellView.transform);
+                MoveUA moveUA = new MoveUA(unitView, path);
+                ActionSystem.Instance.Perform(moveUA, OnMoveCompleted);
+            }
+            
+            //var targetPos = cellView.GetUnitPosition();
+            //unitView.MoveToPosition(targetPos);
+            //OnMoveCompleted.Invoke();
+        }
+
+        public void SpawnUnit(UnitModel unitModel, Action OnComplete)
+        {
+            var cellModel = _boardModel.AroundCells.FirstOrDefault(c => 
+                c.Structure == CellStructure.Spawn && 
+                c.TeamOwner == unitModel.TeamOwner &&
+                !c.HasUnit);
+            
+            if (cellModel == null)
+                return;
+            
+            CellView cellView = _cellViewMapper[cellModel];
+            var unitView = _unitViewMapper[unitModel];
+            unitView.transform.SetParent(cellView.transform);
+            var spawnPos = cellView.GetUnitPosition();
+            unitView.MoveToPosition(spawnPos);
+            cellModel.Register(unitModel);
+            unitModel.SetState(UnitState.Moving);
+            unitView.Collider.enabled = false;
+            OnComplete.Invoke();
+        }
+
+        public List<CellModel> GetPotentialDestinationCell(UnitModel unitModel, int diceValue)
+        {
+            List<CellModel> potentialDestinationCells = new List<CellModel>();
+            /*if (unitModel.State == UnitState.InNest)
+            {
+                var spawnCellOfUnitModel = _cellViewMapper.Keys.FirstOrDefault(c => 
+                    c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
+                
+                potentialDestinationCells.Add(spawnCellOfUnitModel);
+            }*/
+
+            if (unitModel.State == UnitState.Moving)
+            {
+                var currentCellOfUnit = _cellViewMapper.Keys.FirstOrDefault(c => c.Unit == unitModel);
+                if (currentCellOfUnit != null)
+                {
+                    var pathModel = GetPathModel(currentCellOfUnit, diceValue);
+                    if (!IsPathBlocked(pathModel))
+                        potentialDestinationCells.Add(pathModel.Last());
+                    
+                    var reversePathModel = GetReversePathModel(currentCellOfUnit, diceValue);
+                    if (!IsPathBlocked(reversePathModel))
+                    {
+                        var cellModel = reversePathModel.Last();
+                        if (cellModel.HasUnit)
+                        {
+                            var unit = cellModel.Unit;
+                            if(unit.TeamOwner != unit.TeamOwner)
+                                potentialDestinationCells.Add(cellModel);
+                        }
+                    }
+                        
+                }
+            }
+            
+            return potentialDestinationCells;
+        }
+
+        public bool CheckIfAnyMovePossible(TeamColor team, int diceValue)
+        {
+            List<UnitModel> units = _allUnits[team];
+
+            foreach (UnitModel unit in units)
+            {
+                if(CanUnitMove(unit, diceValue))
+                    return true;
+            }
+            return false;
+        }
+
+        public bool CanUnitMove(UnitModel unitModel, int diceValue)
+        {
+            if (unitModel.State == UnitState.InNest)
+            {
+                var spawnCell = _cellViewMapper.Keys.FirstOrDefault(c =>
+                    c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
+                return diceValue == 6 && !spawnCell.HasUnit;
+            }
+
+            if (unitModel.State == UnitState.Moving)
+            {
+                var currentCellOfUnit = _cellViewMapper.Keys.FirstOrDefault(c => c.Unit == unitModel);
+                if (currentCellOfUnit != null)
+                {
+                    var pathModel = GetPathModel(currentCellOfUnit, diceValue);
+                    if(IsPathBlocked(pathModel)) return false;
+                    else return true;
+                }
+            }
+            return false;
+        }
+        
+
+        private bool IsPathBlocked(List<CellModel> pathModel)
+        {
+            for (int i = 1; i < pathModel.Count; i++)
+            {
+                if(pathModel[i].HasUnit)
+                    return true;
+            }
+            
+            return false;
+        }
+        #endregion
+
+        #region --- PATH ---
+        public List<CellModel> GetReversePathModel(CellModel currentCellModel, int diceValue)
+        {
+            List<CellModel> path = new List<CellModel>();
+            var aroundCellsExceptSpawns = _boardModel.AroundCellsExceptSpawns;
+            int currentCellIndex = aroundCellsExceptSpawns.IndexOf(currentCellModel);
+            for (int i = 0; i <= diceValue; i++)
+            {
+                var index = (currentCellIndex - i + aroundCellsExceptSpawns.Count) % aroundCellsExceptSpawns.Count;
+                path.Add(aroundCellsExceptSpawns[index]);
+            }
+            return path;
+        }
+        
+        public List<CellView> GetReversePathView(CellModel currentCellModel, int diceValue)
+        {
+            List<CellView> path = new List<CellView>();
+            var pathModel = GetReversePathModel(currentCellModel, diceValue);
+            for (int i = 0; i < pathModel.Count; i++)
+            {
+                var cellModel = pathModel[i];
+                var cellView = GetCellView(cellModel);
+                if (cellView != null)
+                    path.Add(cellView);
+            }
+            
+            return path;
+        }
+        
+        public List<Vector3> GetReversePath(CellModel currentCellModel, int diceValue)
+        {
+            List<Vector3> path = new List<Vector3>();
+            var pathView = GetReversePathView(currentCellModel, diceValue);
+            for (int i = 0; i < pathView.Count; i++)
+            {
+                var cellView = pathView[i];
+                var point = cellView.GetUnitPosition();
+                path.Add(point);
+            }
+            
+            return path;
+        }
+        
+        public List<CellModel> GetPathModel(CellModel currentCellModel, int diceValue)
+        {
+            List<CellModel> path = new List<CellModel>();
+            var aroundCellsExceptSpawns = _boardModel.AroundCellsExceptSpawns;
+            int currentCellIndex = aroundCellsExceptSpawns.IndexOf(currentCellModel);
+            
+            if(currentCellIndex != -1)
+                path.Add(aroundCellsExceptSpawns[currentCellIndex]);
+            
+            for (int i = 1; i <= diceValue; i++)
+            {
+                var index = (currentCellIndex + i) % aroundCellsExceptSpawns.Count;
+                path.Add(aroundCellsExceptSpawns[index]);
+            }
+            return path;
+        }
+
+        public List<CellView> GetPathView(CellModel currentCellModel, int diceValue)
+        {
+            List<CellView> path = new List<CellView>();
+            var pathModel = GetPathModel(currentCellModel, diceValue);
+            for (int i = 0; i < pathModel.Count; i++)
+            {
+                var cellModel = pathModel[i];
+                var cellView = GetCellView(cellModel);
+                if (cellView != null)
+                    path.Add(cellView);
+            }
+            
+            return path;
+        }
+        
+        public List<Vector3> GetPath(CellModel currentCellModel, int diceValue)
+        {
+            List<Vector3> path = new List<Vector3>();
+            var pathView = GetPathView(currentCellModel, diceValue);
+            for (int i = 0; i < pathView.Count; i++)
+            {
+                var cellView = pathView[i];
+                var point = cellView.GetUnitPosition();
+                path.Add(point);
+            }
+            
+            return path;
+        }
+
+        #endregion
+
+        #region --- INITIALIZE ---
         public void GenerateBoard()
         {
-            var fullBoardModel = _boardGenerationService.CreateFullBoard(
+            _boardModel = _boardModelGenerationService.CreateFullBoard(
                 _boardSetting.RedCellCount,
                 _boardSetting.YellowCellCount,
                 _boardSetting.PurpleCellCount
             );
 
-            for (int i = 0; i < fullBoardModel.AroundCells.Count; i++)
+            for (int i = 0; i < _boardModel.AroundCells.Count; i++)
             {
-                var aroundCellModel = fullBoardModel.AroundCells[i];
+                var aroundCellModel = _boardModel.AroundCells[i];
                 Vector3 pos = _boardLayoutService.GetMainCellPosition(i);
                 CreateCellView(aroundCellModel, pos);
             }
 
-            foreach (var homeCellModel in fullBoardModel.HomeCells)
+            foreach (var homeCellModel in _boardModel.HomeCells)
             {
                 var color = homeCellModel.Key;
                 var homeCells = homeCellModel.Value;
@@ -286,11 +414,7 @@ namespace MADP.Controllers
                 default: return _materialSetting.Normal;
             }
         }
-
-        #endregion
         
-        #region ---UNIT---
-
         private void CreateUnits()
         {
             _allUnits = _unitGenerationService.CreateAllUnits();

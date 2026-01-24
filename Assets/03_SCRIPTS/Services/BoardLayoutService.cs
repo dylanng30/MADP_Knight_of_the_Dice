@@ -80,7 +80,7 @@ namespace MADP.Services
                     break;
             }
             
-            return startPos + (direction * (stepIndex + 1) * _cellSize);
+            return startPos + (direction * (6 - (stepIndex + 1)) * _cellSize);
         }
     }
 }

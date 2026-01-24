@@ -8,22 +8,9 @@ namespace MADP.States.TurnStates
 {
     public class ChoosingState : BaseTurnState
     {
-        private BoardController _boardController;
-        
         public ChoosingState(TurnController controller) : base(controller)
         {
         }
-
-        public override void EnterTurn()
-        {
-            base.EnterTurn();
-        }
-
-        public override void ExitTurn()
-        {
-            base.ExitTurn();
-        }
-
         public override void ExecuteTurn()
         {
             base.ExecuteTurn();
