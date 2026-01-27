@@ -48,6 +48,9 @@ namespace MADP.Controllers
             _diceService = new DiceService();
             _botDecisionService = new BotDecisionService(boardController);
             PlayerColor = TeamColor.Red;
+
+            GoldController.Instance.RegisterPlayerColorTeam(PlayerColor);
+            
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
         }
@@ -82,7 +85,7 @@ namespace MADP.Controllers
             
             if (!canMoveAny)
             {
-                //Debug.Log($"Team {CurrentTeam} không đi được quân nào với {CurrentDiceValue} điểm -> End Turn.");
+                GoldController.Instance.ApplyStuckBonus(CurrentTeam);
                 EndTurn();
             }
             else
@@ -179,6 +182,11 @@ namespace MADP.Controllers
             if (CurrentDiceValue != 6)
             {
                 _currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
+
+                if(_currentTeamIndex == 0)
+                {
+                    GoldController.Instance.ApplyRoundBonus();
+                }
             }
             
             _selectedUnit = null;

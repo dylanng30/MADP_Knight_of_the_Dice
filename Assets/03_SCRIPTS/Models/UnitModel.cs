@@ -14,6 +14,8 @@ namespace MADP.Models
         public TeamColor TeamOwner { get; private set; }
         public UnitStatModel Stat { get; private set; }
         public UnitState State { get; private set; } = UnitState.InNest;
+
+        public int Cost { get; private set; }
         
         public int StepsMoved { get; private set; }
         public int CurrentIndex { get; private set; }

@@ -185,16 +185,25 @@ namespace MADP.Controllers
             
             if (cellModel == null)
                 return;
-            
-            CellView cellView = _cellViewMapper[cellModel];
-            var unitView = _unitViewMapper[unitModel];
-            unitView.transform.SetParent(cellView.transform);
-            var spawnPos = cellView.GetUnitPosition();
-            unitView.MoveToPosition(spawnPos);
-            cellModel.Register(unitModel);
-            unitModel.SetState(UnitState.Moving);
-            unitView.Collider.enabled = false;
-            OnComplete.Invoke();
+
+            if(GoldController.Instance.TrySpendGold(unitModel.TeamOwner, unitModel.Cost))
+            {
+                CellView cellView = _cellViewMapper[cellModel];
+                var unitView = _unitViewMapper[unitModel];
+                unitView.transform.SetParent(cellView.transform);
+                var spawnPos = cellView.GetUnitPosition();
+                unitView.MoveToPosition(spawnPos);
+                cellModel.Register(unitModel);
+                unitModel.SetState(UnitState.Moving);
+                unitView.Collider.enabled = false;
+                OnComplete.Invoke();
+            }
+            else
+            {
+                Debug.Log("Not enough gold to spawn unit");
+
+                //Show UI thông báo không đủ vàng
+            }
         }
 
         public List<CellModel> GetPotentialDestinationCell(UnitModel unitModel, int diceValue)
@@ -277,7 +286,9 @@ namespace MADP.Controllers
             
             var spawnCell = _cellViewMapper.Keys.FirstOrDefault(c =>
                 c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
-            return diceValue == 6 && !spawnCell.HasUnit;
+
+            bool hasEnoughGold = GoldController.Instance.GetGold(unitModel.TeamOwner) >= unitModel.Cost;
+            return diceValue == 6 && !spawnCell.HasUnit && hasEnoughGold;
         }
 
         public bool CanUnitMove(UnitModel unitModel, int diceValue)
