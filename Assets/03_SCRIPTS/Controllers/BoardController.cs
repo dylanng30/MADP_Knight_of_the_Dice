@@ -18,10 +18,11 @@ namespace MADP.Controllers
         [SerializeField] private CellView cellPrefab;
         [SerializeField] private UnitView unitPrefab;
         [SerializeField] private Transform container;
-        
+
         private Dictionary<CellModel, CellView> _cellViewMapper = new();
         private Dictionary<UnitModel, UnitView> _unitViewMapper = new();
         private Dictionary<TeamColor, List<UnitModel>> _allUnits;
+        public Dictionary<TeamColor, List<UnitModel>> AllUnits => _allUnits;
         private List<CellView> _currentHighlightedCells = new();
 
         private BoardModel _boardModel;
@@ -41,16 +42,16 @@ namespace MADP.Controllers
             GenerateBoard();
             CreateUnits();
         }
-        
+
         private void Reset()
         {
             _boardLayoutService.Reset();
-            
+
             foreach (Transform child in container)
             {
                 Destroy(child.gameObject);
             }
-            
+
             _unitViewMapper.Clear();
             _cellViewMapper.Clear();
         }
@@ -75,8 +76,7 @@ namespace MADP.Controllers
         {
             return _allUnits[teamColor];
         }
-        
-        
+
 
         #region --- VFX ---
         public void HighlightCells(List<CellModel> cellModels)
@@ -108,22 +108,22 @@ namespace MADP.Controllers
         #endregion
 
         #region --- GAMEPLAY LOGIC ---
-        
+
         public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action OnMoveCompleted)
         {
             CellModel currentTargetCellModel = null;
-            
+
             // Tìm ô hiện tại của Unit
             foreach (var cellModel in _cellViewMapper.Keys)
             {
                 if (cellModel.Unit == unitModel)
                 {
-                    currentTargetCellModel = cellModel; 
+                    currentTargetCellModel = cellModel;
                     currentTargetCellModel.Clear();
                     break;
                 }
             }
-            
+
             // Cập nhật dữ liệu Model
             targetCellModel.Register(unitModel);
             unitModel.MoveTo(targetCellModel.Index);
@@ -132,8 +132,8 @@ namespace MADP.Controllers
             if (currentTargetCellModel != null)
             {
                 List<Vector3> pathPoints = new List<Vector3>();
-                
-                bool isSpecialGateJump = (diceValue == 1) && 
+
+                bool isSpecialGateJump = (diceValue == 1) &&
                                          (targetCellModel.Structure == CellStructure.Gate) &&
                                          !IsNextCell(currentTargetCellModel, targetCellModel);
 
@@ -141,7 +141,7 @@ namespace MADP.Controllers
                 {
                     // Lấy đường đi đầy đủ tới Gate (để visual nhảy qua từng ô)
                     var cellPath = GetPathToNextGate(currentTargetCellModel);
-                    
+
                     // Chuyển đổi CellPath sang Vector3 Path
                     foreach (var cell in cellPath)
                     {
@@ -149,25 +149,25 @@ namespace MADP.Controllers
                         if (view != null) pathPoints.Add(view.GetUnitPosition());
                     }
                 }
-                else 
+                else
                 {
                     // TH2: DI CHUYỂN BÌNH THƯỜNG
                     // Sử dụng logic cũ
                     pathPoints = GetPath(currentTargetCellModel, diceValue);
                 }
-                
+
                 // Thực hiện Action Di chuyển
                 var unitView = _unitViewMapper[unitModel];
                 var targetView = _cellViewMapper[targetCellModel];
-                
+
                 targetView.SetHighlight(false);
                 unitView.transform.SetParent(targetView.transform);
-                
+
                 MoveUA moveUA = new MoveUA(unitView, pathPoints);
                 ActionSystem.Instance.Perform(moveUA, OnMoveCompleted);
             }
         }
-        
+
         private bool IsNextCell(CellModel cellA, CellModel cellB)
         {
             var list = _boardModel.AroundCells;
@@ -178,14 +178,14 @@ namespace MADP.Controllers
 
         public void SpawnUnit(UnitModel unitModel, Action OnComplete)
         {
-            var cellModel = _boardModel.AroundCells.FirstOrDefault(c => 
-                c.Structure == CellStructure.Spawn && 
+            var cellModel = _boardModel.AroundCells.FirstOrDefault(c =>
+                c.Structure == CellStructure.Spawn &&
                 c.TeamOwner == unitModel.TeamOwner &&
                 !c.HasUnit);
-            
+
             if (cellModel == null)
                 return;
-            
+
             CellView cellView = _cellViewMapper[cellModel];
             var unitView = _unitViewMapper[unitModel];
             unitView.transform.SetParent(cellView.transform);
@@ -202,9 +202,9 @@ namespace MADP.Controllers
             List<CellModel> potentialDestinationCells = new List<CellModel>();
             /*if (unitModel.State == UnitState.InNest)
             {
-                var spawnCellOfUnitModel = _cellViewMapper.Keys.FirstOrDefault(c => 
+                var spawnCellOfUnitModel = _cellViewMapper.Keys.FirstOrDefault(c =>
                     c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
-                
+
                 potentialDestinationCells.Add(spawnCellOfUnitModel);
             }*/
 
@@ -214,11 +214,11 @@ namespace MADP.Controllers
                 if (currentCellOfUnit != null)
                 {
                     bool canJumpToGate = false;
-                    
+
                     if (diceValue == 1)
                     {
                         List<CellModel> pathToGate = GetPathToNextGate(currentCellOfUnit);
-                        
+
                         if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate))
                         {
                             potentialDestinationCells.Add(pathToGate.Last());
@@ -232,7 +232,7 @@ namespace MADP.Controllers
                         var pathModel = GetPathModel(currentCellOfUnit, diceValue);
                         if (!IsPathBlocked(pathModel))
                             potentialDestinationCells.Add(pathModel.Last());
-                    
+
                         var reversePathModel = GetReversePathModel(currentCellOfUnit, diceValue);
                         if (!IsPathBlocked(reversePathModel))
                         {
@@ -240,15 +240,14 @@ namespace MADP.Controllers
                             if (cellModel.HasUnit)
                             {
                                 var unit = cellModel.Unit;
-                                if(unit.TeamOwner != unit.TeamOwner)
+                                if (unit.TeamOwner != unit.TeamOwner)
                                     potentialDestinationCells.Add(cellModel);
                             }
                         }
                     }
-                        
                 }
             }
-            
+
             return potentialDestinationCells;
         }
 
@@ -258,7 +257,7 @@ namespace MADP.Controllers
 
             foreach (UnitModel unit in units)
             {
-                if(CanInteract(unit, diceValue))
+                if (CanInteract(unit, diceValue))
                     return true;
             }
             return false;
@@ -272,9 +271,9 @@ namespace MADP.Controllers
 
         public bool CanUnitSpawn(UnitModel unitModel, int diceValue)
         {
-            if(unitModel.State != UnitState.InNest)
+            if (unitModel.State != UnitState.InNest)
                 return false;
-            
+
             var spawnCell = _cellViewMapper.Keys.FirstOrDefault(c =>
                 c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
             return diceValue == 6 && !spawnCell.HasUnit;
@@ -284,32 +283,32 @@ namespace MADP.Controllers
         {
             if (unitModel.State != UnitState.Moving)
                 return false;
-            
+
             var currentCellOfUnit = _cellViewMapper.Keys.FirstOrDefault(c => c.Unit == unitModel);
             if (currentCellOfUnit != null)
             {
                 var pathModel = GetPathModel(currentCellOfUnit, diceValue);
-                if(IsPathBlocked(pathModel)) return false;
+                if (IsPathBlocked(pathModel)) return false;
                 else return true;
             }
-            
+
             return false;
         }
-        
+
 
         private bool IsPathBlocked(List<CellModel> pathModel)
         {
             for (int i = 1; i < pathModel.Count - 1; i++)
             {
-                if(pathModel[i].HasUnit)
+                if (pathModel[i].HasUnit)
                     return true;
             }
-            
+
             //Temp -> kiểm tra quân cuối cùng cos phải quân đồng minh không
-            if(pathModel[pathModel.Count - 1].HasUnit &&
-               pathModel[pathModel.Count - 1].Unit.TeamOwner == pathModel[0].Unit.TeamOwner)
+            if (pathModel[pathModel.Count - 1].HasUnit &&
+                pathModel[pathModel.Count - 1].Unit.TeamOwner == pathModel[0].Unit.TeamOwner)
                 return true;
-            
+
             return false;
         }
         #endregion
@@ -320,7 +319,7 @@ namespace MADP.Controllers
             List<CellModel> path = new List<CellModel>();
             var aroundCells = _boardModel.AroundCells;
             int currentIndex = aroundCells.IndexOf(currentCell);
-            
+
             for (int i = 1; i < aroundCells.Count; i++)
             {
                 int nextIndex = (currentIndex + i) % aroundCells.Count;
@@ -346,7 +345,7 @@ namespace MADP.Controllers
             }
             return path;
         }
-        
+
         public List<CellView> GetReversePathView(CellModel currentCellModel, int diceValue)
         {
             List<CellView> path = new List<CellView>();
@@ -358,10 +357,10 @@ namespace MADP.Controllers
                 if (cellView != null)
                     path.Add(cellView);
             }
-            
+
             return path;
         }
-        
+
         public List<Vector3> GetReversePath(CellModel currentCellModel, int diceValue)
         {
             List<Vector3> path = new List<Vector3>();
@@ -372,20 +371,20 @@ namespace MADP.Controllers
                 var point = cellView.GetUnitPosition();
                 path.Add(point);
             }
-            
+
             return path;
         }
-        
+
         public List<CellModel> GetPathModel(CellModel currentCellModel, int diceValue)
         {
             List<CellModel> path = new List<CellModel>();
-            
+
             var aroundCells = _boardModel.AroundCells;
             int currentCellIndex = aroundCells.IndexOf(currentCellModel);
             path.Add(currentCellModel);
-            
+
             bool hasSpawnCell = false;
-            
+
             for (int i = 1; i <= diceValue; i++)
             {
                 var rawIndex = (currentCellIndex + i) % aroundCells.Count;
@@ -413,10 +412,10 @@ namespace MADP.Controllers
                 if (cellView != null)
                     path.Add(cellView);
             }
-            
+
             return path;
         }
-        
+
         public List<Vector3> GetPath(CellModel currentCellModel, int diceValue)
         {
             List<Vector3> path = new List<Vector3>();
@@ -427,7 +426,7 @@ namespace MADP.Controllers
                 var point = cellView.GetUnitPosition();
                 path.Add(point);
             }
-            
+
             return path;
         }
 
@@ -456,7 +455,7 @@ namespace MADP.Controllers
                 for (int i = 0; i < homeCells.Count; i++)
                 {
                     Vector3 pos = _boardLayoutService.GetHomeCellPosition(color, i);
-                    CreateCellView(homeCells[i], pos); 
+                    CreateCellView(homeCells[i], pos);
                 }
             }
         }
@@ -467,10 +466,10 @@ namespace MADP.Controllers
             view.Setup(model);
             view.transform.localPosition = position;
             view.Renderer.material = mat;
-            
+
             _cellViewMapper.Add(model, view);
         }
-        
+
         private Material GetCellMaterial(CellModel model)
         {
             if (model.Structure == CellStructure.Spawn)
@@ -505,7 +504,7 @@ namespace MADP.Controllers
                     case TeamColor.Green: return _materialSetting.GreenHome;
                 }
             }
-            
+
             switch (model.Attribute)
             {
                 case CellAttribute.Red: return _materialSetting.Red;
@@ -514,11 +513,11 @@ namespace MADP.Controllers
                 default: return _materialSetting.Normal;
             }
         }
-        
+
         private void CreateUnits()
         {
             _allUnits = _unitGenerationService.CreateAllUnits();
-            
+
             foreach (var team in _allUnits)
             {
                 TeamColor color = team.Key;
@@ -535,13 +534,13 @@ namespace MADP.Controllers
         {
             UnitView view = Instantiate(unitPrefab, container);
             view.Setup(model);
-            
+
             var pos = _boardLayoutService.GetUnitPositionInCage(model.TeamOwner, model.Id);
             view.transform.localPosition = pos;
-            
+
             var mat = GetUnitMaterial(model.TeamOwner);
             view.Renderer.material = mat;
-            
+
             _unitViewMapper.Add(model, view);
         }
 

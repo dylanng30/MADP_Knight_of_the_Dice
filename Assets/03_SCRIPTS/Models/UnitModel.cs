@@ -12,7 +12,7 @@ namespace MADP.Models
     {
         public int Id { get; private set; }
         public TeamColor TeamOwner { get; private set; }
-        public UnitStatModel Stat { get; private set; }
+        public StatModel Stat { get; private set; }
         public UnitState State { get; private set; } = UnitState.InNest;
         
         public int StepsMoved { get; private set; }
