@@ -4,6 +4,9 @@ using System.Linq;
 using MADP.Models;
 using MADP.Models.UnitActions;
 using MADP.Services;
+using MADP.Services.Combat.Interfaces;
+using MADP.Services.Gold.Interfaces;
+using MADP.Services.Pathfinding.Interfaces;
 using MADP.Settings;
 using MADP.Systems;
 using MADP.Views;
@@ -14,189 +17,162 @@ namespace MADP.Controllers
     public class BoardController : MonoBehaviour
     {
         [SerializeField] private BoardSetting _boardSetting;
-        [SerializeField] private CellMaterialSetting _materialSetting;
-        [SerializeField] private CellView cellPrefab;
-        [SerializeField] private UnitView unitPrefab;
-        [SerializeField] private Transform container;
+        [SerializeField] private BoardView _boardView;
         
-        private Dictionary<CellModel, CellView> _cellViewMapper = new();
-        private Dictionary<UnitModel, UnitView> _unitViewMapper = new();
-        private Dictionary<TeamColor, List<UnitModel>> _allUnits;
-        private List<CellView> _currentHighlightedCells = new();
-
+        //Data
         private BoardModel _boardModel;
-
+        private Dictionary<TeamColor, List<UnitModel>> _allUnits;
+        
+        //Services
         private BoardModelGenerationService _boardModelGenerationService = new();
-        private BoardLayoutService _boardLayoutService = new();
-        private UnitGenerationService _unitGenerationService = new();
+        private UnitModelGenerationService _unitModelGenerationService = new();
+        
+        private IPathfindingService _pathfindingService;
+        private IGoldService _goldService;
+        private ICombatService _combatService;
+
+        //Events
+        public Action<BoardModel> OnBoardGenerated;
+        public Action<Dictionary<TeamColor, List<UnitModel>>> OnAllUnitsGenerated;
+
+        public void Initialize(
+            IGoldService goldService, 
+            IPathfindingService pathfindingService,
+            ICombatService combatService)
+        {
+            _goldService = goldService;
+            _pathfindingService = pathfindingService;
+            _combatService = combatService;
+        }
 
         private void Start()
         {
+            _boardView.Initialize(this);
             StartGame();
         }
 
         public void StartGame()
         {
-            Reset();
+            _boardView.Reset();
             GenerateBoard();
-            CreateUnits();
+            GenerateUnits();
         }
-        
-        private void Reset()
-        {
-            _boardLayoutService.Reset();
-            
-            foreach (Transform child in container)
-            {
-                Destroy(child.gameObject);
-            }
-            
-            _unitViewMapper.Clear();
-            _cellViewMapper.Clear();
-        }
-
-        public CellView GetCellView(CellModel cellModel)
-        {
-            if (_cellViewMapper.ContainsKey(cellModel))
-                return _cellViewMapper[cellModel];
-
-            return null;
-        }
-
-        public UnitView GetUnitView(UnitModel unitModel)
-        {
-            if (_unitViewMapper.ContainsKey(unitModel))
-                return _unitViewMapper[unitModel];
-
-            return null;
-        }
-
-        public List<UnitModel> GetAllUnitsByColor(TeamColor teamColor)
-        {
-            return _allUnits[teamColor];
-        }
-        
-        
-
-        #region --- VFX ---
-        public void HighlightCells(List<CellModel> cellModels)
-        {
-            _currentHighlightedCells.Clear();
-
-            if (cellModels.Count <= 0)
-            {
-                ClearAllHighlights();
-                return;
-            }
-
-            foreach (var cellModel in cellModels)
-            {
-                var cellView = GetCellView(cellModel);
-                _currentHighlightedCells.Add(cellView);
-                cellView.SetHighlight(true);
-            }
-        }
-
-        public void ClearAllHighlights()
-        {
-            foreach (var cellView in _currentHighlightedCells)
-            {
-                cellView.SetHighlight(false);
-            }
-            _currentHighlightedCells.Clear();
-        }
-        #endregion
 
         #region --- GAMEPLAY LOGIC ---
-        
         public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action OnMoveCompleted)
         {
-            CellModel currentTargetCellModel = null;
+            CellModel currentCellModel = _boardModel.AroundCells.FirstOrDefault(c => c.Unit == unitModel);
             
-            // Tìm ô hiện tại của Unit
-            foreach (var cellModel in _cellViewMapper.Keys)
-            {
-                if (cellModel.Unit == unitModel)
-                {
-                    currentTargetCellModel = cellModel; 
-                    currentTargetCellModel.Clear();
-                    break;
-                }
-            }
+            bool isSpecialGateJump = (diceValue == 1) &&
+                                     (targetCellModel.Structure == CellStructure.Gate) &&
+                                     !IsNextCell(currentCellModel, targetCellModel);
             
-            // Cập nhật dữ liệu Model
-            targetCellModel.Register(unitModel);
-            unitModel.MoveTo(targetCellModel.Index);
-
-            // --- XỬ LÝ VISUAL ---
-            if (currentTargetCellModel != null)
+            List<CellModel> pathCells = isSpecialGateJump ?
+                _pathfindingService.GetPathToGate(_boardModel, currentCellModel) :
+                _pathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
+            
+            List<Vector3> fullVisualPath = _boardView.GetPath(pathCells);
+            
+            if (targetCellModel.HasUnit && targetCellModel.Unit.TeamOwner != unitModel.TeamOwner)
             {
-                List<Vector3> pathPoints = new List<Vector3>();
+                UnitModel victim = targetCellModel.Unit;
+                UnitView victimView = _boardView.GetUnitView(victim);
+                UnitView attackerUnitView = _boardView.GetUnitView(unitModel);
                 
-                bool isSpecialGateJump = (diceValue == 1) && 
-                                         (targetCellModel.Structure == CellStructure.Gate) &&
-                                         !IsNextCell(currentTargetCellModel, targetCellModel);
-
-                if (isSpecialGateJump)
+                List<Vector3> approachPath = new List<Vector3>(fullVisualPath);
+                
+                if (approachPath.Count > 1) 
                 {
-                    // Lấy đường đi đầy đủ tới Gate (để visual nhảy qua từng ô)
-                    var cellPath = GetPathToNextGate(currentTargetCellModel);
+                    approachPath.RemoveAt(approachPath.Count - 1);
+                }
+                
+                MoveUA approachMoveUA = new MoveUA(attackerUnitView, approachPath);
+
+                CombatResult result = _combatService.SimulateCombat(unitModel, victim);
+                
+                AttackUA attackUA = new AttackUA(attackerUnitView, victimView, result.IsVictimDead);
+                approachMoveUA.PostActions.Add(attackUA);
+
+                if (result.IsVictimDead)
+                {
+                    Debug.Log($"Unit {victim.Id} chết. Unit {unitModel.Id} chiếm ô.");
                     
-                    // Chuyển đổi CellPath sang Vector3 Path
-                    foreach (var cell in cellPath)
-                    {
-                        var view = GetCellView(cell);
-                        if (view != null) pathPoints.Add(view.GetUnitPosition());
-                    }
+                    victim.TakeDamage(result.DamageDealt);
+                    _boardView.UnitReturnNest(victim);
+                    victim.Revive();
+                    
+                    currentCellModel.Clear();
+                    targetCellModel.Register(unitModel);
+                    unitModel.MoveTo(targetCellModel.Index);
+                    
+                    CellView targetCellView = _boardView.GetCellView(targetCellModel);
+                    attackerUnitView.transform.SetParent(targetCellView.transform);
+                    
+                    var winStepPath = new List<Vector3>();
+                    winStepPath.Add(approachPath.Last());
+                    winStepPath.Add(fullVisualPath.Last());
+                    
+                    MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath); 
+                    attackUA.PostActions.Add(winMoveUA);
                 }
-                else 
+                else
                 {
-                    // TH2: DI CHUYỂN BÌNH THƯỜNG
-                    // Sử dụng logic cũ
-                    pathPoints = GetPath(currentTargetCellModel, diceValue);
+                    Debug.Log($"Unit {victim.Id} của team {victim.TeamOwner.ToString()} sống sót. Unit {unitModel.Id} của team {victim.TeamOwner.ToString()} quay về.");
+                    
+                    victim.TakeDamage(result.DamageDealt);
+                    List<Vector3> returnPath = new List<Vector3>(approachPath);
+                    returnPath.Reverse();
+                    
+                    MoveUA returnUA = new MoveUA(attackerUnitView, returnPath);
+                    attackUA.PostActions.Add(returnUA);
                 }
                 
-                // Thực hiện Action Di chuyển
-                var unitView = _unitViewMapper[unitModel];
-                var targetView = _cellViewMapper[targetCellModel];
+                ActionSystem.Instance.Perform(approachMoveUA, OnMoveCompleted);
+            }
+            else
+            {
+                UnitView unitView = _boardView.GetUnitView(unitModel);
+                CellView targetCellView = _boardView.GetCellView(targetCellModel);
                 
-                targetView.SetHighlight(false);
-                unitView.transform.SetParent(targetView.transform);
+                currentCellModel.Clear();
+                targetCellModel.Register(unitModel);
+                unitModel.MoveTo(targetCellModel.Index);
                 
-                MoveUA moveUA = new MoveUA(unitView, pathPoints);
+                unitView.transform.SetParent(targetCellView.transform);
+                
+                MoveUA moveUA = new MoveUA(unitView, fullVisualPath);
                 ActionSystem.Instance.Perform(moveUA, OnMoveCompleted);
             }
-        }
-        
-        private bool IsNextCell(CellModel cellA, CellModel cellB)
-        {
-            var list = _boardModel.AroundCells;
-            int indexA = list.IndexOf(cellA);
-            int indexNext = (indexA + 1) % list.Count;
-            return list[indexNext] == cellB;
+            
+            _boardView.ClearAllHighlights();
         }
 
         public void SpawnUnit(UnitModel unitModel, Action OnComplete)
         {
-            var cellModel = _boardModel.AroundCells.FirstOrDefault(c => 
+            CellModel spawnCell = _boardModel.AroundCells.FirstOrDefault(c => 
                 c.Structure == CellStructure.Spawn && 
                 c.TeamOwner == unitModel.TeamOwner &&
                 !c.HasUnit);
             
-            if (cellModel == null)
-                return;
+            if (spawnCell == null) return;
 
-            if(GoldController.Instance.TrySpendGold(unitModel.TeamOwner, unitModel.Cost))
+            if(_goldService.TrySpendGold(unitModel.TeamOwner, unitModel.Cost))
             {
-                CellView cellView = _cellViewMapper[cellModel];
-                var unitView = _unitViewMapper[unitModel];
-                unitView.transform.SetParent(cellView.transform);
-                var spawnPos = cellView.GetUnitPosition();
-                unitView.MoveToPosition(spawnPos);
-                cellModel.Register(unitModel);
+                spawnCell.Register(unitModel);
                 unitModel.SetState(UnitState.Moving);
-                unitView.Collider.enabled = false;
-                OnComplete.Invoke();
+                
+                UnitView unitView = _boardView.GetUnitView(unitModel);
+                CellView spawnCellView = _boardView.GetCellView(spawnCell);
+                
+                if (unitView != null)
+                {
+                    unitView.transform.SetParent(spawnCellView.transform);
+                    Vector3 targetPos = _boardView.GetCellPosition(spawnCell);
+                    unitView.MoveToPosition(targetPos);
+                    unitView.Collider.enabled = false;
+                }
+                
+                OnComplete?.Invoke();
             }
             else
             {
@@ -209,56 +185,73 @@ namespace MADP.Controllers
         public List<CellModel> GetPotentialDestinationCell(UnitModel unitModel, int diceValue)
         {
             List<CellModel> potentialDestinationCells = new List<CellModel>();
-            /*if (unitModel.State == UnitState.InNest)
-            {
-                var spawnCellOfUnitModel = _cellViewMapper.Keys.FirstOrDefault(c => 
-                    c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
-                
-                potentialDestinationCells.Add(spawnCellOfUnitModel);
-            }*/
 
             if (unitModel.State == UnitState.Moving)
             {
-                var currentCellOfUnit = _cellViewMapper.Keys.FirstOrDefault(c => c.Unit == unitModel);
-                if (currentCellOfUnit != null)
+                var currentCell = _boardModel.AroundCells.FirstOrDefault(c => c.Unit == unitModel);
+                if (currentCell != null)
                 {
                     bool canJumpToGate = false;
                     
                     if (diceValue == 1)
                     {
-                        List<CellModel> pathToGate = GetPathToNextGate(currentCellOfUnit);
+                        var pathToGate = _pathfindingService.GetPathToGate(_boardModel, currentCell);
                         
-                        if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate))
+                        if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate, unitModel.TeamOwner))
                         {
                             potentialDestinationCells.Add(pathToGate.Last());
-                            Debug.Log("Khong bi chan");
                             canJumpToGate = true;
                         }
                     }
 
                     if (!canJumpToGate)
                     {
-                        var pathModel = GetPathModel(currentCellOfUnit, diceValue);
-                        if (!IsPathBlocked(pathModel))
+                        var pathModel = _pathfindingService.GetPath(_boardModel, currentCell, diceValue);
+                        if (pathModel.Count > 0 && !IsPathBlocked(pathModel, unitModel.TeamOwner))
+                        {
                             potentialDestinationCells.Add(pathModel.Last());
+                        }
                     
-                        var reversePathModel = GetReversePathModel(currentCellOfUnit, diceValue);
-                        if (!IsPathBlocked(reversePathModel))
+                        var reversePathModel = _pathfindingService.GetReversePath(_boardModel, currentCell, diceValue);
+                        if (reversePathModel.Count > 0 && !IsPathBlocked(reversePathModel, unitModel.TeamOwner))
                         {
                             var cellModel = reversePathModel.Last();
                             if (cellModel.HasUnit)
                             {
                                 var unit = cellModel.Unit;
-                                if(unit.TeamOwner != unit.TeamOwner)
+                                if(unit.TeamOwner != unitModel.TeamOwner)
                                     potentialDestinationCells.Add(cellModel);
                             }
                         }
+                        
                     }
                         
                 }
             }
             
             return potentialDestinationCells;
+        }
+        
+        private bool IsNextCell(CellModel cellA, CellModel cellB)
+        {
+            var list = _boardModel.AroundCells;
+            int indexA = list.IndexOf(cellA);
+            int indexNext = (indexA + 1) % list.Count;
+            return list[indexNext] == cellB;
+        }
+        
+        public void HighlightCells(List<CellModel> cellModels)
+        {
+            _boardView.HighlightCells(cellModels);
+        }
+
+        public void ClearAllHighlights()
+        {
+            _boardView.ClearAllHighlights();
+        }
+        public List<UnitModel> GetAllUnitsByColor(TeamColor teamColor)
+        {
+            return _allUnits[teamColor];
         }
 
         public bool CheckIfAnyMovePossible(TeamColor team, int diceValue)
@@ -275,177 +268,50 @@ namespace MADP.Controllers
 
         public bool CanInteract(UnitModel unitModel, int diceValue)
         {
-            return CanUnitSpawn(unitModel, diceValue) ||
-                   CanUnitMove(unitModel, diceValue);
+            return CanSpawnUnit(unitModel, diceValue) ||
+                   CanMoveUnit(unitModel, diceValue);
         }
 
-        public bool CanUnitSpawn(UnitModel unitModel, int diceValue)
+        public bool CanSpawnUnit(UnitModel unitModel, int diceValue)
         {
-            if(unitModel.State != UnitState.InNest)
+            if(unitModel.State != UnitState.InNest) return false;
+            
+            var spawnCell = _boardModel.AroundCells.FirstOrDefault(
+                c => c.Structure == CellStructure.Spawn && 
+                     c.TeamOwner == unitModel.TeamOwner);
+                
+            return diceValue == 6 && !spawnCell.HasUnit && 
+                   _goldService.GetGold(unitModel.TeamOwner) >= unitModel.Cost;
+        }
+
+        public bool CanMoveUnit(UnitModel unitModel, int diceValue)
+        {
+            if(unitModel.State != UnitState.Moving) return false;
+            
+            return GetPotentialDestinationCell(unitModel, diceValue).Count > 0;
+        }
+
+        private bool IsPathBlocked(List<CellModel> pathModel, TeamColor selfTeam)
+        {
+            if (pathModel == null || pathModel.Count == 0) 
                 return false;
             
-            var spawnCell = _cellViewMapper.Keys.FirstOrDefault(c =>
-                c.Structure == CellStructure.Spawn && c.TeamOwner == unitModel.TeamOwner);
-
-            bool hasEnoughGold = GoldController.Instance.GetGold(unitModel.TeamOwner) >= unitModel.Cost;
-            return diceValue == 6 && !spawnCell.HasUnit && hasEnoughGold;
-        }
-
-        public bool CanUnitMove(UnitModel unitModel, int diceValue)
-        {
-            if (unitModel.State != UnitState.Moving)
-                return false;
-            
-            var currentCellOfUnit = _cellViewMapper.Keys.FirstOrDefault(c => c.Unit == unitModel);
-            if (currentCellOfUnit != null)
-            {
-                var pathModel = GetPathModel(currentCellOfUnit, diceValue);
-                if(IsPathBlocked(pathModel)) return false;
-                else return true;
-            }
-            
-            return false;
-        }
-        
-
-        private bool IsPathBlocked(List<CellModel> pathModel)
-        {
             for (int i = 1; i < pathModel.Count - 1; i++)
             {
-                if(pathModel[i].HasUnit)
-                    return true;
+                if(pathModel[i].HasUnit) return true;
             }
             
-            //Temp -> kiểm tra quân cuối cùng cos phải quân đồng minh không
-            if(pathModel[pathModel.Count - 1].HasUnit &&
-               pathModel[pathModel.Count - 1].Unit.TeamOwner == pathModel[0].Unit.TeamOwner)
+            var lastCell = pathModel.Last();
+            
+            if(lastCell.HasUnit && 
+               lastCell.Unit.TeamOwner == selfTeam)
                 return true;
             
             return false;
         }
         #endregion
-
-        #region --- PATH ---
-        private List<CellModel> GetPathToNextGate(CellModel currentCell)
-        {
-            List<CellModel> path = new List<CellModel>();
-            var aroundCells = _boardModel.AroundCells;
-            int currentIndex = aroundCells.IndexOf(currentCell);
-            
-            for (int i = 1; i < aroundCells.Count; i++)
-            {
-                int nextIndex = (currentIndex + i) % aroundCells.Count;
-                CellModel nextCell = aroundCells[nextIndex];
-                path.Add(nextCell);
-                if (nextCell.Structure == CellStructure.Gate)
-                {
-                    return path;
-                }
-            }
-
-            return new List<CellModel>();
-        }
-        public List<CellModel> GetReversePathModel(CellModel currentCellModel, int diceValue)
-        {
-            List<CellModel> path = new List<CellModel>();
-            var aroundCellsExceptSpawns = _boardModel.AroundCellsExceptSpawns;
-            int currentCellIndex = aroundCellsExceptSpawns.IndexOf(currentCellModel);
-            for (int i = 0; i <= diceValue; i++)
-            {
-                var index = (currentCellIndex - i + aroundCellsExceptSpawns.Count) % aroundCellsExceptSpawns.Count;
-                path.Add(aroundCellsExceptSpawns[index]);
-            }
-            return path;
-        }
         
-        public List<CellView> GetReversePathView(CellModel currentCellModel, int diceValue)
-        {
-            List<CellView> path = new List<CellView>();
-            var pathModel = GetReversePathModel(currentCellModel, diceValue);
-            for (int i = 0; i < pathModel.Count; i++)
-            {
-                var cellModel = pathModel[i];
-                var cellView = GetCellView(cellModel);
-                if (cellView != null)
-                    path.Add(cellView);
-            }
-            
-            return path;
-        }
-        
-        public List<Vector3> GetReversePath(CellModel currentCellModel, int diceValue)
-        {
-            List<Vector3> path = new List<Vector3>();
-            var pathView = GetReversePathView(currentCellModel, diceValue);
-            for (int i = 0; i < pathView.Count; i++)
-            {
-                var cellView = pathView[i];
-                var point = cellView.GetUnitPosition();
-                path.Add(point);
-            }
-            
-            return path;
-        }
-        
-        public List<CellModel> GetPathModel(CellModel currentCellModel, int diceValue)
-        {
-            List<CellModel> path = new List<CellModel>();
-            
-            var aroundCells = _boardModel.AroundCells;
-            int currentCellIndex = aroundCells.IndexOf(currentCellModel);
-            path.Add(currentCellModel);
-            
-            bool hasSpawnCell = false;
-            
-            for (int i = 1; i <= diceValue; i++)
-            {
-                var rawIndex = (currentCellIndex + i) % aroundCells.Count;
-
-                if (aroundCells[rawIndex].Structure == CellStructure.Spawn)
-                {
-                    hasSpawnCell = true;
-                }
-
-                int currentIndex = hasSpawnCell ? (rawIndex + 1) % aroundCells.Count : rawIndex;
-                path.Add(aroundCells[currentIndex]);
-            }
-            Debug.Log($"So phan tu: {path.Count}");
-            return path;
-        }
-
-        public List<CellView> GetPathView(CellModel currentCellModel, int diceValue)
-        {
-            List<CellView> path = new List<CellView>();
-            var pathModel = GetPathModel(currentCellModel, diceValue);
-            for (int i = 0; i < pathModel.Count; i++)
-            {
-                var cellModel = pathModel[i];
-                var cellView = GetCellView(cellModel);
-                if (cellView != null)
-                    path.Add(cellView);
-            }
-            
-            return path;
-        }
-        
-        public List<Vector3> GetPath(CellModel currentCellModel, int diceValue)
-        {
-            List<Vector3> path = new List<Vector3>();
-            var pathView = GetPathView(currentCellModel, diceValue);
-            for (int i = 0; i < pathView.Count; i++)
-            {
-                var cellView = pathView[i];
-                var point = cellView.GetUnitPosition();
-                path.Add(point);
-            }
-            
-            return path;
-        }
-
-        #endregion
-
-        #region --- INITIALIZE ---
-        public void GenerateBoard()
+        private void GenerateBoard()
         {
             _boardModel = _boardModelGenerationService.CreateFullBoard(
                 _boardSetting.RedCellCount,
@@ -453,121 +319,12 @@ namespace MADP.Controllers
                 _boardSetting.PurpleCellCount
             );
 
-            for (int i = 0; i < _boardModel.AroundCells.Count; i++)
-            {
-                var aroundCellModel = _boardModel.AroundCells[i];
-                Vector3 pos = _boardLayoutService.GetMainCellPosition(i);
-                CreateCellView(aroundCellModel, pos);
-            }
-
-            foreach (var homeCellModel in _boardModel.HomeCells)
-            {
-                var color = homeCellModel.Key;
-                var homeCells = homeCellModel.Value;
-                for (int i = 0; i < homeCells.Count; i++)
-                {
-                    Vector3 pos = _boardLayoutService.GetHomeCellPosition(color, i);
-                    CreateCellView(homeCells[i], pos); 
-                }
-            }
+            OnBoardGenerated?.Invoke(_boardModel);
         }
-        private void CreateCellView(CellModel model, Vector3 position)
+        private void GenerateUnits()
         {
-            Material mat = GetCellMaterial(model);
-            CellView view = Instantiate(cellPrefab, container);
-            view.Setup(model);
-            view.transform.localPosition = position;
-            view.Renderer.material = mat;
-            
-            _cellViewMapper.Add(model, view);
+            _allUnits = _unitModelGenerationService.CreateAllUnits();
+            OnAllUnitsGenerated?.Invoke(_allUnits);
         }
-        
-        private Material GetCellMaterial(CellModel model)
-        {
-            if (model.Structure == CellStructure.Spawn)
-            {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.RedSpawn;
-                    case TeamColor.Blue: return _materialSetting.BlueSpawn;
-                    case TeamColor.Yellow: return _materialSetting.YellowSpawn;
-                    case TeamColor.Green: return _materialSetting.GreenSpawn;
-                }
-            }
-
-            if (model.Structure == CellStructure.Gate)
-            {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.Purple;
-                    case TeamColor.Blue: return _materialSetting.Purple;
-                    case TeamColor.Yellow: return _materialSetting.Purple;
-                    case TeamColor.Green: return _materialSetting.Purple;
-                }
-            }
-
-            if (model.Structure == CellStructure.Home)
-            {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.RedHome;
-                    case TeamColor.Blue: return _materialSetting.BlueHome;
-                    case TeamColor.Yellow: return _materialSetting.YellowHome;
-                    case TeamColor.Green: return _materialSetting.GreenHome;
-                }
-            }
-            
-            switch (model.Attribute)
-            {
-                case CellAttribute.Red: return _materialSetting.Red;
-                case CellAttribute.Yellow: return _materialSetting.Yellow;
-                case CellAttribute.Purple: return _materialSetting.Purple;
-                default: return _materialSetting.Normal;
-            }
-        }
-        
-        private void CreateUnits()
-        {
-            _allUnits = _unitGenerationService.CreateAllUnits();
-            
-            foreach (var team in _allUnits)
-            {
-                TeamColor color = team.Key;
-                List<UnitModel> units = team.Value;
-
-                foreach (var unit in units)
-                {
-                    CreateUnitView(unit);
-                }
-            }
-        }
-
-        private void CreateUnitView(UnitModel model)
-        {
-            UnitView view = Instantiate(unitPrefab, container);
-            view.Setup(model);
-            
-            var pos = _boardLayoutService.GetUnitPositionInCage(model.TeamOwner, model.Id);
-            view.transform.localPosition = pos;
-            
-            var mat = GetUnitMaterial(model.TeamOwner);
-            view.Renderer.material = mat;
-            
-            _unitViewMapper.Add(model, view);
-        }
-
-        private Material GetUnitMaterial(TeamColor color)
-        {
-            switch (color)
-            {
-                case TeamColor.Red: return _materialSetting.RedHome;
-                case TeamColor.Blue: return _materialSetting.BlueHome;
-                case TeamColor.Yellow: return _materialSetting.YellowHome;
-                case TeamColor.Green: return _materialSetting.GreenHome;
-                default: return _materialSetting.Normal;
-            }
-        }
-
-        #endregion
     }
 }

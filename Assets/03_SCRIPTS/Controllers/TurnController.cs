@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using MADP.Managers;
 using MADP.Models;
 using MADP.Services;
+using MADP.Services.Gold.Interfaces;
 using MADP.States.TurnStates;
 using MADP.States.TurnStates.Interfaces;
 using MADP.Views;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MADP.Controllers
 {
@@ -24,8 +26,7 @@ namespace MADP.Controllers
         private readonly TeamColor[] _turnOrder = { 
             TeamColor.Red, TeamColor.Green, TeamColor.Yellow, TeamColor.Blue 
         };
-        private DiceService _diceService;
-        private BotDecisionService _botDecisionService;
+        
         private Dictionary<TurnState, ITurnState> _turnStates;
 
         public TeamColor CurrentTeam => _turnOrder[_currentTeamIndex];
@@ -43,13 +44,20 @@ namespace MADP.Controllers
         private List<CellModel> _potentialDestination;
         private ITurnState _currentTurnState;
         
+        private IGoldService _goldService;
+        private BotDecisionService _botDecisionService;
+        
+        public void Initialize(IGoldService goldService)
+        {
+            _goldService = goldService;
+        }
+        
         private void Start()
         {
-            _diceService = new DiceService();
             _botDecisionService = new BotDecisionService(boardController);
             PlayerColor = TeamColor.Red;
 
-            GoldController.Instance.RegisterPlayerColorTeam(PlayerColor);
+            //GoldController.Instance.RegisterPlayerColorTeam(PlayerColor);
             
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
@@ -74,8 +82,9 @@ namespace MADP.Controllers
         
         public void RollDice()
         {
-            CurrentDiceValue = _diceService.Roll();
-            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            int rand = Random.Range(0, 2);
+            CurrentDiceValue = rand == 0 ? 1 : 6; //Random.Range(1, 7);
+            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -85,7 +94,7 @@ namespace MADP.Controllers
             
             if (!canMoveAny)
             {
-                GoldController.Instance.ApplyStuckBonus(CurrentTeam);
+                _goldService.ApplyStuckBonus(CurrentTeam);
                 EndTurn();
             }
             else
@@ -104,8 +113,6 @@ namespace MADP.Controllers
         
         public void HandleCellClicked(CellModel clickedCell)
         {
-            // TRƯỜNG HỢP 1: Click vào ô Đích (để di chuyển)
-            // Điều kiện: Đang có Unit được chọn VÀ Click đúng vào ô đích đã tính toán
             if (_selectedUnit != null)
             {
                 foreach (var cell in _potentialDestination)
@@ -117,11 +124,9 @@ namespace MADP.Controllers
                     }
                 }
             }
-
-            // TRƯỜNG HỢP 2: Click vào Quân mình (để chọn)
+            
             if (clickedCell.HasUnit && clickedCell.Unit.TeamOwner == CurrentTeam)
             {
-                // Kiểm tra quân này có đi được với xúc xắc hiện tại không
                 if (boardController.CanInteract(clickedCell.Unit, CurrentDiceValue))
                 {
                     SelectUnit(clickedCell.Unit);
@@ -133,45 +138,34 @@ namespace MADP.Controllers
                 }
                 return;
             }
-
-            // TRƯỜNG HỢP 3: Click lung tung
+            
             DeselectCurrent();
         }
         private void SelectUnit(UnitModel unit)
         {
-            // 1. Reset selection cũ
             if (_selectedUnit != null) DeselectCurrent();
 
             _selectedUnit = unit;
-
-            // 2. Tính toán đích đến
-            _potentialDestination = boardController.GetPotentialDestinationCell(unit, CurrentDiceValue);
-
-            // 3. Highlight ô đích
-            boardController.HighlightCells(_potentialDestination);
-
-            // 4. Show UI Info (Gọi UIManager)
-            // _uiManager.ShowUnitInfo(unit);
             
-            //Debug.Log($"Đã chọn Unit {unit.Id}. Click vào ô {_potentialDestination?.Index} để di chuyển.");
+            _potentialDestination = boardController.GetPotentialDestinationCell(unit, CurrentDiceValue);
+            
+            boardController.HighlightCells(_potentialDestination);
+        }
+
+        public void ShowUnitInfo(UnitModel unit)
+        {
+            
         }
 
         public void DeselectCurrent()
         {
-            // Ẩn Highlight
             boardController.ClearAllHighlights();
-            
-            // Ẩn UI Info
-            // _uiManager.HideUnitInfo();
-
             _selectedUnit = null;
             _potentialDestination = null;
         }
 
         private void ExecuteMove(UnitModel unitModel, CellModel destination)
         {
-            //DeselectCurrent(); // Dọn dẹp highlight trước khi đi
-            
             boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => 
             {
                 EndTurn();
@@ -185,7 +179,8 @@ namespace MADP.Controllers
 
                 if(_currentTeamIndex == 0)
                 {
-                    GoldController.Instance.ApplyRoundBonus();
+                    //GoldController.Instance.ApplyRoundBonus();
+                    _goldService.ApplyRoundBonus();
                 }
             }
             
@@ -225,8 +220,6 @@ namespace MADP.Controllers
                     if (destCells.Count > 0)
                     {
                         CellModel target = destCells[0]; 
-                
-                        Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestUnit.Id} đến {target.Index}");
                         ExecuteMove(bestUnit, target); 
                     }
                     else

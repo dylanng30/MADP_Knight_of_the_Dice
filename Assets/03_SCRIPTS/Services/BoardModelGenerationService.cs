@@ -17,23 +17,20 @@ namespace MADP.Services
         {
             BoardModel boardModel = new BoardModel();
             
-            var (aroundCells, aroundCellsExceptSpawns) = CreateAroundCells(redCount, yellowCount, purpleCount);
-
-            boardModel.AroundCells = aroundCells;
-            boardModel.AroundCellsExceptSpawns = aroundCellsExceptSpawns;
+            boardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount);
             
             boardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
             boardModel.HomeCells.Add(TeamColor.Red, CreateHomeCells(TeamColor.Red));
             boardModel.HomeCells.Add(TeamColor.Blue, CreateHomeCells(TeamColor.Blue));
             boardModel.HomeCells.Add(TeamColor.Yellow, CreateHomeCells(TeamColor.Yellow));
             boardModel.HomeCells.Add(TeamColor.Green, CreateHomeCells(TeamColor.Green));
+            
             return boardModel;
         }
         
-        private (List<CellModel>, List<CellModel>) CreateAroundCells(int redCount, int yellowCount, int purpleCount)
+        private List<CellModel> CreateAroundCells(int redCount, int yellowCount, int purpleCount)
         {
             List<CellModel> aroundCells = new List<CellModel>();
-            List<CellModel> aroundCellsExceptSpawns = new List<CellModel>();
 
             Reset();
             CreateSpecialCellIndexes(redCount, yellowCount, purpleCount);
@@ -43,14 +40,10 @@ namespace MADP.Services
                 (CellStructure structure, TeamColor owner) = IdentifyStructure(i);
                 CellAttribute attribute = IdentifyAttribute(i);
                 var newCellModel = new CellModel(i, structure, attribute, owner);
-                
-                if (structure != CellStructure.Spawn)
-                    aroundCellsExceptSpawns.Add(newCellModel);
-                
                 aroundCells.Add(newCellModel);
             }
-            
-            return (aroundCells, aroundCellsExceptSpawns);
+
+            return aroundCells;
         }
         
         private List<CellModel> CreateHomeCells(TeamColor color)

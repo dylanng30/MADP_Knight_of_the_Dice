@@ -9,19 +9,18 @@ namespace MADP.Systems
     {
         private void OnEnable()
         {
-            ActionSystem.AttachPerformer<DealDamageUA>(DealDamagePerformer);
+            ActionSystem.AttachPerformer<AttackUA>(DealDamagePerformer);
         }
 
         private void OnDisable()
         {
-            ActionSystem.DetachPerformer<DealDamageUA>();
+            ActionSystem.DetachPerformer<AttackUA>();
         }
 
-        private IEnumerator DealDamagePerformer(DealDamageUA dealDamageUA)
+        private IEnumerator DealDamagePerformer(AttackUA attackUA)
         {
-            int dmgAmount = dealDamageUA.Amount;
-            var target = dealDamageUA.TargetUnitModel;
-            //target.TakeDamage(dmgAmount);
+            attackUA.AttackerView.PlayAnimation("Aattack");
+            attackUA.VictimView.PlayAnimation("Hit");
             yield return null;
         }
     }

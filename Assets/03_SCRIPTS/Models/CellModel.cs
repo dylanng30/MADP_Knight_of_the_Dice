@@ -1,4 +1,6 @@
-﻿namespace MADP.Models
+﻿using UnityEngine;
+
+namespace MADP.Models
 {
     public enum CellStructure
     {
@@ -31,7 +33,21 @@
             TeamOwner = teamOwner;
         }
 
-        public void Register(UnitModel unit) => Unit = unit;
-        public void Clear() => Unit = null;
+        public void Register(UnitModel unit)
+        {
+            if (Unit != null)
+            {
+                Debug.Log("Loi logic");
+                return;
+            }
+
+            Unit = unit;
+            //Debug.Log($"Unit {Unit.Id} cua team {Unit.TeamOwner.ToString()} vao o {Index}");
+        }
+        public void Clear()
+        {
+            Debug.Log($"Unit {Unit.Id} cua team {Unit.TeamOwner.ToString()} roi o {Index}");
+            Unit = null;
+        }
     }
 }

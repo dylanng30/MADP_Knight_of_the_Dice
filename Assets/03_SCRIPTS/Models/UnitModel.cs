@@ -1,4 +1,5 @@
 using MADP.Models;
+using UnityEngine;
 
 namespace MADP.Models
 {
@@ -20,10 +21,11 @@ namespace MADP.Models
         public int StepsMoved { get; private set; }
         public int CurrentIndex { get; private set; }
 
-        public UnitModel(int id, TeamColor teamOwner)
+        public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat)
         {
             Id = id;
             TeamOwner = teamOwner;
+            Stat = stat;
         }
 
         public void Reset()
@@ -37,15 +39,23 @@ namespace MADP.Models
         {
             CurrentIndex = cellIndex;
         }
-
-        public void AddSteps(int amount)
-        {
-            StepsMoved += amount;
-        }
-
         public void SetState(UnitState newState)
         {
             State = newState;
+        }
+
+        public void TakeDamage(int amount)
+        {
+            Debug.Log($"Unit {Id} takes {amount} damage");
+            Stat.CurrentHealth -= amount;
+        }
+        
+        public bool IsDead() => Stat.CurrentHealth <= 0;
+
+        public void Revive()
+        {
+            Stat.CurrentHealth = Stat.MaxHealth;
+            Reset();
         }
     }
 }

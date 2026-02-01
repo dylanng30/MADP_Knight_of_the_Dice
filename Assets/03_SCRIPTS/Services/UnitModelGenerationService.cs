@@ -4,7 +4,7 @@ using MADP.Models;
 
 namespace MADP.Services
 {
-    public class UnitGenerationService
+    public class UnitModelGenerationService
     {
         public Dictionary<TeamColor, List<UnitModel>> CreateAllUnits()
         {
@@ -23,7 +23,8 @@ namespace MADP.Services
             List<UnitModel> teamUnits = new List<UnitModel>();
             for(int i = 0; i < 4; i++)
             {
-                UnitModel model = new UnitModel(i, teamColor);
+                UnitStatModel statModel = new UnitStatModel(5, 2, 1);
+                UnitModel model = new UnitModel(i, teamColor, statModel);
                 teamUnits.Add(model);
             }
             

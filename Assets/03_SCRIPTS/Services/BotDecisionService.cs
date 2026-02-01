@@ -52,7 +52,7 @@ namespace MADP.Services
         {
             int score = 0;
 
-            if (_boardController.CanUnitMove(unit, diceValue))
+            if (_boardController.CanMoveUnit(unit, diceValue))
             {
                 var potentialCells = _boardController.GetPotentialDestinationCell(unit, diceValue);
 
@@ -70,7 +70,7 @@ namespace MADP.Services
                 }
             }
 
-            if (_boardController.CanUnitSpawn(unit, diceValue))
+            if (_boardController.CanSpawnUnit(unit, diceValue))
                 score += 500;
             
             return score;

@@ -9,6 +9,7 @@ namespace MADP.Views
     {
         [SerializeField] private Renderer renderer;
         [SerializeField] private Collider collider;
+        [SerializeField] private Animator animator;
         public Renderer Renderer => renderer;
         public Collider Collider => collider;
         
@@ -17,6 +18,12 @@ namespace MADP.Views
         public void Setup(UnitModel model)
         {
             Model = model;
+        }
+
+        public void PlayAnimation(string animationName)
+        {
+            Debug.Log("Playing animation: " + animationName);
+            //animator?.Play(animationName);
         }
 
         public void MoveToPosition(Vector3 position)

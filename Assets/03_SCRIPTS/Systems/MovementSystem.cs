@@ -20,20 +20,13 @@ namespace MADP.Systems
 
         private IEnumerator MovePerformer(MoveUA moveUA)
         {
-            Debug.Log("[MOVEMENT SYSTEM] Move performer");
             var unitView = moveUA.UnitView;
-            
-            //Move
+            //unitView.PlayAnimation("Move");
             for (int i = 0; i < moveUA.Path.Count; i++)
             {
                 Vector3 targetPosition = moveUA.Path[i];
                 yield return unitView.MoveTo(targetPosition);
             }
-
-            //Kiểm tra đích đến 
-            //Nếu có enemy thì tấn công
-            //DealDamageUA dealDamageUA = new DealDamageUA(unitModel, unitModel.DMG);
-            //ActionSystem.Instance.AddReaction(dealDamageUA);
         }
     }
 }
