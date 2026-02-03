@@ -15,11 +15,10 @@ namespace MADP.States.TurnStates
         public override void EnterTurn()
         {
             base.EnterTurn();
-            /*if (!_turnController.IsPlayerTurn)
+            if (!_turnController.IsPlayerTurn)
             {
                 _turnController.HandleBotTurn();
-            }*/
-            _turnController.HandleBotTurn();
+            }
         }
 
         public override void ExecuteTurn()
@@ -27,8 +26,9 @@ namespace MADP.States.TurnStates
             base.ExecuteTurn();
             if (_turnController.IsPlayerTurn)
             {
-                //HandleInput();
+                HandleInput();
             }
+            //HandleInput();
         }
 
         private void HandleInput()

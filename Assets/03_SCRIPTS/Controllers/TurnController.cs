@@ -38,8 +38,6 @@ namespace MADP.Controllers
         private int _currentTeamIndex = 0;
         public bool IsPlayerTurn => PlayerColor == _turnOrder[_currentTeamIndex];
         
-        private CellModel _lastChosenCell;
-        
         private UnitModel _selectedUnit;
         private List<CellModel> _potentialDestination;
         private ITurnState _currentTurnState;
@@ -57,8 +55,6 @@ namespace MADP.Controllers
             _botDecisionService = new BotDecisionService(boardController);
             PlayerColor = TeamColor.Red;
 
-            //GoldController.Instance.RegisterPlayerColorTeam(PlayerColor);
-            
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
         }
@@ -82,9 +78,8 @@ namespace MADP.Controllers
         
         public void RollDice()
         {
-            int rand = Random.Range(0, 2);
-            CurrentDiceValue = rand == 0 ? 1 : 6; //Random.Range(1, 7);
-            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            CurrentDiceValue = Random.Range(1, 7);
+            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -94,6 +89,7 @@ namespace MADP.Controllers
             
             if (!canMoveAny)
             {
+
                 _goldService.ApplyStuckBonus(CurrentTeam);
                 EndTurn();
             }
@@ -175,11 +171,10 @@ namespace MADP.Controllers
         {
             if (CurrentDiceValue != 6)
             {
-                _currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
+              //_currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
 
                 if(_currentTeamIndex == 0)
                 {
-                    //GoldController.Instance.ApplyRoundBonus();
                     _goldService.ApplyRoundBonus();
                 }
             }

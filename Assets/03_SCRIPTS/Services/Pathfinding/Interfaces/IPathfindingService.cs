@@ -8,5 +8,6 @@ namespace MADP.Services.Pathfinding.Interfaces
         List<CellModel> GetReversePath(BoardModel board, CellModel startCell, int steps);
         List<CellModel> GetPath(BoardModel board, CellModel startCell, int steps);
         List<CellModel> GetPathToGate(BoardModel board, CellModel startCell);
+        List<CellModel> GetPathToHome(BoardModel board, CellModel startCell, int steps);
     }
 }

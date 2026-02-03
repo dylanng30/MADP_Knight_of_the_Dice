@@ -55,13 +55,10 @@ namespace MADP.Views
 
         public void HighlightCells(List<CellModel> cellModels)
         {
-            _currentHighlightedCells.Clear();
+            ClearAllHighlights();
 
             if (cellModels.Count <= 0)
-            {
-                ClearAllHighlights();
                 return;
-            }
 
             foreach (var cellModel in cellModels)
             {

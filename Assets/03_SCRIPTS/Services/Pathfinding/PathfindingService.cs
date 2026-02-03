@@ -6,6 +6,22 @@ namespace MADP.Services.Pathfinding
 {
     public class PathfindingService : IPathfindingService
     {
+        public List<CellModel> GetPathToHome(BoardModel board, CellModel startCell, int steps)
+        {
+            List<CellModel> path = new List<CellModel>();
+            var team = startCell.TeamOwner;
+            var homeCells = board.HomeCells[team];
+
+            int startIndex = 0;
+            if (startCell.Structure == CellStructure.Home) startIndex = startCell.Index;
+
+            for (int i = startIndex; i < steps && i < homeCells.Count; i++)
+            {
+                path.Add(homeCells[i]);
+            }
+
+            return path;
+        }
         public List<CellModel> GetReversePath(BoardModel board, CellModel startCell, int steps)
         {
             List<CellModel> path = new List<CellModel>();

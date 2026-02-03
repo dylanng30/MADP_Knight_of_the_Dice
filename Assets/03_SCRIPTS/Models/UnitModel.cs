@@ -17,30 +17,22 @@ namespace MADP.Models
         public UnitState State { get; private set; } = UnitState.InNest;
 
         public int Cost { get; private set; }
-        
-        public int StepsMoved { get; private set; }
-        public int CurrentIndex { get; private set; }
 
         public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat)
         {
             Id = id;
             TeamOwner = teamOwner;
             Stat = stat;
+            Cost = id;
         }
 
         public void Reset()
         {
             State = UnitState.InNest;
-            StepsMoved = 0;
-            CurrentIndex = -1;
-        }
-
-        public void MoveTo(int cellIndex)
-        {
-            CurrentIndex = cellIndex;
         }
         public void SetState(UnitState newState)
         {
+            Debug.Log($"Unit {Id} state changed from {State} to {newState}");
             State = newState;
         }
 

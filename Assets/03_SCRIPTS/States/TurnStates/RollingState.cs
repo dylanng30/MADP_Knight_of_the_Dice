@@ -9,6 +9,12 @@ namespace MADP.States.TurnStates
         public RollingState(TurnController controller) : base(controller)
         {
         }
+
+        public override void EnterTurn()
+        {
+            base.EnterTurn();
+            Debug.Log(_turnController.CurrentTeam + " is now in Rolling State");
+        }
         public override void ExecuteTurn()
         {
             /*if (_turnController.IsPlayerTurn && Input.GetKeyDown(KeyCode.Space))
@@ -19,7 +25,7 @@ namespace MADP.States.TurnStates
             {
                 _turnController.RollDice();
             }*/
-            
+
             _turnController.RollDice();
         }
     }
