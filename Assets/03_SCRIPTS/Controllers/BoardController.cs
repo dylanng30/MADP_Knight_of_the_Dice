@@ -4,24 +4,21 @@ using System.Linq;
 using MADP.Models;
 using MADP.Models.UnitActions;
 using MADP.Services;
+using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat.Interfaces;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.Pathfinding.Interfaces;
 using MADP.Settings;
 using MADP.Systems;
 using MADP.Views;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
 
 namespace MADP.Controllers
 {
     public class BoardController : MonoBehaviour
     {
-        [SerializeField] private BoardSetting _boardSetting;
-        [SerializeField] private BoardView _boardView;
+        [SerializeField] private BoardSetting boardSetting;
+        [SerializeField] private BoardView boardView;
         
         //Data
         private BoardModel _boardModel;
@@ -34,6 +31,7 @@ namespace MADP.Controllers
         private IPathfindingService _pathfindingService;
         private IGoldService _goldService;
         private ICombatService _combatService;
+        private ICellEventService _cellEventService;
 
         //Events
         public Action<BoardModel> OnBoardGenerated;
@@ -42,35 +40,37 @@ namespace MADP.Controllers
         public void Initialize(
             IGoldService goldService, 
             IPathfindingService pathfindingService,
-            ICombatService combatService)
+            ICombatService combatService,
+            ICellEventService cellEventService)
         {
             _goldService = goldService;
             _pathfindingService = pathfindingService;
             _combatService = combatService;
+            _cellEventService = cellEventService;
         }
 
         private void Start()
         {
-            _boardView.Initialize(this);
+            boardView.Initialize(this);
             StartGame();
         }
 
         public void StartGame()
         {
-            _boardView.Reset();
+            boardView.Reset();
             GenerateBoard();
             GenerateUnits();
         }
 
         #region --- MOVEMENT & COMBAT ---
-        public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action OnMoveCompleted)
+        public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action onMoveCompleted)
         {
             CellModel currentCellModel = GetCurrentCellOfUnit(unitModel);
-            _boardView.ClearAllHighlights();
+            boardView.ClearAllHighlights();
 
             if (targetCellModel.Structure == CellStructure.Home && targetCellModel.TeamOwner == unitModel.TeamOwner)
             {
-                HandleMoveToHome(unitModel, currentCellModel, targetCellModel, diceValue, OnMoveCompleted);
+                HandleMoveToHome(unitModel, currentCellModel, targetCellModel, diceValue, onMoveCompleted);
                 return;
             }
 
@@ -82,35 +82,35 @@ namespace MADP.Controllers
                 _pathfindingService.GetPathToGate(_boardModel, currentCellModel) :
                 _pathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
 
-            List<Vector3> fullVisualPath = _boardView.GetPath(pathCells);
+            List<Vector3> fullVisualPath = boardView.GetPath(pathCells);
 
             if(IsCombatScenario(unitModel, targetCellModel))
             {
-                HandleCombatMove(unitModel, currentCellModel, targetCellModel, fullVisualPath, OnMoveCompleted);
+                HandleCombatMove(unitModel, currentCellModel, targetCellModel, fullVisualPath, onMoveCompleted);
             }
             else
             {
-                HandleNormalMove(unitModel, currentCellModel, targetCellModel, fullVisualPath, OnMoveCompleted);
+                HandleNormalMove(unitModel, currentCellModel, targetCellModel, fullVisualPath, onMoveCompleted);
             }
 
         }
 
-        private void HandleMoveToHome(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, int diceValue, Action OnMoveCompleted)
+        private void HandleMoveToHome(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, int diceValue, Action onMoveCompleted)
         {
             Debug.Log($"Unit {unitModel.Id} đã về tới chuồng của team {unitModel.TeamOwner}");
             List<CellModel> homePath = _pathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
-            List<Vector3> homeVisualPath = _boardView.GetPath(homePath);
+            List<Vector3> homeVisualPath = boardView.GetPath(homePath);
 
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
-            MoveUA moveToHomeUA = new MoveUA(_boardView.GetUnitView(unitModel), homeVisualPath);
-            ActionSystem.Instance.Perform(moveToHomeUA, OnMoveCompleted);
+            MoveUA moveToHomeUA = new MoveUA(boardView.GetUnitView(unitModel), homeVisualPath);
+            ActionSystem.Instance.Perform(moveToHomeUA, onMoveCompleted);
         }
 
-        private void HandleCombatMove(UnitModel attacker, CellModel currentCell, CellModel targetCell, List<Vector3> fullVisualPath, Action OnMoveCompleted)
+        private void HandleCombatMove(UnitModel attacker, CellModel currentCell, CellModel targetCell, List<Vector3> fullVisualPath, Action onMoveCompleted)
         {
             UnitModel victim = targetCell.Unit;
-            UnitView victimView = _boardView.GetUnitView(victim);
-            UnitView attackerView = _boardView.GetUnitView(attacker);
+            UnitView victimView = boardView.GetUnitView(victim);
+            UnitView attackerView = boardView.GetUnitView(attacker);
 
             List<Vector3> approachPath = new List<Vector3>(fullVisualPath);
 
@@ -131,9 +131,9 @@ namespace MADP.Controllers
             else
             {
                 HandleCombatFail(victim, attackerView, attackUA, approachPath, result.DamageDealt);
+                
             }
-
-            ActionSystem.Instance.Perform(approachMoveUA, OnMoveCompleted);
+            ActionSystem.Instance.Perform(approachMoveUA, onMoveCompleted);
         }
         
         private void HandleCombatWin(
@@ -144,14 +144,15 @@ namespace MADP.Controllers
         {
             Debug.Log($"Unit {victim.Id} chết. Unit {attacker.Id} chiếm ô.");
             victim.TakeDamage(damageDealt);
-            _boardView.UnitReturnNest(victim);
+            boardView.UnitReturnNest(victim);
             victim.Revive();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
-            CellView targetCellView = _boardView.GetCellView(targetCellModel);
+            CellView targetCellView = boardView.GetCellView(targetCellModel);
             attackerUnitView.transform.SetParent(targetCellView.transform);
             var winStepPath = new List<Vector3> { approachEndPos, fullPathEndPos };
             MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath);
             attackUA.PostActions.Add(winMoveUA);
+            TryAddCellEventAction(attacker, targetCellModel, winMoveUA);
         }
 
         private void HandleCombatFail(
@@ -164,19 +165,33 @@ namespace MADP.Controllers
             parentAction.PostActions.Add(new MoveUA(attackerView, returnPath));
         }
 
-        private void HandleNormalMove(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, List<Vector3> fullVisualPath, Action OnMoveCompleted)
+        private void HandleNormalMove(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, List<Vector3> fullVisualPath, Action onMoveCompleted)
         {
-            UnitView unitView = _boardView.GetUnitView(unitModel);
-            CellView targetCellView = _boardView.GetCellView(targetCellModel);
+            UnitView unitView = boardView.GetUnitView(unitModel);
+            CellView targetCellView = boardView.GetCellView(targetCellModel);
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
             unitView.transform.SetParent(targetCellView.transform);
             MoveUA moveUA = new MoveUA(unitView, fullVisualPath);
-            ActionSystem.Instance.Perform(moveUA, OnMoveCompleted);
+            TryAddCellEventAction(unitModel, targetCellModel, moveUA);
+            ActionSystem.Instance.Perform(moveUA, onMoveCompleted);
         }
 
         private bool IsCombatScenario(UnitModel unit, CellModel target)
         {
             return target.HasUnit && target.Unit.TeamOwner != unit.TeamOwner;
+        }
+        
+        private void TryAddCellEventAction(UnitModel unitModel, CellModel cellModel, BaseUnitAction parentAction)
+        {
+            var cellEvent = _cellEventService.GetEvent(cellModel);
+            
+            if (cellEvent != null)
+            {
+                var unitView = boardView.GetUnitView(unitModel);
+                var cellView = boardView.GetCellView(cellModel);
+                var eventAction = new CellEventUA(unitModel, unitView, cellModel, cellView, cellEvent);
+                parentAction.PostActions.Add(eventAction);
+            }
         }
         #endregion
 
@@ -185,7 +200,7 @@ namespace MADP.Controllers
         public void SpawnUnit(UnitModel unitModel, Action OnComplete)
         {
             CellModel spawnCell = _boardModel.AroundCells.FirstOrDefault(c => 
-                c.Structure == CellStructure.Gate && 
+                c.Structure == CellStructure.Spawn && 
                 c.TeamOwner == unitModel.TeamOwner &&
                 !c.HasUnit);
             
@@ -196,13 +211,13 @@ namespace MADP.Controllers
                 spawnCell.Register(unitModel);
                 unitModel.SetState(UnitState.Moving);
                 
-                UnitView unitView = _boardView.GetUnitView(unitModel);
-                CellView spawnCellView = _boardView.GetCellView(spawnCell);
+                UnitView unitView = boardView.GetUnitView(unitModel);
+                CellView spawnCellView = boardView.GetCellView(spawnCell);
                 
                 if (unitView != null)
                 {
                     unitView.transform.SetParent(spawnCellView.transform);
-                    Vector3 targetPos = _boardView.GetCellPosition(spawnCell);
+                    Vector3 targetPos = boardView.GetCellPosition(spawnCell);
                     unitView.MoveToPosition(targetPos);
                     unitView.Collider.enabled = false;
                 }
@@ -310,6 +325,7 @@ namespace MADP.Controllers
                 if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate, unit.TeamOwner))
                 {
                     results.Add(pathToGate.Last());
+                    return;
                 }
             }
 
@@ -343,12 +359,12 @@ namespace MADP.Controllers
         
         public void HighlightCells(List<CellModel> cellModels)
         {
-            _boardView.HighlightCells(cellModels);
+            boardView.HighlightCells(cellModels);
         }
 
         public void ClearAllHighlights()
         {
-            _boardView.ClearAllHighlights();
+            boardView.ClearAllHighlights();
         }
         public List<UnitModel> GetAllUnitsByColor(TeamColor teamColor)
         {
@@ -454,9 +470,9 @@ namespace MADP.Controllers
         private void GenerateBoard()
         {
             _boardModel = _boardModelGenerationService.CreateFullBoard(
-                _boardSetting.RedCellCount,
-                _boardSetting.YellowCellCount,
-                _boardSetting.PurpleCellCount
+                boardSetting.RedCellCount,
+                boardSetting.YellowCellCount,
+                boardSetting.PurpleCellCount
             );
 
             OnBoardGenerated?.Invoke(_boardModel);

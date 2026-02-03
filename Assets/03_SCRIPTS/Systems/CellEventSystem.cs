@@ -1,33 +1,25 @@
-﻿using MADP.Models.UnitActions;
+﻿using System.Collections;
+using MADP.Models.UnitActions;
 using UnityEngine;
 
 namespace MADP.Systems
 {
     public class CellEventSystem : MonoBehaviour
     {
-        [SerializeField] private int HealAmount;
-        [SerializeField] private int HealRate;
         private void OnEnable()
         {
-            ActionSystem.SubscribeReaction<MoveUA>(CheckTileEvent, UnitActionEventType.POST);
+            ActionSystem.AttachPerformer<CellEventUA>(ExecuteCellEvent);
         }
 
         private void OnDisable()
         {
-            ActionSystem.UnsubscribeReaction<MoveUA>(CheckTileEvent, UnitActionEventType.POST);
+            ActionSystem.DetachPerformer<CellEventUA>();
         }
 
-        private void CheckTileEvent(MoveUA moveUA)
+        private IEnumerator ExecuteCellEvent(CellEventUA cellEventUA)
         {
-            //Lấy cellType
-            
-            //CellAttribute == RED
-            
-            
-            //CellType == Green
-            //Heal 1 lượng nhất định
-            //Heal tỉ lệ
-            //HealUA healUa = new HealUA();
+            cellEventUA.CellEvent.Execute(cellEventUA.UnitModel, cellEventUA.CellModel);
+            yield return new WaitForEndOfFrame();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace MADP.Models
         }
         public void SetState(UnitState newState)
         {
-            Debug.Log($"Unit {Id} state changed from {State} to {newState}");
+            //Debug.Log($"Unit {Id} state changed from {State} to {newState}");
             State = newState;
         }
 
@@ -40,6 +40,13 @@ namespace MADP.Models
         {
             Debug.Log($"Unit {Id} takes {amount} damage");
             Stat.CurrentHealth -= amount;
+        }
+
+        public void Heal(int amount)
+        {
+            Stat.CurrentHealth += amount;
+            if(Stat.CurrentHealth > Stat.MaxHealth)
+                Stat.CurrentHealth = Stat.MaxHealth;
         }
         
         public bool IsDead() => Stat.CurrentHealth <= 0;

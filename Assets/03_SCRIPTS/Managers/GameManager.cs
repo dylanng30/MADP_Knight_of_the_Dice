@@ -1,5 +1,7 @@
 ﻿using System;
 using MADP.Controllers;
+using MADP.Services.CellEvent;
+using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat;
 using MADP.Services.Combat.Interfaces;
 using MADP.Services.Gold;
@@ -28,7 +30,7 @@ namespace MADP.Managers
         private IGoldService _goldService;
         private IPathfindingService _pathfindingService;
         private ICombatService _combatService;
-        
+        private ICellEventService _cellEventService;
         
         private GameState _currentGameState;
         public Action<GameState> OnGameStateChanged;
@@ -38,8 +40,9 @@ namespace MADP.Managers
             _goldService = new GoldService();
             _pathfindingService = new PathfindingService();
             _combatService = new CombatService();
+            _cellEventService = new CellEventService(_goldService);
             
-            _boardController.Initialize(_goldService, _pathfindingService, _combatService);
+            _boardController.Initialize(_goldService, _pathfindingService, _combatService, _cellEventService);
             _turnController.Initialize(_goldService);
             _goldUIManager.Initialize(_goldService);
             

@@ -171,7 +171,7 @@ namespace MADP.Controllers
         {
             if (CurrentDiceValue != 6)
             {
-              //_currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
+                _currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
 
                 if(_currentTeamIndex == 0)
                 {
