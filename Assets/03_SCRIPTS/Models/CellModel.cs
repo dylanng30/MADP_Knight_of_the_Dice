@@ -12,7 +12,7 @@ namespace MADP.Models
     }
     public enum TeamColor
     {
-        None, Red, Green, Blue, Yellow
+        None, Red, Green, Blue, Yellow, Purple
     }
     public class CellModel
     {

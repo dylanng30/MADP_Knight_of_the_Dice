@@ -21,12 +21,13 @@ namespace MADP.Systems
         private IEnumerator MovePerformer(MoveUA moveUA)
         {
             var unitView = moveUA.UnitView;
-            //unitView.PlayAnimation("Move");
+            unitView.PlayAnimation("Move");
             for (int i = 0; i < moveUA.Path.Count; i++)
             {
                 Vector3 targetPosition = moveUA.Path[i];
                 yield return unitView.MoveTo(targetPosition);
             }
+            unitView.PlayAnimation("Idle");
         }
     }
 }

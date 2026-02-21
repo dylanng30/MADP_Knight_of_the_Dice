@@ -3,6 +3,7 @@ using MADP.Controllers;
 using MADP.Models;
 using MADP.Services;
 using MADP.Settings;
+using MADP.Views.Unit;
 using UnityEngine;
 
 namespace MADP.Views
@@ -11,10 +12,14 @@ namespace MADP.Views
     {
         [Header("---SETTING---")]
         [SerializeField] private CellMaterialSetting _materialSetting;
-        
+        [SerializeField] private TeamColorDatabaseSO _teamColorDatabase;
         [Space(10)]
         [SerializeField] private CellView _cellViewPrefab;
-        [SerializeField] private UnitView _unitViewPrefab;
+        
+        [SerializeField] private UnitView firstUnitViewPrefab;
+        [SerializeField] private UnitView secondUnitViewPrefab;
+        [SerializeField] private UnitView thirdUnitViewPrefab;
+        [SerializeField] private UnitView fourthUnitViewPrefab;
         
         //Controllers
         private BoardController _controller;
@@ -196,27 +201,49 @@ namespace MADP.Views
 
         private void GenerateUnitView(UnitModel model)
         {
-            UnitView view = Instantiate(_unitViewPrefab, this.transform);
+            UnitView unitViewPrefab = GetUnitViewPrefab(model.Id);
+            UnitView view = Instantiate(unitViewPrefab, this.transform);
             view.Setup(model);
             
             var pos = _boardLayoutService.GetUnitPositionInCage(model.TeamOwner, model.Id);
             view.transform.localPosition = pos;
             
-            var mat = GetUnitMaterial(model.TeamOwner);
-            view.Renderer.material = mat;
+            Vector3 defaultDirection = Vector3.zero - view.transform.position;
+            view.Rotate(defaultDirection);
+            
+            //Hướng nhìn ban đầu
+            Vector3 directionToTarget = Vector3.zero - view.transform.position;
+            view.transform.LookAt(Vector3.zero);
+            
+            if(view.PrimarySign.Count > 0)
+                foreach (var sign in view.PrimarySign)
+                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Primary);
+            
+            if(view.SecondarySign.Count > 0)
+                foreach (var sign in view.SecondarySign)
+                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Secondary);
+            
+            if(view.TertiarySign.Count > 0)
+                foreach (var sign in view.TertiarySign)
+                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Tertiary);
             
             _unitMap.Add(model, view);
         }
 
-        private Material GetUnitMaterial(TeamColor color)
+        private Color GetUnitColor(UnitModel model, Priority priority)
         {
-            switch (color)
+            return _teamColorDatabase.GetColor(model.TeamOwner, priority);
+        }
+
+        private UnitView GetUnitViewPrefab(int id)
+        {
+            switch (id)
             {
-                case TeamColor.Red: return _materialSetting.RedHome;
-                case TeamColor.Blue: return _materialSetting.BlueHome;
-                case TeamColor.Yellow: return _materialSetting.YellowHome;
-                case TeamColor.Green: return _materialSetting.GreenHome;
-                default: return _materialSetting.Normal;
+                case 0: return firstUnitViewPrefab;
+                case 1: return secondUnitViewPrefab;
+                case 2: return thirdUnitViewPrefab;
+                case 3: return fourthUnitViewPrefab;
+                default: return firstUnitViewPrefab;
             }
         }
         #endregion

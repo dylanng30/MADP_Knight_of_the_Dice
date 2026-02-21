@@ -11,6 +11,7 @@ using MADP.Services.Pathfinding.Interfaces;
 using MADP.Settings;
 using MADP.Systems;
 using MADP.Views;
+using MADP.Views.Unit;
 using UnityEngine;
 
 namespace MADP.Controllers
@@ -218,7 +219,9 @@ namespace MADP.Controllers
                 {
                     unitView.transform.SetParent(spawnCellView.transform);
                     Vector3 targetPos = boardView.GetCellPosition(spawnCell);
-                    unitView.MoveToPosition(targetPos);
+                    unitView.Spawn(targetPos);
+                    var direction = GetDirectionWhenSpawn(unitModel);
+                    unitView.Rotate(direction);
                     unitView.Collider.enabled = false;
                 }
                 
@@ -370,7 +373,6 @@ namespace MADP.Controllers
         {
             return _allUnits[teamColor];
         }
-        
 
         public bool CheckIfAnyMovePossible(TeamColor team, int diceValue)
         {
@@ -481,6 +483,24 @@ namespace MADP.Controllers
         {
             _allUnits = _unitModelGenerationService.CreateAllUnits();
             OnAllUnitsGenerated?.Invoke(_allUnits);
+        }
+        #endregion
+        
+        #region ---HELPER---
+
+        private Vector3 GetDirectionWhenSpawn(UnitModel unit)
+        {
+            var spawnCell = _boardModel.AroundCells.FirstOrDefault(c => c.Unit == unit);
+            int nextCellIndex = (spawnCell.Index + 1) % _boardModel.AroundCells.Count;
+            var nextCell = _boardModel.AroundCells[nextCellIndex];
+            if (nextCell != null && spawnCell != null)
+            {
+                var spawnView = boardView.GetCellView(spawnCell);
+                var nextView = boardView.GetCellView(nextCell);
+                Vector3 direction = nextView.transform.position - spawnView.transform.position;
+                return direction;
+            }
+            return Vector3.zero;
         }
         #endregion
 

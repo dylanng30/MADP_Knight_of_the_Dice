@@ -1,4 +1,6 @@
-﻿namespace MADP.Utilities
+﻿using UnityEngine;
+
+namespace MADP.Utilities
 {
     public class Constants
     {
@@ -6,5 +8,6 @@
         public const string UnitView = "Unit";
 
         public const int InitialGold = 1;
+        
     }
 }

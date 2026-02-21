@@ -1,5 +1,6 @@
 ﻿using System;
 using MADP.Controllers;
+using MADP.Models;
 using MADP.Services.CellEvent;
 using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat;
@@ -17,37 +18,13 @@ namespace MADP.Managers
     {
         MENU, PLAY
     }
-    public class GameManager : Singleton<GameManager>
+    public class GameManager : PersistentSingleton<GameManager>
     {
         [Header("---MANAGERS---")]
         [SerializeField] private UIManager _uiManager;
-        [SerializeField] private GoldUIManager _goldUIManager;
-        
-        [Header("---CONTROLLERS---")]
-        [SerializeField] private BoardController _boardController;
-        [SerializeField] private TurnController _turnController;
-        
-        private IGoldService _goldService;
-        private IPathfindingService _pathfindingService;
-        private ICombatService _combatService;
-        private ICellEventService _cellEventService;
         
         private GameState _currentGameState;
         public Action<GameState> OnGameStateChanged;
-
-        private void Awake()
-        {
-            _goldService = new GoldService();
-            _pathfindingService = new PathfindingService();
-            _combatService = new CombatService();
-            _cellEventService = new CellEventService(_goldService);
-            
-            _boardController.Initialize(_goldService, _pathfindingService, _combatService, _cellEventService);
-            _turnController.Initialize(_goldService);
-            _goldUIManager.Initialize(_goldService);
-            
-            _goldService.Initialize(Constants.InitialGold);
-        }
 
         private void Start()
         {

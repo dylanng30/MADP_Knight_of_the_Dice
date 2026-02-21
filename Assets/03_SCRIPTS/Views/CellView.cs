@@ -9,6 +9,9 @@ namespace MADP.Views
         [SerializeField] private Transform _unitAnchor;
         [SerializeField] private Transform _selectedSignal;
         
+        [Header("VFX")]
+        [SerializeField] private ParticleSystem _particleSystem;
+        
         public Renderer Renderer => _renderer;
         public CellModel Model { get; private set; }
 

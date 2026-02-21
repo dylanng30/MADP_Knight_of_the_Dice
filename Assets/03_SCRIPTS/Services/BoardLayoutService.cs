@@ -10,7 +10,7 @@ namespace MADP.Services
         private Vector3 _offset = new Vector3(0, 0, 7);
         //Unit
         private float _cageOffset = 4.0f;
-        private float _unitGap = 1f;
+        private float _unitGap = 2f;
         
         private Vector3 _currentPosition;
         private Vector3 _currentDirection;
@@ -29,13 +29,13 @@ namespace MADP.Services
             switch (color)
             {
                 case TeamColor.Yellow:    
-                    return new Vector3(_cageOffset, 0, -_cageOffset); // Góc dưới phải
+                    return new Vector3(_cageOffset, 0, -_cageOffset); //Góc dưới phải
                 case TeamColor.Green:  
-                    return new Vector3(-_cageOffset, 0, -_cageOffset); // Góc dưới trái
+                    return new Vector3(-_cageOffset, 0, -_cageOffset); //Góc dưới trái
                 case TeamColor.Red: 
-                    return new Vector3(-_cageOffset, 0, _cageOffset);  // Góc trên trái
+                    return new Vector3(-_cageOffset, 0, _cageOffset); //Góc trên trái
                 case TeamColor.Blue:   
-                    return new Vector3(_cageOffset, 0, _cageOffset);   // Góc trên phải
+                    return new Vector3(_cageOffset, 0, _cageOffset); //Góc trên phải
                 default: return Vector3.zero;
             }
         }

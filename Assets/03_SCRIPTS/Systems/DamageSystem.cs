@@ -19,7 +19,7 @@ namespace MADP.Systems
 
         private IEnumerator DealDamagePerformer(AttackUA attackUA)
         {
-            attackUA.AttackerView.PlayAnimation("Aattack");
+            attackUA.AttackerView.PlayAnimation("Attack");
             attackUA.VictimView.PlayAnimation("Hit");
             yield return null;
         }

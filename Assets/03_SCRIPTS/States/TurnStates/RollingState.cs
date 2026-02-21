@@ -17,16 +17,14 @@ namespace MADP.States.TurnStates
         }
         public override void ExecuteTurn()
         {
-            /*if (_turnController.IsPlayerTurn && Input.GetKeyDown(KeyCode.Space))
+            if (_turnController.IsPlayerTurn && Input.GetKeyDown(KeyCode.Space))
             {
                 _turnController.RollDice();
             }
             else if (!_turnController.IsPlayerTurn)
             {
                 _turnController.RollDice();
-            }*/
-
-            _turnController.RollDice();
+            }
         }
     }
 }

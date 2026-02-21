@@ -2,6 +2,7 @@
 using MADP.States.TurnStates.Interfaces;
 using MADP.Utilities;
 using MADP.Views;
+using MADP.Views.Unit;
 using UnityEngine;
 
 namespace MADP.States.TurnStates
@@ -28,7 +29,6 @@ namespace MADP.States.TurnStates
             {
                 HandleInput();
             }
-            //HandleInput();
         }
 
         private void HandleInput()

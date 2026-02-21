@@ -89,7 +89,6 @@ namespace MADP.Controllers
             
             if (!canMoveAny)
             {
-
                 _goldService.ApplyStuckBonus(CurrentTeam);
                 EndTurn();
             }
