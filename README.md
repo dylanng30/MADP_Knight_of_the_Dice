@@ -41,18 +41,6 @@ Singleton Pattern: Áp dụng tiết chế cho các Manager lõi (GameManager, U
 
 Scriptable Objects (SO): Quản lý toàn bộ thông số tĩnh (Trọng số AI, Bảng màu đội, Setting bản đồ) giúp Game Designer dễ dàng cân bằng game mà không cần mở code.
 
-📂 Cấu Trúc Thư Mục Lõi (03_SCRIPTS)
-Plaintext
-📦 03_SCRIPTS
- ┣ 📂 Controllers   # Bộ não trung tâm điều phối View và Service (TurnController, LobbyController)
- ┣ 📂 Managers      # Quản lý vòng đời tổng thể của Game/Scene (GameManager, UIManager)
- ┣ 📂 Models        # Dữ liệu thuần túy của Game, không chứa logic xử lý (UnitModel, BoardModel)
- ┣ 📂 Services      # Chứa các Business Logic chuyên sâu, có thể tái sử dụng (AI, Combat, Pathfinding)
- ┣ 📂 Settings      # Định nghĩa các config tĩnh dùng ScriptableObject (ColorPalette, BoardSetting)
- ┣ 📂 States        # Quản lý máy trạng thái (TurnStates)
- ┣ 📂 Systems       # Các hệ thống thực thi vật lý/di chuyển thực tế (MovementSystem, DamageSystem)
- ┣ 📂 Utilities     # Các lớp tiện ích dùng chung (Constants, Extensions, AppColors)
- ┗ 📂 Views         # Đảm nhận UI và Input, hoàn toàn "mù" về luật game (LobbyView, BoardView)
 🧠 Cơ Chế Hoạt Động Của Trí Tuệ Nhân Tạo (AI)
 AI trong game sử dụng thuật toán Expectimax (được tối ưu hóa độ sâu) kết hợp với Hàm Đánh Giá (Heuristic Function).
 Điểm số của một nước đi được tính theo công thức:
