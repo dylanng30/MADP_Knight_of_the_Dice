@@ -6,14 +6,14 @@ namespace MADP.Services
 {
     public class UnitModelGenerationService
     {
-        public Dictionary<TeamColor, List<UnitModel>> CreateAllUnits()
+        public Dictionary<TeamColor, List<UnitModel>> CreateAllUnits(List<TeamColor> activeTeams)
         {
             var allUnits = new Dictionary<TeamColor, List<UnitModel>>();
             
-            allUnits.Add(TeamColor.Red, CreateTeamUnit(TeamColor.Red));
-            allUnits.Add(TeamColor.Blue, CreateTeamUnit(TeamColor.Blue));
-            allUnits.Add(TeamColor.Yellow, CreateTeamUnit(TeamColor.Yellow));
-            allUnits.Add(TeamColor.Green, CreateTeamUnit(TeamColor.Green));
+            foreach (var teamColor in activeTeams)
+            {
+                allUnits.Add(teamColor, CreateTeamUnit(teamColor));
+            }   
             
             return allUnits;
         }

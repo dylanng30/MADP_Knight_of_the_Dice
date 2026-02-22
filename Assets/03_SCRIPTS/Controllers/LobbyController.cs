@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MADP.Managers;
 using MADP.Models;
 using MADP.Services.Lobby;
 using MADP.Settings;
 using MADP.Views.Lobby;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MADP.Controllers
 {
@@ -107,6 +109,8 @@ namespace MADP.Controllers
         private void HandleStartGame()
         {
             Debug.Log("Game Started!");
+            GameManager.Instance.CurrentMatchSettings = _lobbyService.GetMatchSettings();
+            SceneManager.LoadScene("Match");
         }
         #endregion
 

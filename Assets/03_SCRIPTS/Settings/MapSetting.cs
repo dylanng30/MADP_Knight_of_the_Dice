@@ -11,6 +11,7 @@ namespace MADP.Settings
     public struct MapSetting
     {
         public MapType MapType;
-        public Color ThemeColor;
+        public Color PrimaryColor;
+        public Color SecondaryColor;
     }
 }

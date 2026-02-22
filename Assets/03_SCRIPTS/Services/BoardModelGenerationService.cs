@@ -12,18 +12,29 @@ namespace MADP.Services
         private HashSet<int> _redIndexes;
         private HashSet<int> _yellowIndexes;
         private HashSet<int> _purpleIndexes;
-
-        public BoardModel CreateFullBoard(int redCount, int yellowCount, int purpleCount)
+        
+        private Dictionary<TeamColor, int> _teamToBaseMap;
+        public BoardModel CreateFullBoard(
+            int redCount, 
+            int yellowCount, 
+            int purpleCount, 
+            List<LobbySlotModel> activeSlots)
         {
+            _teamToBaseMap = new Dictionary<TeamColor, int>();
+            foreach (var slot in activeSlots)
+            {
+                _teamToBaseMap[slot.TeamColor] = slot.SlotIndex;
+            }
+            
             BoardModel boardModel = new BoardModel();
             
             boardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount);
-            
             boardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
-            boardModel.HomeCells.Add(TeamColor.Red, CreateHomeCells(TeamColor.Red));
-            boardModel.HomeCells.Add(TeamColor.Blue, CreateHomeCells(TeamColor.Blue));
-            boardModel.HomeCells.Add(TeamColor.Yellow, CreateHomeCells(TeamColor.Yellow));
-            boardModel.HomeCells.Add(TeamColor.Green, CreateHomeCells(TeamColor.Green));
+            
+            foreach (var slot in activeSlots)
+            {
+                boardModel.HomeCells.Add(slot.TeamColor, CreateHomeCells(slot.TeamColor));
+            }
             
             return boardModel;
         }
@@ -46,6 +57,23 @@ namespace MADP.Services
             return aroundCells;
         }
         
+        private (CellStructure, TeamColor) IdentifyStructure(int index)
+        {
+            foreach (var kvp in _teamToBaseMap)
+            {
+                TeamColor teamColor = kvp.Key;
+                int baseIndex = kvp.Value; // 0, 1, 2, hoặc 3
+                
+                int spawnIndex = baseIndex * 14; 
+                int gateIndex = (spawnIndex - 1 + 56) % 56;
+
+                if (index == spawnIndex) return (CellStructure.Spawn, teamColor);
+                if (index == gateIndex) return (CellStructure.Gate, teamColor);
+            }
+            
+            return (CellStructure.Normal, TeamColor.None);
+        }
+        
         private List<CellModel> CreateHomeCells(TeamColor color)
         {
             List<CellModel> homeCells = new List<CellModel>();
@@ -58,23 +86,6 @@ namespace MADP.Services
             return homeCells;
         }
         
-        private (CellStructure, TeamColor) IdentifyStructure(int index)
-        {
-            //RED
-            if (index == 0) return (CellStructure.Spawn, TeamColor.Red);
-            if (index == 55) return (CellStructure.Gate, TeamColor.Red);
-            //GREEN
-            if (index == 14) return (CellStructure.Spawn, TeamColor.Green);
-            if (index == 13) return (CellStructure.Gate, TeamColor.Green);
-            //YELLO
-            if (index == 28) return (CellStructure.Spawn, TeamColor.Yellow);
-            if (index == 27) return (CellStructure.Gate, TeamColor.Yellow);
-            //BLUE
-            if (index == 42) return (CellStructure.Spawn, TeamColor.Blue);
-            if (index == 41) return (CellStructure.Gate, TeamColor.Blue);
-            
-            return (CellStructure.Normal, TeamColor.None);
-        }
         private CellAttribute IdentifyAttribute(int index)
         {
             if (_redIndexes.Contains(index)) return CellAttribute.Red;

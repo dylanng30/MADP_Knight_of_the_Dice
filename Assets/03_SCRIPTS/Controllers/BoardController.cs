@@ -37,22 +37,36 @@ namespace MADP.Controllers
         //Events
         public Action<BoardModel> OnBoardGenerated;
         public Action<Dictionary<TeamColor, List<UnitModel>>> OnAllUnitsGenerated;
+        
+        private List<LobbySlotModel> _activeSlots;
+        private Dictionary<TeamColor, int> _teamToBaseMap = new();
+        private MapType _currentMapType;
 
         public void Initialize(
             IGoldService goldService, 
             IPathfindingService pathfindingService,
             ICombatService combatService,
-            ICellEventService cellEventService)
+            ICellEventService cellEventService,
+            List<LobbySlotModel> activeSlots,
+            MapType mapType)
         {
             _goldService = goldService;
             _pathfindingService = pathfindingService;
             _combatService = combatService;
             _cellEventService = cellEventService;
+            _activeSlots = activeSlots;
+            _currentMapType = mapType;
+            
+            _teamToBaseMap.Clear();
+            foreach (var slot in activeSlots)
+            {
+                _teamToBaseMap[slot.TeamColor] = slot.SlotIndex;
+            }
         }
 
         private void Start()
         {
-            boardView.Initialize(this);
+            boardView.Initialize(this, _teamToBaseMap, _currentMapType);
             StartGame();
         }
 
@@ -474,14 +488,16 @@ namespace MADP.Controllers
             _boardModel = _boardModelGenerationService.CreateFullBoard(
                 boardSetting.RedCellCount,
                 boardSetting.YellowCellCount,
-                boardSetting.PurpleCellCount
+                boardSetting.PurpleCellCount,
+                _activeSlots
             );
 
             OnBoardGenerated?.Invoke(_boardModel);
         }
         private void GenerateUnits()
         {
-            _allUnits = _unitModelGenerationService.CreateAllUnits();
+            List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
+            _allUnits = _unitModelGenerationService.CreateAllUnits(activeTeams); 
             OnAllUnitsGenerated?.Invoke(_allUnits);
         }
         #endregion

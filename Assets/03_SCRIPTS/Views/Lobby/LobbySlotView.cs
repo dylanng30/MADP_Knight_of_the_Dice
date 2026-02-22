@@ -1,6 +1,8 @@
 ﻿using System;
+using DG.Tweening;
 using MADP.Models;
 using MADP.Settings;
+using MADP.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,8 +14,8 @@ namespace MADP.Views.Lobby
     {
         [Header("---SET UP---")]
         [SerializeField] private TeamColorSetting teamColorSetting;
-        [SerializeField] private Transform emptySlot;
-        [SerializeField] private Transform playerSlot;
+        [SerializeField] private RectTransform emptySlot;
+        [SerializeField] private RectTransform playerSlot;
         
         [Space(10)]
         [Header("---UI---")]
@@ -28,6 +30,7 @@ namespace MADP.Views.Lobby
         [SerializeField] private Button removeButton;
         [SerializeField] private Button changeColorButton;
         [SerializeField] private Button changeRoleButton;
+        
         
         private int _slotIndex;
         private Action<int> _onSlotChanged;
@@ -61,6 +64,7 @@ namespace MADP.Views.Lobby
 
             if (_hasPlayer)
             {
+                SlideIn();
                 nameText.text = model.PlayerName;
                 teamImage.color = GetTeamColor(model.TeamColor);
                 roleTxt.text = model.RoleType.ToString();
@@ -90,5 +94,14 @@ namespace MADP.Views.Lobby
             TeamColor.Purple =>  teamColorSetting.Purple,
             _ => teamColorSetting.DefaultColor
         };
+
+        #region ---ANIMATION ---
+
+        private void SlideIn()
+        {
+            var sequence = UIAnimator.SlideInFromTop(playerSlot, playerSlot.rect.height, 1f);
+        }
+
+        #endregion
     }
 }

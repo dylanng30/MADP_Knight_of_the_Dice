@@ -123,6 +123,8 @@ MonoBehaviour:
   _renderer: {fileID: 2164749325254556938}
   _unitAnchor: {fileID: 2749468698645742144}
   _selectedSignal: {fileID: 3026480210152960470}
+  _particleSystem: {fileID: 0}
+  Id: 0
 --- !u!1 &4057063430585634422
 GameObject:
   m_ObjectHideFlags: 0

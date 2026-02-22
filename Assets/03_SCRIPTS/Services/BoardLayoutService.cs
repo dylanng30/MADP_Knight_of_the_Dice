@@ -1,4 +1,6 @@
-﻿using MADP.Models;
+﻿using System.Collections.Generic;
+using MADP.Models;
+using MADP.Utilities;
 using UnityEngine;
 
 namespace MADP.Services
@@ -6,7 +8,7 @@ namespace MADP.Services
     public class BoardLayoutService
     {
         //Cell
-        private float _cellSize = 1f;
+        private float _cellSize = 2f;
         private Vector3 _offset = new Vector3(0, 0, 7);
         //Unit
         private float _cageOffset = 4.0f;
@@ -14,6 +16,13 @@ namespace MADP.Services
         
         private Vector3 _currentPosition;
         private Vector3 _currentDirection;
+        
+        private Dictionary<TeamColor, int> _teamToBaseMap;
+        
+        public void Initialize(Dictionary<TeamColor, int> teamToBaseMap)
+        {
+            _teamToBaseMap = teamToBaseMap;
+        }
 
         public Vector3 GetUnitPositionInCage(TeamColor teamColor, int unitId)
         {
@@ -22,28 +31,27 @@ namespace MADP.Services
             float xOffset = (unitId % 2 == 0 ? -1 : 1) * _unitGap / 2;
             float zOffset = (unitId < 2 ? 1 : -1) * _unitGap / 2;
 
-            return stableCenter + new Vector3(xOffset, 0, zOffset);
+            return stableCenter * _cellSize + new Vector3(xOffset, 0, zOffset);
         }
         private Vector3 GetCageCenter(TeamColor color)
         {
-            switch (color)
+            if (_teamToBaseMap == null || !_teamToBaseMap.TryGetValue(color, out int baseIndex)) 
+                return Vector3.zero;
+            
+            return baseIndex switch
             {
-                case TeamColor.Yellow:    
-                    return new Vector3(_cageOffset, 0, -_cageOffset); //Góc dưới phải
-                case TeamColor.Green:  
-                    return new Vector3(-_cageOffset, 0, -_cageOffset); //Góc dưới trái
-                case TeamColor.Red: 
-                    return new Vector3(-_cageOffset, 0, _cageOffset); //Góc trên trái
-                case TeamColor.Blue:   
-                    return new Vector3(_cageOffset, 0, _cageOffset); //Góc trên phải
-                default: return Vector3.zero;
-            }
+                0 => new Vector3(-_cageOffset, 0, _cageOffset), //Trên trái
+                1 => new Vector3(-_cageOffset, 0, -_cageOffset), //Dưới trái
+                2 => new Vector3(_cageOffset, 0, -_cageOffset), //Dưới phải
+                3 => new Vector3(_cageOffset, 0, _cageOffset), //Trên phải
+                _ => Vector3.zero
+            };
         }
 
         public void Reset()
         {
-            _currentPosition = _offset;
-            _currentDirection = Vector3.left;
+            _currentPosition = _offset * _cellSize;
+            _currentDirection = Vector3.left * _cellSize;
         }
         
         public Vector3 GetMainCellPosition(int currentIndex)
@@ -61,26 +69,19 @@ namespace MADP.Services
 
         public Vector3 GetHomeCellPosition(TeamColor color, int stepIndex)
         {
-            Vector3 startPos = Vector3.zero; 
-            Vector3 direction = Vector3.zero;
-            
-            switch (color)
+            if (_teamToBaseMap == null || !_teamToBaseMap.TryGetValue(color, out int baseIndex)) 
+                return Vector3.zero;
+
+            Vector3 direction = baseIndex switch
             {
-                case TeamColor.Red: 
-                    direction = Vector3.forward; 
-                    break;
-                case TeamColor.Blue:
-                    direction = Vector3.right;
-                    break;
-                case TeamColor.Yellow:
-                    direction = Vector3.back;
-                    break;
-                case TeamColor.Green:
-                    direction = Vector3.left;
-                    break;
-            }
+                0 => Vector3.forward, //Nhà 0 đi thẳng lên
+                1 => Vector3.left, //Nhà 1 đi sang trái
+                2 => Vector3.back, //Nhà 2 đi lùi xuống
+                3 => Vector3.right, // Nhà 3 đi sang phải
+                _ => Vector3.zero
+            };
             
-            return startPos + (direction * (6 - stepIndex) * _cellSize);
+            return Vector3.zero + (direction * (6 - stepIndex) * _cellSize);
         }
     }
 }

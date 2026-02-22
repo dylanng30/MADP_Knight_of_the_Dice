@@ -23,37 +23,34 @@ namespace MADP.Controllers
         [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
         
-        private readonly TeamColor[] _turnOrder = { 
-            TeamColor.Red, TeamColor.Green, TeamColor.Yellow, TeamColor.Blue 
-        };
-        
         private Dictionary<TurnState, ITurnState> _turnStates;
-
-        public TeamColor CurrentTeam => _turnOrder[_currentTeamIndex];
-        public TurnState CurrentState { get; private set; }
-        
         public int CurrentDiceValue { get; private set; }
-        
-        private TeamColor PlayerColor;
-        private int _currentTeamIndex = 0;
-        public bool IsPlayerTurn => PlayerColor == _turnOrder[_currentTeamIndex];
         
         private UnitModel _selectedUnit;
         private List<CellModel> _potentialDestination;
         private ITurnState _currentTurnState;
         
+        //Services
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
         
-        public void Initialize(IGoldService goldService)
+        
+        private List<LobbySlotModel> _activeSlots = new List<LobbySlotModel>();
+        private int _currentTeamIndex = 0;
+        public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
+        public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
+        
+        public void Initialize(
+            IGoldService goldService, 
+            List<LobbySlotModel> activeSlots)
         {
             _goldService = goldService;
+            _activeSlots = activeSlots;
         }
         
         private void Start()
         {
             _botDecisionService = new BotDecisionService(boardController);
-            PlayerColor = TeamColor.Red;
 
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
@@ -100,7 +97,7 @@ namespace MADP.Controllers
 
         public void HandleUnitClicked(UnitModel unit)
         {
-            if(unit.TeamOwner != PlayerColor)
+            if(unit.TeamOwner != CurrentTeam)
                 return;
             
             boardController.SpawnUnit(unit, EndTurn);
@@ -170,7 +167,7 @@ namespace MADP.Controllers
         {
             if (CurrentDiceValue != 6)
             {
-                _currentTeamIndex = (_currentTeamIndex + 1) % _turnOrder.Length;
+                _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
 
                 if(_currentTeamIndex == 0)
                 {

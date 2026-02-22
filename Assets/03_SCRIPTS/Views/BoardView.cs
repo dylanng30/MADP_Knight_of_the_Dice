@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MADP.Controllers;
 using MADP.Models;
 using MADP.Services;
@@ -11,8 +12,9 @@ namespace MADP.Views
     public class BoardView : MonoBehaviour
     {
         [Header("---SETTING---")]
-        [SerializeField] private CellMaterialSetting _materialSetting;
         [SerializeField] private TeamColorDatabaseSO _teamColorDatabase;
+        [SerializeField] private ColorPaletteSetting _colorPalette;
+        
         [Space(10)]
         [SerializeField] private CellView _cellViewPrefab;
         
@@ -25,16 +27,30 @@ namespace MADP.Views
         private BoardController _controller;
         
         //Services
-        private BoardLayoutService _boardLayoutService = new();
+        private BoardLayoutService _boardLayoutService = new ();
+        private BoardRotationService _rotationService = new ();
         
         //Mapper
         private Dictionary<CellModel, CellView> _cellMap = new();
         private Dictionary<UnitModel, UnitView> _unitMap = new();
 
         private List<CellView> _currentHighlightedCells = new();
-        public void Initialize(BoardController controller)
+        private MapType _currentMapType;
+
+        private void Update()
+        {
+            //_rotationService?.Update(transform);
+        }
+
+        public void Initialize(
+            BoardController controller, 
+            Dictionary<TeamColor, int> teamToBaseMap,
+            MapType mapType)
         {
             _controller = controller;
+            _currentMapType = mapType;
+            
+            _boardLayoutService.Initialize(teamToBaseMap);
 
             _controller.OnBoardGenerated += GenerateBoard;
             _controller.OnAllUnitsGenerated += GenerateUnits;
@@ -130,57 +146,58 @@ namespace MADP.Views
         
         private void GenerateCellView(CellModel model, Vector3 position)
         {
-            Material mat = GetCellMaterial(model);
             CellView view = Instantiate(_cellViewPrefab, this.transform);
             view.Setup(model);
             view.transform.localPosition = position;
-            view.Renderer.material = mat;
+            
+            Color finalColor = Color.white;
+
+            if (model.TeamOwner != TeamColor.None)
+            {
+                finalColor = _teamColorDatabase.GetColor(model.TeamOwner, Priority.Primary);
+            }
+            else if (model.Attribute != CellAttribute.None)
+            {
+                finalColor = GetAttributeColor(model.Attribute);
+            }
+            else
+            {
+                bool isEvenIndex = model.Index % 2 == 0;
+                finalColor = GetMapThemeColor(_currentMapType, isEvenIndex);
+            }
+            
+            view.Renderer.material.color = finalColor;
             
             _cellMap.Add(model, view);
         }
         
-        private Material GetCellMaterial(CellModel model)
+        private Color GetAttributeColor(CellAttribute attribute)
         {
-            if (model.Structure == CellStructure.Spawn)
+            if (_colorPalette == null) return Color.white;
+
+            return attribute switch
             {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.RedSpawn;
-                    case TeamColor.Blue: return _materialSetting.BlueSpawn;
-                    case TeamColor.Yellow: return _materialSetting.YellowSpawn;
-                    case TeamColor.Green: return _materialSetting.GreenSpawn;
-                }
+                CellAttribute.Red => _colorPalette.TeamColorSetting.Red,
+                CellAttribute.Yellow => _colorPalette.TeamColorSetting.Yellow,
+                CellAttribute.Purple => _colorPalette.TeamColorSetting.Purple,
+                CellAttribute.Blue => _colorPalette.TeamColorSetting.Blue,
+                CellAttribute.Green => _colorPalette.TeamColorSetting.Green,
+                _ => _colorPalette.TeamColorSetting.DefaultColor
+            };
+        }
+
+        private Color GetMapThemeColor(MapType mapType, bool isEvenIndex)
+        {
+            if (_colorPalette == null || _colorPalette.MapSettings == null) 
+                return Color.gray; // Fallback an toàn
+
+            foreach (var setting in _colorPalette.MapSettings)
+            {
+                if (setting.MapType == mapType)
+                    return isEvenIndex ? setting.PrimaryColor : setting.SecondaryColor;
             }
 
-            if (model.Structure == CellStructure.Gate)
-            {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.Purple;
-                    case TeamColor.Blue: return _materialSetting.Purple;
-                    case TeamColor.Yellow: return _materialSetting.Purple;
-                    case TeamColor.Green: return _materialSetting.Purple;
-                }
-            }
-
-            if (model.Structure == CellStructure.Home)
-            {
-                switch (model.TeamOwner)
-                {
-                    case TeamColor.Red: return _materialSetting.RedHome;
-                    case TeamColor.Blue: return _materialSetting.BlueHome;
-                    case TeamColor.Yellow: return _materialSetting.YellowHome;
-                    case TeamColor.Green: return _materialSetting.GreenHome;
-                }
-            }
-            
-            switch (model.Attribute)
-            {
-                case CellAttribute.Red: return _materialSetting.Red;
-                case CellAttribute.Yellow: return _materialSetting.Yellow;
-                case CellAttribute.Purple: return _materialSetting.Purple;
-                default: return _materialSetting.Normal;
-            }
+            return _colorPalette.TeamColorSetting.DefaultColor;
         }
         #endregion
 

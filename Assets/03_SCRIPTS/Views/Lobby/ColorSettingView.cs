@@ -26,7 +26,7 @@ namespace MADP.Views.Lobby
             foreach (var item in colorItemViews)
                 item.Initialize(OnColorItemClicked);
         }
-
+        
         public void Show(TeamColor currentColor, List<TeamColor> takenColors, int slotIndex)
         {
             _currentSlotIndex = slotIndex;

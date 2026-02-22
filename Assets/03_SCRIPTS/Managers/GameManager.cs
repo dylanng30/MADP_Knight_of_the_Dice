@@ -25,11 +25,13 @@ namespace MADP.Managers
         
         private GameState _currentGameState;
         public Action<GameState> OnGameStateChanged;
+        
+        public MatchSettingsModel CurrentMatchSettings { get; set; }
 
         private void Start()
         {
-            _currentGameState = GameState.MENU;
-            ChangeState(_currentGameState);
+            //_currentGameState = GameState.MENU;
+            //ChangeState(_currentGameState);
         }
 
         public void ChangeState(GameState newState)

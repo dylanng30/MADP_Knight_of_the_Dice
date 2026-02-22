@@ -28,7 +28,7 @@ namespace MADP.Views.Unit
         public void PlayAnimation(string animationName)
         {
             Debug.Log("Playing animation: " + animationName); 
-            animator.Play(animationName);
+            //animator.Play(animationName);
         }
 
         public void Spawn(Vector3 position)
