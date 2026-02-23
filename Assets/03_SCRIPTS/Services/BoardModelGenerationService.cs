@@ -59,19 +59,31 @@ namespace MADP.Services
         
         private (CellStructure, TeamColor) IdentifyStructure(int index)
         {
-            foreach (var kvp in _teamToBaseMap)
+            if (index % 14 == 0)
             {
-                TeamColor teamColor = kvp.Key;
-                int baseIndex = kvp.Value; // 0, 1, 2, hoặc 3
-                
-                int spawnIndex = baseIndex * 14; 
-                int gateIndex = (spawnIndex - 1 + 56) % 56;
-
-                if (index == spawnIndex) return (CellStructure.Spawn, teamColor);
-                if (index == gateIndex) return (CellStructure.Gate, teamColor);
+                int baseIndex = index / 14;
+                TeamColor teamOwner = GetTeamByBaseIndex(baseIndex);
+                return (CellStructure.Spawn, teamOwner);
+            }
+            
+            if ((index + 1) % 14 == 0)
+            {
+                int baseIndex = (index + 1) % 56 / 14; 
+                TeamColor teamOwner = GetTeamByBaseIndex(baseIndex);
+                return (CellStructure.Gate, teamOwner);
             }
             
             return (CellStructure.Normal, TeamColor.None);
+        }
+        
+        private TeamColor GetTeamByBaseIndex(int baseIndex)
+        {
+            foreach (var kvp in _teamToBaseMap)
+            {
+                if (kvp.Value == baseIndex)
+                    return kvp.Key;
+            }
+            return TeamColor.None;
         }
         
         private List<CellModel> CreateHomeCells(TeamColor color)

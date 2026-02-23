@@ -1,34 +1,47 @@
-﻿using MADP.Models;
+﻿using System.Collections.Generic;
+using MADP.Models;
 using MADP.Services.Gold.Interfaces;
+using MADP.Settings;
 using MADP.Views;
+using TMPro;
 using UnityEngine;
 
 namespace MADP.Managers
 {
     public class GoldUIManager : MonoBehaviour
     {
-        [SerializeField] private GoldView _redGoldView;
-        [SerializeField] private GoldView _blueGoldView;
-        [SerializeField] private GoldView _yellowGoldView;
-        [SerializeField] private GoldView _greenGoldView;
+        [SerializeField] private TeamColorDatabaseSO teamColorDB;
+        [SerializeField] private List<GoldView> goldViews;
         
         private IGoldService _goldService;
+        private Dictionary<TeamColor, GoldView> _activeViews = new ();
 
-        public void Initialize(IGoldService goldService)
+        public void Initialize(IGoldService goldService, List<LobbySlotModel> activePlayers)
         {
             _goldService = goldService;
             _goldService.OnGoldChanged += UpdateUI;
+            
+            _activeViews.Clear();
+            
+            foreach (var view in goldViews) view.Hide();
+
+            for (int i = 0; i < activePlayers.Count; i++)
+            {
+                if (i >= goldViews.Count) break; 
+
+                TeamColor team = activePlayers[i].TeamColor;
+                GoldView view = goldViews[i];
+                Color teamColorUI = teamColorDB.GetColor(team, Priority.Primary);
+                view.Setup(team, teamColorUI);
+                _activeViews.Add(team, view);
+            }
         }
         
         private void UpdateUI(TeamColor team, int amount)
         {
-            switch (team)
+            if (_activeViews.TryGetValue(team, out GoldView view))
             {
-                case TeamColor.Red: _redGoldView?.SetGold(amount); break;
-                case TeamColor.Blue: _blueGoldView?.SetGold(amount); break;
-                case TeamColor.Yellow: _yellowGoldView?.SetGold(amount); break;
-                case TeamColor.Green: _greenGoldView?.SetGold(amount); break;
-                default: break;
+                view.SetGold(amount);
             }
         }
         
@@ -37,5 +50,6 @@ namespace MADP.Managers
             if (_goldService != null) 
                 _goldService.OnGoldChanged -= UpdateUI;
         }
+
     }
 }

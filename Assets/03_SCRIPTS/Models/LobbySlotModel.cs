@@ -1,4 +1,5 @@
 ﻿using System;
+using MADP.Settings;
 
 namespace MADP.Models
 {
@@ -18,6 +19,7 @@ namespace MADP.Models
         public TeamColor TeamColor;
         public PlayerType PlayerType;
         public RoleType RoleType;
+        public BotType BotType;
         public string PlayerName;
         public int AvatarId;
         public bool IsHost = false;
@@ -31,6 +33,7 @@ namespace MADP.Models
             PlayerType = PlayerType.Empty;
             PlayerName = "Empty";
             RoleType = RoleType.Random;
+            BotType = SlotIndex % 2 == 0 ? BotType.Easy : BotType.Medium;
         }
     }
 }

@@ -23,13 +23,14 @@ namespace MADP.Controllers
         
         //Data
         private BoardModel _boardModel;
+        public BoardModel Board => _boardModel;
         private Dictionary<TeamColor, List<UnitModel>> _allUnits;
         
         //Services
         private BoardModelGenerationService _boardModelGenerationService = new();
         private UnitModelGenerationService _unitModelGenerationService = new();
         
-        private IPathfindingService _pathfindingService;
+        public IPathfindingService PathfindingService { get; private set; }
         private IGoldService _goldService;
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
@@ -51,7 +52,7 @@ namespace MADP.Controllers
             MapType mapType)
         {
             _goldService = goldService;
-            _pathfindingService = pathfindingService;
+            PathfindingService = pathfindingService;
             _combatService = combatService;
             _cellEventService = cellEventService;
             _activeSlots = activeSlots;
@@ -94,8 +95,8 @@ namespace MADP.Controllers
                                      !IsNextCell(currentCellModel, targetCellModel);
 
             List<CellModel> pathCells = isSpecialGateJump ?
-                _pathfindingService.GetPathToGate(_boardModel, currentCellModel) :
-                _pathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
+                PathfindingService.GetPathToGate(_boardModel, currentCellModel) :
+                PathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
 
             List<Vector3> fullVisualPath = boardView.GetPath(pathCells);
 
@@ -113,7 +114,7 @@ namespace MADP.Controllers
         private void HandleMoveToHome(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, int diceValue, Action onMoveCompleted)
         {
             Debug.Log($"Unit {unitModel.Id} đã về tới chuồng của team {unitModel.TeamOwner}");
-            List<CellModel> homePath = _pathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
+            List<CellModel> homePath = PathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
             List<Vector3> homeVisualPath = boardView.GetPath(homePath);
 
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
@@ -338,7 +339,7 @@ namespace MADP.Controllers
             //Nhảy cóc
             if (diceValue == 1)
             {
-                var pathToGate = _pathfindingService.GetPathToGate(_boardModel, currentCell);
+                var pathToGate = PathfindingService.GetPathToGate(_boardModel, currentCell);
                 if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate, unit.TeamOwner))
                 {
                     results.Add(pathToGate.Last());
@@ -347,14 +348,14 @@ namespace MADP.Controllers
             }
 
             //Đá tiến
-            var forwardPath = _pathfindingService.GetPath(_boardModel, currentCell, diceValue);
+            var forwardPath = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
             if (forwardPath.Count > 0 && !IsPathBlocked(forwardPath, unit.TeamOwner))
             {
                 results.Add(forwardPath.Last());
             }
 
             //Đá hậu
-            var reversePath = _pathfindingService.GetReversePath(_boardModel, currentCell, diceValue);
+            var reversePath = PathfindingService.GetReversePath(_boardModel, currentCell, diceValue);
             if (reversePath.Count > 0 && !IsPathBlocked(reversePath, unit.TeamOwner))
             {
                 var targetCell = reversePath.Last();
@@ -458,6 +459,9 @@ namespace MADP.Controllers
             }
 
             targetCell.Register(unit);
+            
+            var distance = Mathf.Abs(targetCell.Index - currentCell.Index);
+            unit.AddSteps(distance);
 
             if (targetCell.Structure == CellStructure.Home)
             {
@@ -517,6 +521,10 @@ namespace MADP.Controllers
                 return direction;
             }
             return Vector3.zero;
+        }
+        public CellModel GetSpawnCell(TeamColor teamColor)
+        {
+            return _boardModel?.AroundCells.FirstOrDefault(c => c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
         }
         #endregion
 

@@ -1,79 +1,29 @@
 ﻿using System.Collections.Generic;
 using MADP.Controllers;
 using MADP.Models;
+using MADP.Services.AI.Interfaces;
+using UnityEngine;
 
 namespace MADP.Services
 {
     public class BotDecisionService
     {
-        private BoardController _boardController;
-
-        public BotDecisionService(BoardController boardController)
+        private readonly Dictionary<TeamColor, IBotBrain> _bots = new ();
+        public void RegisterBotStrategy(TeamColor team, IBotBrain botBrain)
         {
-            _boardController = boardController;
+            Debug.Log($"Team {team} dùng {botBrain.GetType()}");
+            _bots[team] = botBrain;
         }
-
-        public UnitModel GetBestUnitToMove(TeamColor botTeamColor, int diceValue)
+        
+        public (UnitModel Unit, CellModel Destination) GetBestMove(TeamColor team, int diceValue, BoardModel board)
         {
-            List<UnitModel> botAllUnits = _boardController.GetAllUnitsByColor(botTeamColor);
-            List<UnitModel> moveableUnits = new List<UnitModel>();
-
-            foreach (var unit in botAllUnits)
+            if (_bots.TryGetValue(team, out var strategy))
             {
-                if (_boardController.CanInteract(unit, diceValue))
-                {
-                    moveableUnits.Add(unit);
-                }
+                return strategy.DecideMove(team, diceValue, board);
             }
             
-            if (moveableUnits.Count == 0) 
-                return null;
-            
-            if(moveableUnits.Count == 1)
-                return moveableUnits[0];
-            
-            UnitModel bestUnit = null;
-            int highestScore = -1;
-
-            foreach (var unit in moveableUnits)
-            {
-                int score = CalculateMoveScore(unit, diceValue);
-                if (score > highestScore)
-                {
-                    highestScore = score;
-                    bestUnit = unit;
-                }
-            }
-
-            return bestUnit;
-        }
-
-        private int CalculateMoveScore(UnitModel unit, int diceValue)
-        {
-            int score = 0;
-
-            if (_boardController.CanMoveUnit(unit, diceValue))
-            {
-                var potentialCells = _boardController.GetPotentialDestinationCell(unit, diceValue);
-
-                if (potentialCells.Count > 0)
-                {
-                    foreach (var cell in potentialCells)
-                    {
-                        if (cell.HasUnit && cell.Unit.TeamOwner != unit.TeamOwner)
-                            score += 1000;
-                        else if (cell.Structure == CellStructure.Gate)
-                            score += 500;
-                        else
-                            score += 500; // Điểm đi tieeps
-                    }
-                }
-            }
-
-            if (_boardController.CanSpawnUnit(unit, diceValue))
-                score += 500;
-            
-            return score;
+            Debug.LogError($"Chưa đăng ký AI cho team {team}");
+            return (null, null);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace MADP.Models
         public UnitState State { get; private set; } = UnitState.InNest;
 
         public int Cost { get; private set; }
+        public int StepsMoved { get; private set; }
 
         public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat)
         {
@@ -29,6 +30,11 @@ namespace MADP.Models
         public void Reset()
         {
             State = UnitState.InNest;
+            StepsMoved = 0;
+        }
+        public void AddSteps(int amount)
+        {
+            StepsMoved += amount;
         }
         public void SetState(UnitState newState)
         {

@@ -150,6 +150,14 @@ namespace MADP.Views
             view.Setup(model);
             view.transform.localPosition = position;
             
+            if (model.Structure == CellStructure.Home)
+            {
+                position.y = 0; 
+                Quaternion targetRotation = Quaternion.LookRotation(-position);
+                view.transform.rotation = targetRotation;
+            }
+            
+            
             Color finalColor = Color.white;
 
             if (model.TeamOwner != TeamColor.None)

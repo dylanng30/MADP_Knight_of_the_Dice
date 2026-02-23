@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using MADP.Managers;
 using MADP.Models;
 using MADP.Services;
+using MADP.Services.AI;
+using MADP.Services.AI.Interfaces;
 using MADP.Services.Gold.Interfaces;
+using MADP.Settings;
 using MADP.States.TurnStates;
 using MADP.States.TurnStates.Interfaces;
 using MADP.Views;
@@ -19,6 +22,7 @@ namespace MADP.Controllers
     }
     public class TurnController : MonoBehaviour
     {
+        [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
         [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
@@ -46,12 +50,33 @@ namespace MADP.Controllers
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
+            
+            _botDecisionService = new BotDecisionService();
+            
+            foreach (var slot in activeSlots)
+            {
+                if (slot.PlayerType == PlayerType.Bot)
+                {
+                    IBotBrain botBrain;
+                    
+                    BotProfileSO profile = botDB != null ? botDB.GetProfile(slot.BotType) : null;
+
+                    if (profile != null)
+                    {
+                        botBrain = new SmartBotBrain(boardController, profile);
+                    }
+                    else
+                    {
+                        botBrain = new RandomBotBrain(boardController);
+                    }
+                    
+                    _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
+                }
+            }
         }
         
         private void Start()
         {
-            _botDecisionService = new BotDecisionService(boardController);
-
             LoadTurnStates();
             SwitchState(TurnState.Rolling);
         }
@@ -196,32 +221,30 @@ namespace MADP.Controllers
         }
         private IEnumerator BotThinkingProcecss()
         {
-            yield return new WaitForSeconds(3f);
-            UnitModel bestUnit = _botDecisionService.GetBestUnitToMove(CurrentTeam, CurrentDiceValue);
+            yield return new WaitForSeconds(1.5f);
+            
+            var bestMove = _botDecisionService.GetBestMove(CurrentTeam, CurrentDiceValue, boardController.Board);
 
-            if (bestUnit != null)
+            if (bestMove.Unit != null)
             {
-                if (bestUnit.State == UnitState.InNest)
+                if (bestMove.Unit.State == UnitState.InNest)
                 {
-                    boardController.SpawnUnit(bestUnit, EndTurn);
+                    Debug.Log($"Bot {CurrentTeam} quyết định SINH QUÂN {bestMove.Unit.Id}");
+                    boardController.SpawnUnit(bestMove.Unit, EndTurn);
+                }
+                else if (bestMove.Destination != null)
+                {
+                    Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestMove.Unit.Id} đến {bestMove.Destination.Index}");
+                    ExecuteMove(bestMove.Unit, bestMove.Destination); 
                 }
                 else
                 {
-                    var destCells = boardController.GetPotentialDestinationCell(bestUnit, CurrentDiceValue);
-                    if (destCells.Count > 0)
-                    {
-                        CellModel target = destCells[0]; 
-                        ExecuteMove(bestUnit, target); 
-                    }
-                    else
-                    {
-                        EndTurn();
-                    }
+                    EndTurn();
                 }
             }
             else
             {
-                Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ.");
+                Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ (Bị chặn hoặc kẹt).");
                 EndTurn();
             }
         }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MADP.Models;
 using MADP.Services.Gold.Interfaces;
 
@@ -14,9 +16,13 @@ namespace MADP.Services.Gold
             _goldModel.OnTeamGoldChanged += HandleGoldChanged;
         }
 
-        public void Initialize(int initialGold)
+        public void Initialize(int initialGold, List<LobbySlotModel> activePlayers)
         {
-            var teams = new[] { TeamColor.Red, TeamColor.Yellow, TeamColor.Blue, TeamColor.Green };
+            List<TeamColor> teams =  new List<TeamColor>();
+            foreach (var player in activePlayers)
+            {
+                teams.Add(player.TeamColor);
+            }
             _goldModel.Initialize(teams, initialGold);
         }
         

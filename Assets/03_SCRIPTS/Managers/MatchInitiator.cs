@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MADP.Controllers;
 using MADP.Models;
@@ -54,9 +53,9 @@ namespace MADP.Managers
                 activePlayers, 
                 settings.SelectedMap);
             _turnController.Initialize(_goldService, activePlayers);
-            _goldUIManager.Initialize(_goldService);
+            _goldUIManager.Initialize(_goldService, activePlayers);
             
-            _goldService.Initialize(Constants.InitialGold);
+            _goldService.Initialize(Constants.InitialGold, activePlayers);
         }
         
         private MatchSettingsModel GetMockSettings()

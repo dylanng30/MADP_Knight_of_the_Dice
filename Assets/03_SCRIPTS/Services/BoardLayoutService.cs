@@ -8,7 +8,7 @@ namespace MADP.Services
     public class BoardLayoutService
     {
         //Cell
-        private float _cellSize = 2f;
+        private float _cellSize = 1f;
         private Vector3 _offset = new Vector3(0, 0, 7);
         //Unit
         private float _cageOffset = 4.0f;

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using MADP.Models;
 
 namespace MADP.Services.Gold.Interfaces
 {
     public interface IGoldService
     {
-        void Initialize(int initialGold);
+        void Initialize(int initialGold, List<LobbySlotModel> activePlayers);
         event Action<TeamColor, int> OnGoldChanged;
         
         int GetGold(TeamColor team);

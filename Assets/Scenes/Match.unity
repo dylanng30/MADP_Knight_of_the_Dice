@@ -611,6 +611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0faed395759f40358196b00dc4f0ec29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  botDB: {fileID: 11400000, guid: 0b66456dd136f5749b8ea37af8e8b2a9, type: 2}
   boardController: {fileID: 33901811}
   diceView: {fileID: 252177715}
   _uiManager: {fileID: 0}
@@ -1685,13 +1686,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.13088536, y: -0.8681629, z: 0.31598538, w: -0.35960466}
-  m_LocalPosition: {x: -8, y: 6, z: 8}
+  m_LocalRotation: {x: -0.16172893, y: -0.8373193, z: 0.3904484, w: -0.34682885}
+  m_LocalPosition: {x: -8, y: 10, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1102216770}
-  m_LocalEulerAnglesHint: {x: 40, y: -225, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: -225, z: 0}
 --- !u!1 &985050420
 GameObject:
   m_ObjectHideFlags: 0
