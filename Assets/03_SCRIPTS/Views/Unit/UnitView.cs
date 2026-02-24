@@ -20,9 +20,22 @@ namespace MADP.Views.Unit
         public Collider Collider => collider;
         public UnitModel Model { get; private set; }
 
+        public RoleType Role;
+        public int Level;
+        public int Health;
+        public int Damage;
+        public int Armor;
+
+
         public void Setup(UnitModel model)
         {
             Model = model;
+
+            Role = model.RoleType;
+            Level = Model.Id;
+            Health = Model.Stat.CurrentHealth;
+            Damage = Model.Stat.Damage;
+            Armor = Model.Stat.Armor;
         }
 
         public void PlayAnimation(string animationName)

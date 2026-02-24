@@ -109,7 +109,18 @@ namespace MADP.Controllers
         private void HandleStartGame()
         {
             Debug.Log("Game Started!");
-            GameManager.Instance.CurrentMatchSettings = _lobbyService.GetMatchSettings();
+            var matchSettings = _lobbyService.GetFinalizedMatchSettings();
+            int activePlayers = 0;
+            foreach (var slot in matchSettings.Slots)
+                if (slot.PlayerType != PlayerType.Empty) activePlayers++;
+
+            if (activePlayers < 2)
+            {
+                Debug.LogWarning("Cần ít nhất 2 người chơi để bắt đầu!");
+                return;
+            }
+
+            GameManager.Instance.CurrentMatchSettings = matchSettings;          
             SceneManager.LoadScene("Match");
         }
         #endregion

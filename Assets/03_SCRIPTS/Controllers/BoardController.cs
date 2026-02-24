@@ -18,6 +18,7 @@ namespace MADP.Controllers
 {
     public class BoardController : MonoBehaviour
     {
+        [SerializeField] private TeamStatDatabaseSO teamStatDB;
         [SerializeField] private BoardSetting boardSetting;
         [SerializeField] private BoardView boardView;
         
@@ -28,7 +29,7 @@ namespace MADP.Controllers
         
         //Services
         private BoardModelGenerationService _boardModelGenerationService = new();
-        private UnitModelGenerationService _unitModelGenerationService = new();
+        private UnitModelGenerationService _unitModelGenerationService;
         
         public IPathfindingService PathfindingService { get; private set; }
         private IGoldService _goldService;
@@ -51,6 +52,10 @@ namespace MADP.Controllers
             List<LobbySlotModel> activeSlots,
             MapType mapType)
         {
+
+            _unitModelGenerationService = new UnitModelGenerationService(teamStatDB);
+
+
             _goldService = goldService;
             PathfindingService = pathfindingService;
             _combatService = combatService;
@@ -500,8 +505,8 @@ namespace MADP.Controllers
         }
         private void GenerateUnits()
         {
-            List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
-            _allUnits = _unitModelGenerationService.CreateAllUnits(activeTeams); 
+            //List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
+            _allUnits = _unitModelGenerationService.CreateAllUnits(_activeSlots); 
             OnAllUnitsGenerated?.Invoke(_allUnits);
         }
         #endregion
@@ -526,6 +531,7 @@ namespace MADP.Controllers
         {
             return _boardModel?.AroundCells.FirstOrDefault(c => c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
         }
+        
         #endregion
 
     }

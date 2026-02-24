@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MADP.Models;
 using MADP.Settings;
+using MADP.Utilities;
+using UnityEngine;
 
 namespace MADP.Services.Lobby
 {
@@ -10,7 +12,7 @@ namespace MADP.Services.Lobby
     {
         private LobbyModel _lobbyModel;
         private MatchSettingsModel _currentMatchSettings;
-        
+
         public LobbyModel GetLobby() => _lobbyModel;
         public LobbySlotModel[] GetSlots() => _lobbyModel?.Slots;
         public MatchSettingsModel GetMatchSettings() => _currentMatchSettings;
@@ -22,16 +24,16 @@ namespace MADP.Services.Lobby
                 RoomId = roomId,
                 Slots = new LobbySlotModel[4]
             };
-            
+
             _lobbyModel.Slots[0] = new LobbySlotModel(0, TeamColor.Red)
             {
-                PlayerType = PlayerType.Human, 
+                PlayerType = PlayerType.Human,
                 IsHost = true
             };
             _lobbyModel.Slots[1] = new LobbySlotModel(1, TeamColor.None);
             _lobbyModel.Slots[2] = new LobbySlotModel(2, TeamColor.None);
             _lobbyModel.Slots[3] = new LobbySlotModel(3, TeamColor.None);
-            
+
             //Khởi tạo MatchSettings mặc định
             _currentMatchSettings = new MatchSettingsModel
             {
@@ -43,7 +45,7 @@ namespace MADP.Services.Lobby
                 Slots = _lobbyModel.Slots
             };
         }
-        
+
         public void UpdateMatchSettings(int time, MapType map, int redCellCount, int yellowCellCount, int purpleCellCount)
         {
             _currentMatchSettings.TimePerTurn = time;
@@ -52,7 +54,7 @@ namespace MADP.Services.Lobby
             _currentMatchSettings.YellowCellCount = yellowCellCount;
             _currentMatchSettings.PurpleCellCount = purpleCellCount;
         }
-       
+
         public void ToggleSlotState(int index)
         {
             if (index <= 0 || index >= _lobbyModel.Slots.Length) return;
@@ -71,19 +73,19 @@ namespace MADP.Services.Lobby
                 slot.PlayerName = "Empty";
             }
         }
-        
+
         public void SetSlotColor(int index, TeamColor newColor)
         {
             if (index >= 0 && index < _lobbyModel.Slots.Length)
                 _lobbyModel.Slots[index].TeamColor = newColor;
         }
-        
+
         public void SetSlotRole(int index, RoleType newRole)
         {
             if (index >= 0 && index < _lobbyModel.Slots.Length)
                 _lobbyModel.Slots[index].RoleType = newRole;
         }
-        
+
         public List<TeamColor> GetTakenColors(int excludeSlotIndex)
         {
             return _lobbyModel.Slots
@@ -98,7 +100,7 @@ namespace MADP.Services.Lobby
                 .Where(s => s.HasPlayer && s.TeamColor != TeamColor.None)
                 .Select(s => s.TeamColor)
                 .ToList();
-            
+
             foreach (TeamColor color in Enum.GetValues(typeof(TeamColor)))
             {
                 if (color != TeamColor.None && !takenColors.Contains(color))
@@ -106,8 +108,40 @@ namespace MADP.Services.Lobby
                     return color;
                 }
             }
-            
-            return TeamColor.None; 
+
+            return TeamColor.None;
+        }
+
+        public MatchSettingsModel GetFinalizedMatchSettings()
+        {
+            List<LobbySlotModel> finalizedSlots = new List<LobbySlotModel>();
+
+            foreach (var originalSlot in _lobbyModel.Slots)
+            {
+                LobbySlotModel newSlot = new LobbySlotModel(originalSlot.SlotIndex, originalSlot.TeamColor);
+                newSlot.PlayerType = originalSlot.PlayerType;
+
+                if (originalSlot.RoleType == RoleType.Random)
+                {
+                    newSlot.RoleType = EnumUtils.GetRandomRoleConcrete();
+                    Debug.Log($"Slot {newSlot.SlotIndex} Role 'Random' -> Resolved to '{newSlot.RoleType}'");
+                }
+                else
+                {
+                    newSlot.RoleType = originalSlot.RoleType;
+                }
+
+                finalizedSlots.Add(newSlot);
+            }
+            _currentMatchSettings.Slots = finalizedSlots.ToArray();
+            return _currentMatchSettings;
+
+            /*return new MatchSettingsModel
+            {
+                Slots = finalizedSlots.ToArray(),
+                SelectedMap = _currentMatchSettings.SelectedMap,
+            };*/
+
         }
     }
 }
