@@ -5,35 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/RandomBotBrain.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileDatabaseSO.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileDatabaseSO.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileSO.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileSO.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/02_PREFABS/CellView.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/02_PREFABS/CellView.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbySlotModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbySlotModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/AggressiveBotStrategy.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/AggressiveBotStrategy.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/RandomBotBrain.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotStrategy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotBrain.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotStrategy.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotBrain.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BoardLayoutService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BoardLayoutService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BoardModelGenerationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BoardModelGenerationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BotDecisionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/BotDecisionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/GoldService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/GoldService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/Interfaces/IGoldService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/Interfaces/IGoldService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/RollingState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/RollingState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/CellView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/CellView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Match.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Match.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,7 +195,7 @@
       <workItem from="1771685978554" duration="3106000" />
       <workItem from="1771689147722" duration="156000" />
       <workItem from="1771777469667" duration="4742000" />
-      <workItem from="1771863850803" duration="5190000" />
+      <workItem from="1771863850803" duration="5496000" />
     </task>
     <task id="LOCAL-00001" summary="Stat + AttackAction">
       <option name="closed" value="true" />

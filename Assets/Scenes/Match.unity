@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 250688699}
   - component: {fileID: 250688698}
   m_Layer: 0
-  m_Name: BlueGold
+  m_Name: GoldView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -345,7 +345,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &250688698
 MonoBehaviour:
@@ -359,7 +359,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d027493aeb61e4ca841a6fe27ee166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamNameText: {fileID: 0}
   goldText: {fileID: 250688699}
+  bgImage: {fileID: 0}
 --- !u!114 &250688699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,7 +415,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 17
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -942,7 +944,7 @@ GameObject:
   - component: {fileID: 477127227}
   - component: {fileID: 477127226}
   m_Layer: 0
-  m_Name: RedGold
+  m_Name: GoldView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -965,7 +967,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &477127226
 MonoBehaviour:
@@ -979,7 +981,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d027493aeb61e4ca841a6fe27ee166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamNameText: {fileID: 0}
   goldText: {fileID: 477127227}
+  bgImage: {fileID: 0}
 --- !u!114 &477127227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1033,7 +1037,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 17
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1090,7 +1094,7 @@ GameObject:
   - component: {fileID: 492775130}
   - component: {fileID: 492775129}
   m_Layer: 0
-  m_Name: GreenGold
+  m_Name: GoldView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1113,7 +1117,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &492775129
 MonoBehaviour:
@@ -1127,7 +1131,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d027493aeb61e4ca841a6fe27ee166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamNameText: {fileID: 0}
   goldText: {fileID: 492775130}
+  bgImage: {fileID: 0}
 --- !u!114 &492775130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,7 +1187,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 17
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1466,7 +1472,7 @@ GameObject:
   - component: {fileID: 962478617}
   - component: {fileID: 962478616}
   m_Layer: 0
-  m_Name: YellowGold
+  m_Name: GoldView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1489,7 +1495,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &962478616
 MonoBehaviour:
@@ -1503,7 +1509,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41d027493aeb61e4ca841a6fe27ee166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamNameText: {fileID: 0}
   goldText: {fileID: 962478617}
+  bgImage: {fileID: 0}
 --- !u!114 &962478617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1557,7 +1565,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 17
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1728,7 +1736,7 @@ MonoBehaviour:
   firstUnitViewPrefab: {fileID: 992176373225617957, guid: b5bc7875176316849a58c53c444bb521, type: 3}
   secondUnitViewPrefab: {fileID: 5168573483681331228, guid: af69bfa2889000e4589b5f1e752da0ca, type: 3}
   thirdUnitViewPrefab: {fileID: 1113348919265313270, guid: 2a5d3e19ab316b247abbe5f72108b2c8, type: 3}
-  fourthUnitViewPrefab: {fileID: 992176373225617957, guid: b5bc7875176316849a58c53c444bb521, type: 3}
+  fourthUnitViewPrefab: {fileID: 3537657560405999304, guid: 1e7342f9296d4a64ba5db1b8807fdf92, type: 3}
 --- !u!4 &985050422
 Transform:
   m_ObjectHideFlags: 0
@@ -3234,10 +3242,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81dbb61244364cbdb6a7e13f46690eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _redGoldView: {fileID: 477127226}
-  _blueGoldView: {fileID: 250688698}
-  _yellowGoldView: {fileID: 962478616}
-  _greenGoldView: {fileID: 492775129}
+  teamColorDB: {fileID: 11400000, guid: cdef1b47243231c4098367a5cf53a4e4, type: 2}
+  goldViews:
+  - {fileID: 477127226}
+  - {fileID: 492775129}
+  - {fileID: 962478616}
+  - {fileID: 250688698}
 --- !u!1 &2120259800
 GameObject:
   m_ObjectHideFlags: 0
