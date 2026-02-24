@@ -27,7 +27,8 @@ namespace MADP.States.TurnStates
             base.ExecuteTurn();
             if (_turnController.IsPlayerTurn)
             {
-                HandleInput();
+                _turnController.PlayerAgent.RequestDecision();
+                // HandleInput();
             }
         }
 
