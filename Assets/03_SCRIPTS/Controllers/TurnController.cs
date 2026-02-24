@@ -195,10 +195,23 @@ namespace MADP.Controllers
 
         private void ExecuteMove(UnitModel unitModel, CellModel destination)
         {
-            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => 
+            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () =>
             {
                 if (boardController.CheckWinCondition(CurrentTeam))
                 {
+                    if (CurrentTeam == TeamColor.Red)
+                    {
+                        // Thuong khi thang
+                        playerAgent.AddReward(1f);
+                        playerAgent.EndEpisode();
+                    }
+                    else
+                    {
+                        // Phat khi thua
+                        playerAgent.AddReward(-1f);
+                        playerAgent.EndEpisode();
+                    }
+
                     //GameManager.Instance.HandleVictory(CurrentTeam);
                     SwitchState(TurnState.WaitingForActions);
                 }
@@ -213,6 +226,8 @@ namespace MADP.Controllers
         {
             // Kiểm tra để dừng huấn luyện
             agentScript.TurnCounter += 1;
+            // Phat sau moi turn, khuyen kich hoan thanh nhanh
+            agentScript.AddReward(-agentScript.maxAgentTurn / 100f);
             if (agentScript.TurnCounter > agentScript.maxAgentTurn)
             {
                 playerAgent.EndEpisode();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _03_SCRIPTS.AI;
 using MADP.Models;
 using MADP.Models.UnitActions;
 using MADP.Services;
@@ -21,6 +22,7 @@ namespace MADP.Controllers
         [SerializeField] private TeamStatDatabaseSO teamStatDB;
         [SerializeField] private BoardSetting boardSetting;
         [SerializeField] private BoardView boardView;
+        [SerializeField] private TeamAgent agentScript;
 
         //Data
         private BoardModel _boardModel;
@@ -29,7 +31,7 @@ namespace MADP.Controllers
 
         //Services
         private BoardModelGenerationService _boardModelGenerationService = new();
-        private UnitModelGenerationService _unitModelGenerationService = new();
+        private UnitModelGenerationService _unitModelGenerationService;
 
         public IPathfindingService PathfindingService { get; private set; }
         private IGoldService _goldService;
@@ -52,7 +54,6 @@ namespace MADP.Controllers
             List<LobbySlotModel> activeSlots,
             MapType mapType)
         {
-
             _unitModelGenerationService = new UnitModelGenerationService(teamStatDB);
 
 
@@ -90,15 +91,16 @@ namespace MADP.Controllers
             foreach (var cell in homeCells)
             {
                 int index = cell.Index;
-                if((index == 6 || index == 5 || index == 4 || index == 3) && 
-                   cell.HasUnit)
+                if ((index == 6 || index == 5 || index == 4 || index == 3) &&
+                    cell.HasUnit)
                 {
                     rightCell++;
                 }
             }
+
             return rightCell == 4;
         }
-        
+
 
         #region --- MOVEMENT & COMBAT ---
 
@@ -267,6 +269,12 @@ namespace MADP.Controllers
                     unitView.Collider.enabled = false;
                 }
 
+                // Thuong khi spawn
+                if (unitModel.TeamOwner == TeamColor.Red)
+                {
+                    agentScript.AddReward(0.03f);
+                }
+
                 OnComplete?.Invoke();
             }
             else
@@ -323,7 +331,7 @@ namespace MADP.Controllers
             if (currentCell == null) return;
 
             //Unit đang ở Gate
-            if (currentCell.Structure == CellStructure.Gate && 
+            if (currentCell.Structure == CellStructure.Gate &&
                 currentCell.TeamOwner == unit.TeamOwner)
             {
                 GetGateEntryOptions(unit, diceValue, results);
@@ -531,8 +539,8 @@ namespace MADP.Controllers
 
         private void GenerateUnits()
         {
-            List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
-            _allUnits = _unitModelGenerationService.CreateAllUnits(activeTeams); 
+            // List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
+            _allUnits = _unitModelGenerationService.CreateAllUnits(_activeSlots);
             OnAllUnitsGenerated?.Invoke(_allUnits);
         }
 
@@ -599,6 +607,8 @@ namespace MADP.Controllers
             MoveUA moveUA = new MoveUA(unitView, visualPath);
 
             ActionSystem.Instance.Perform(moveUA, onMoveCompleted);
+            //Khuyen khich tien ve phia truoc
+            agentScript.AddReward(path.Count * 0.01f);
         }
 
         public void AttackForwardOnly(UnitModel attacker, int diceValue, Action onCompleted)
@@ -655,10 +665,14 @@ namespace MADP.Controllers
                 attacker.AddSteps(distance);
 
                 attackerView.transform.SetParent(boardView.GetCellView(targetCell).transform);
+                // Thuong khi tieu diet dich
+                agentScript.AddReward(0.15f);
             }
             else
             {
                 victim.TakeDamage(result.DamageDealt);
+                // Khuyen khich tan cong dich
+                agentScript.AddReward(0.01f * result.DamageDealt);
             }
 
             ActionSystem.Instance.Perform(moveUA, onCompleted);
@@ -718,10 +732,14 @@ namespace MADP.Controllers
                 attacker.AddSteps(distance);
 
                 attackerView.transform.SetParent(boardView.GetCellView(targetCell).transform);
+                // Thuong khi tieu diet dich
+                agentScript.AddReward(0.15f);
             }
             else
             {
                 victim.TakeDamage(result.DamageDealt);
+                // Khuyen khich tan cong dich
+                agentScript.AddReward(0.01f * result.DamageDealt);
             }
 
             ActionSystem.Instance.Perform(moveUA, onCompleted);
@@ -748,7 +766,7 @@ namespace MADP.Controllers
 
             CellModel targetCell = homePath.Last();
 
-            // Execute Move
+            // ExecutFe Move
             UnitView unitView = boardView.GetUnitView(unitModel);
             CellView targetCellView = boardView.GetCellView(targetCell);
 
@@ -767,6 +785,8 @@ namespace MADP.Controllers
             MoveUA moveUA = new MoveUA(unitView, visualPath);
 
             ActionSystem.Instance.Perform(moveUA, onCompleted);
+            // Thuong khi vao home
+            agentScript.AddReward(0.25f);
         }
 
         public void MoveInsideHomeOnly(UnitModel unitModel, int diceValue, Action onCompleted)
@@ -810,9 +830,10 @@ namespace MADP.Controllers
             MoveUA moveUA = new MoveUA(unitView, visualPath);
 
             ActionSystem.Instance.Perform(moveUA, onCompleted);
+            // Khuyen khich di den cuoi
+            agentScript.AddReward(0.05f);
         }
 
         #endregion
-
     }
 }
