@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MADP.Models;
 using UnityEngine;
 
-namespace MADP.Services
+namespace MADP.Services.GameSettings.Interfaces
 {
     public interface IGameSettingsService
     {
@@ -15,7 +15,13 @@ namespace MADP.Services
         void SetMasterVolume(float value);
         void SetMusicVolume(float value);
         void SetSfxVolume(float value);
-        void SetQualityLevel(int level);
+        
+        //WindowMode
         void SetFullScreen(bool isFullScreen);
+        List<string> GetWindowModeOptions();
+        
+        //Resolution
+        void SetResolution(int level);
+        List<string> GetResolutionOptions();
     }
 }

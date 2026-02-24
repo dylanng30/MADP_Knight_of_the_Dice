@@ -83,6 +83,23 @@ namespace MADP.Controllers
             GenerateUnits();
         }
 
+        public bool CheckWinCondition(TeamColor teamColor)
+        {
+            var homeCells = _boardModel.HomeCells[teamColor];
+            int rightCell = 0;
+            foreach (var cell in homeCells)
+            {
+                int index = cell.Index;
+                if((index == 6 || index == 5 || index == 4 || index == 3) && 
+                   cell.HasUnit)
+                {
+                    rightCell++;
+                }
+            }
+            return rightCell == 4;
+        }
+        
+
         #region --- MOVEMENT & COMBAT ---
         public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action onMoveCompleted)
         {

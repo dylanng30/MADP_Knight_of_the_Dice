@@ -10,7 +10,6 @@ namespace MADP.Models
     public class GameSettingsModel
     {
         // General Settings
-        public int QualityLevel = 2; //0: Low, 1: Medium, 2: High
         public int ResolutionIndex = 0;
         public bool IsFullScreen = true;
 
