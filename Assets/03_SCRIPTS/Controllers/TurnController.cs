@@ -195,7 +195,18 @@ namespace MADP.Controllers
 
         private void ExecuteMove(UnitModel unitModel, CellModel destination)
         {
-            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => { EndTurn(); });
+            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => 
+            {
+                if (boardController.CheckWinCondition(CurrentTeam))
+                {
+                    //GameManager.Instance.HandleVictory(CurrentTeam);
+                    SwitchState(TurnState.WaitingForActions);
+                }
+                else
+                {
+                    EndTurn();
+                }
+            });
         }
 
         public void EndTurn()

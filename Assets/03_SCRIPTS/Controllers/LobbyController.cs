@@ -7,6 +7,7 @@ using MADP.Settings;
 using MADP.Views.Lobby;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace MADP.Controllers
 {
@@ -16,11 +17,22 @@ namespace MADP.Controllers
         [SerializeField] private ColorSettingView colorSettingView;
         [SerializeField] private RoleSettingView roleSettingView;
         [SerializeField] private MatchSettingsView matchSettingsView;
+        
+        [Header("GameSettings")]
+        [SerializeField] private GameSettingsController gameSettingsController;
+        [SerializeField] private Button gameSettingsButton;
 
         private LobbyService _lobbyService = new();
 
         private void Start()
         {
+            if (gameSettingsController != null)
+            {
+                gameSettingsController.Initialize();
+                gameSettingsButton.onClick.AddListener(gameSettingsController.OpenSettings);
+            }
+            
+            
             lobbyView.OnSlotActionRequested += HandleSlotAction;
             lobbyView.OnColorEditRequested += HandleColorEditRequested;
             lobbyView.OnRoleEditRequested += HandleRoleEditRequested;
@@ -31,6 +43,7 @@ namespace MADP.Controllers
             roleSettingView.OnRoleSaved += HandleRoleSaveRequested;
             matchSettingsView.OnSettingsSaved += HandleMatchSettingSaved;
             CreateLobby(1);
+            
         }
         private void OnDestroy()
         {
@@ -109,7 +122,18 @@ namespace MADP.Controllers
         private void HandleStartGame()
         {
             Debug.Log("Game Started!");
-            GameManager.Instance.CurrentMatchSettings = _lobbyService.GetMatchSettings();
+            var matchSettings = _lobbyService.GetFinalizedMatchSettings();
+            int activePlayers = 0;
+            foreach (var slot in matchSettings.Slots)
+                if (slot.PlayerType != PlayerType.Empty) activePlayers++;
+
+            if (activePlayers < 2)
+            {
+                Debug.LogWarning("Cần ít nhất 2 người chơi để bắt đầu!");
+                return;
+            }
+
+            GameManager.Instance.CurrentMatchSettings = matchSettings;          
             SceneManager.LoadScene("Match");
         }
         #endregion

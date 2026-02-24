@@ -18,6 +18,7 @@ namespace MADP.Controllers
 {
     public class BoardController : MonoBehaviour
     {
+        [SerializeField] private TeamStatDatabaseSO teamStatDB;
         [SerializeField] private BoardSetting boardSetting;
         [SerializeField] private BoardView boardView;
 
@@ -51,6 +52,10 @@ namespace MADP.Controllers
             List<LobbySlotModel> activeSlots,
             MapType mapType)
         {
+
+            _unitModelGenerationService = new UnitModelGenerationService(teamStatDB);
+
+
             _goldService = goldService;
             PathfindingService = pathfindingService;
             _combatService = combatService;
@@ -77,6 +82,23 @@ namespace MADP.Controllers
             GenerateBoard();
             GenerateUnits();
         }
+
+        public bool CheckWinCondition(TeamColor teamColor)
+        {
+            var homeCells = _boardModel.HomeCells[teamColor];
+            int rightCell = 0;
+            foreach (var cell in homeCells)
+            {
+                int index = cell.Index;
+                if((index == 6 || index == 5 || index == 4 || index == 3) && 
+                   cell.HasUnit)
+                {
+                    rightCell++;
+                }
+            }
+            return rightCell == 4;
+        }
+        
 
         #region --- MOVEMENT & COMBAT ---
 
@@ -301,7 +323,7 @@ namespace MADP.Controllers
             if (currentCell == null) return;
 
             //Unit đang ở Gate
-            if (currentCell.Structure == CellStructure.Gate &&
+            if (currentCell.Structure == CellStructure.Gate && 
                 currentCell.TeamOwner == unit.TeamOwner)
             {
                 GetGateEntryOptions(unit, diceValue, results);
@@ -510,7 +532,7 @@ namespace MADP.Controllers
         private void GenerateUnits()
         {
             List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
-            _allUnits = _unitModelGenerationService.CreateAllUnits(activeTeams);
+            _allUnits = _unitModelGenerationService.CreateAllUnits(activeTeams); 
             OnAllUnitsGenerated?.Invoke(_allUnits);
         }
 
@@ -791,5 +813,6 @@ namespace MADP.Controllers
         }
 
         #endregion
+
     }
 }

@@ -15,16 +15,18 @@ namespace MADP.Models
         public TeamColor TeamOwner { get; private set; }
         public UnitStatModel Stat { get; private set; }
         public UnitState State { get; private set; } = UnitState.InNest;
+        public RoleType RoleType { get; private set; }
 
         public int Cost { get; private set; }
         public int StepsMoved { get; private set; }
 
-        public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat)
+        public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat, RoleType roleType)
         {
             Id = id;
             TeamOwner = teamOwner;
             Stat = stat;
             Cost = id;
+            RoleType = roleType;
         }
 
         public void Reset()
