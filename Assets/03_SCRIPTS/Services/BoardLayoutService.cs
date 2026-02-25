@@ -9,7 +9,7 @@ namespace MADP.Services
     {
         //Cell
         private float _cellSize = 1f;
-        private Vector3 _offset = new Vector3(0, 0, 7);
+        private Vector3 _offset = new Vector3(0, 0, 8);
         //Unit
         private float _cageOffset = 4.0f;
         private float _unitGap = 2f;
@@ -56,12 +56,12 @@ namespace MADP.Services
         
         public Vector3 GetMainCellPosition(int currentIndex)
         {
-            int index = currentIndex % 14;
+            int index = currentIndex % Constants.CellCountPerTeam;
             
             _currentPosition += _currentDirection;
-            if (index == 0 || index == 12)
+            if (index == 1 || index == 13)
                 _currentDirection = Quaternion.Euler(0, -90, 0) * _currentDirection;
-            else if (index == 6)
+            else if (index == 7)
                 _currentDirection = Quaternion.Euler(0, 90, 0) * _currentDirection;
             
             return _currentPosition;
@@ -81,7 +81,7 @@ namespace MADP.Services
                 _ => Vector3.zero
             };
             
-            return Vector3.zero + (direction * (6 - stepIndex) * _cellSize);
+            return Vector3.zero + (direction * (7 - stepIndex) * _cellSize);
         }
     }
 }

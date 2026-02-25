@@ -21,6 +21,8 @@ namespace MADP.Views
         public Renderer Renderer => _renderer;
         public CellModel Model { get; private set; }
 
+        public CellStructure structure;
+
         public int Id { get; private set; }
         
         public void Setup(CellModel model)
@@ -44,7 +46,7 @@ namespace MADP.Views
 
         private void SetupStructure()
         {
-            var structure = Model.Structure;
+            structure = Model.Structure;
             numberTxt.gameObject.SetActive(false);
             if (structure == CellStructure.Home)
             {

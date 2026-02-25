@@ -1,4 +1,5 @@
 ﻿using MADP.Models;
+using MADP.Views.Inventory;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,32 +19,40 @@ namespace MADP.Views.UnitInfo
 
         [Header("ARMOR")]
         [SerializeField] private TextMeshProUGUI armorTxt;
+        
+        [Header("INVENTORY")]
+        [SerializeField] private UnitInventoryView inventoryView;
 
         private UnitModel unitModel;
 
-        public void Setup(UnitModel model)
+        public void Show(UnitModel model)
         {
             unitModel = model;
-            healthBar.fillAmount = (float)unitModel.Stat.CurrentHealth / unitModel.Stat.MaxHealth;
-            healthRatioTxt.text = $"{unitModel.Stat.CurrentHealth}/{unitModel.Stat.MaxHealth}";
-            damageTxt.text = unitModel.Stat.Damage.ToString();
-            armorTxt.text = unitModel.Stat.Armor.ToString();
-
+            UpdateUI();
+            unitModel.OnStatsChanged += UpdateUI;
+            
+            if (inventoryView != null)
+            {
+                inventoryView.Initialize(unitModel.Inventory);
+            }
+            
             gameObject.SetActive(true);
         }
 
         public void Clear()
         {
             gameObject.SetActive(false);
-            unitModel = null;           
+            if(unitModel != null)
+                unitModel.OnStatsChanged -= UpdateUI;
+            unitModel = null;
         }
 
-        private void Update()
+        public void UpdateUI()
         {
-           if(unitModel != null)
-           {
-                
-           }
+            healthBar.fillAmount = (float)unitModel.CurrentHealth / unitModel.MaxHealth;
+            healthRatioTxt.text = $"{unitModel.CurrentHealth}/{unitModel.MaxHealth}";
+            damageTxt.text = unitModel.Damage.ToString();
+            armorTxt.text = unitModel.Armor.ToString();
         }
 
     }

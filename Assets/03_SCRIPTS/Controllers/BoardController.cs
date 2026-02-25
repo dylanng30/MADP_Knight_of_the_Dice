@@ -548,7 +548,23 @@ namespace MADP.Controllers
         {
             return _boardModel?.AroundCells.FirstOrDefault(c => c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
         }
-        
+        public bool IsOvershootingGate(UnitModel unit, int diceValue)
+        {
+            if (unit.State != UnitState.Moving) return false;
+
+            CellModel currentCell = GetCurrentCellOfUnit(unit);
+            var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
+            
+            for (int i = 0; i < path.Count; i++)
+            {
+                CellModel cell = path[i];
+                if (cell.Structure == CellStructure.Gate && cell.TeamOwner == unit.TeamOwner)
+                {
+                    if (i < path.Count - 1) return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
     }
