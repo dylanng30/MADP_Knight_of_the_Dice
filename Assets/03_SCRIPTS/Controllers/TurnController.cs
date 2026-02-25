@@ -30,9 +30,7 @@ namespace MADP.Controllers
         [SerializeField] private BoardController boardController;
         [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
-        [SerializeField] private TeamAgent agentScript;
-        [SerializeField] private Agent playerAgent;
-        public Agent PlayerAgent => playerAgent;
+        private Dictionary<TeamColor, TeamAgent> _agents;
 
         private Dictionary<TurnState, ITurnState> _turnStates;
         public int CurrentDiceValue { get; private set; }
@@ -86,6 +84,15 @@ namespace MADP.Controllers
         private void Start()
         {
             LoadTurnStates();
+            _agents = new Dictionary<TeamColor, TeamAgent>();
+
+            foreach (var agent in FindObjectsOfType<TeamAgent>())
+            {
+                _agents[agent.AgentColor] = agent;
+            }
+
+            boardController.SetAgents(_agents);
+
             SwitchState(TurnState.Rolling);
         }
 
@@ -112,7 +119,7 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            // Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -127,7 +134,8 @@ namespace MADP.Controllers
             }
             else
             {
-                SwitchState(TurnState.Choosing);
+                _agents[CurrentTeam].RequestDecision();
+                // SwitchState(TurnState.Choosing);
             }
         }
 
@@ -161,7 +169,7 @@ namespace MADP.Controllers
                 }
                 else
                 {
-                    Debug.Log("Unit này không thể di chuyển (đang trong chuồng mà không có 6, hoặc bị chặn)");
+                    // Debug.Log("Unit này không thể di chuyển (đang trong chuồng mà không có 6, hoặc bị chặn)");
                     DeselectCurrent();
                 }
 
@@ -199,19 +207,20 @@ namespace MADP.Controllers
             {
                 if (boardController.CheckWinCondition(CurrentTeam))
                 {
-                    if (CurrentTeam == TeamColor.Red)
+                    foreach (var kvp in _agents)
                     {
-                        // Thuong khi thang
-                        playerAgent.AddReward(1f);
-                        playerAgent.EndEpisode();
-                    }
-                    else
-                    {
-                        // Phat khi thua
-                        playerAgent.AddReward(-1f);
-                        playerAgent.EndEpisode();
+                        if (kvp.Key == CurrentTeam)
+                            kvp.Value.AddReward(1f);
+                        else
+                            kvp.Value.AddReward(-1f);
                     }
 
+                    foreach (var agent in _agents.Values)
+                    {
+                        agent.EndEpisode();
+                    }
+
+                    return;
                     //GameManager.Instance.HandleVictory(CurrentTeam);
                     SwitchState(TurnState.WaitingForActions);
                 }
@@ -225,12 +234,15 @@ namespace MADP.Controllers
         public void EndTurn()
         {
             // Kiểm tra để dừng huấn luyện
-            agentScript.TurnCounter += 1;
+            _agents[CurrentTeam].TurnCounter += 1;
             // Phat sau moi turn, khuyen kich hoan thanh nhanh
-            agentScript.AddReward(-agentScript.maxAgentTurn / 100f);
-            if (agentScript.TurnCounter > agentScript.maxAgentTurn)
+            _agents[CurrentTeam].AddReward(-1f / _agents[CurrentTeam].maxAgentTurn);
+            if (_agents[CurrentTeam].TurnCounter > _agents[CurrentTeam].maxAgentTurn)
             {
-                playerAgent.EndEpisode();
+                foreach (var agent in _agents.Values)
+                {
+                    agent.EndEpisode();
+                }
             }
 
             if (CurrentDiceValue != 6)
@@ -273,7 +285,7 @@ namespace MADP.Controllers
             {
                 if (bestMove.Unit.State == UnitState.InNest)
                 {
-                    Debug.Log($"Bot {CurrentTeam} quyết định SINH QUÂN {bestMove.Unit.Id}");
+                    // Debug.Log($"Bot {CurrentTeam} quyết định SINH QUÂN {bestMove.Unit.Id}");
                     boardController.SpawnUnit(bestMove.Unit, EndTurn);
                 }
                 else if (bestMove.Destination != null)
@@ -291,6 +303,21 @@ namespace MADP.Controllers
                 Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ (Bị chặn hoặc kẹt).");
                 EndTurn();
             }
+        }
+
+        public void ResetEnvironment()
+        {
+            boardController.ResetBoard();
+            _currentTeamIndex = 0;
+            _selectedUnit = null;
+            CurrentDiceValue = 0;
+
+            foreach (var agent in _agents.Values)
+            {
+                agent.TurnCounter = 0;
+            }
+
+            SwitchState(TurnState.Rolling);
         }
     }
 }

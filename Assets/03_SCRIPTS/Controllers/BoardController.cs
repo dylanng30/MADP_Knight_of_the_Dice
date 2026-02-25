@@ -22,7 +22,8 @@ namespace MADP.Controllers
         [SerializeField] private TeamStatDatabaseSO teamStatDB;
         [SerializeField] private BoardSetting boardSetting;
         [SerializeField] private BoardView boardView;
-        [SerializeField] private TeamAgent agentScript;
+
+        private Dictionary<TeamColor, TeamAgent> _agents;
 
         //Data
         private BoardModel _boardModel;
@@ -35,6 +36,7 @@ namespace MADP.Controllers
 
         public IPathfindingService PathfindingService { get; private set; }
         private IGoldService _goldService;
+        public IGoldService GoldService => _goldService;
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
 
@@ -138,7 +140,7 @@ namespace MADP.Controllers
         private void HandleMoveToHome(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel,
             int diceValue, Action onMoveCompleted)
         {
-            Debug.Log($"Unit {unitModel.Id} đã về tới chuồng của team {unitModel.TeamOwner}");
+            // Debug.Log($"Unit {unitModel.Id} đã về tới chuồng của team {unitModel.TeamOwner}");
             List<CellModel> homePath = PathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
             List<Vector3> homeVisualPath = boardView.GetPath(homePath);
 
@@ -185,10 +187,13 @@ namespace MADP.Controllers
             UnitView attackerUnitView, AttackUA attackUA,
             Vector3 approachEndPos, Vector3 fullPathEndPos, int damageDealt)
         {
+            _agents[attacker.TeamOwner].AddReward(0.15f);
+            _agents[victim.TeamOwner].AddReward(-0.15f);
             Debug.Log($"Unit {victim.Id} chết. Unit {attacker.Id} chiếm ô.");
             victim.TakeDamage(damageDealt);
             boardView.UnitReturnNest(victim);
             victim.Revive();
+            targetCellModel.Clear();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
             CellView targetCellView = boardView.GetCellView(targetCellModel);
             attackerUnitView.transform.SetParent(targetCellView.transform);
@@ -202,6 +207,7 @@ namespace MADP.Controllers
             UnitModel victim, UnitView attackerView,
             BaseUnitAction parentAction, List<Vector3> approachPath, int damage)
         {
+            _agents[victim.TeamOwner].AddReward(-damage * 0.01f);
             victim.TakeDamage(damage);
             var returnPath = new List<Vector3>(approachPath);
             returnPath.Reverse();
@@ -267,12 +273,6 @@ namespace MADP.Controllers
                     var direction = GetDirectionWhenSpawn(unitModel);
                     unitView.Rotate(direction);
                     unitView.Collider.enabled = false;
-                }
-
-                // Thuong khi spawn
-                if (unitModel.TeamOwner == TeamColor.Red)
-                {
-                    agentScript.AddReward(0.03f);
                 }
 
                 OnComplete?.Invoke();
@@ -572,266 +572,137 @@ namespace MADP.Controllers
 
         #endregion
 
-        #region ---MLAgent---
+        #region --- ML AGENT ---
 
-        public void MoveOnNormalCellOnly(UnitModel unitModel, int diceValue, Action onMoveCompleted)
+        public void SpawnOnly(UnitModel unit, int diceValue, Action onCompleted)
         {
-            CellModel currentCell = GetCurrentCellOfUnit(unitModel);
-            if (currentCell == null) return;
+            if (!CanSpawnUnit(unit, diceValue))
+            {
+                _agents[unit.TeamOwner].AddReward(-0.02f);
+                onCompleted?.Invoke();
+                return;
+            }
 
-            // Chỉ cho phép ở vòng ngoài
-            if (!_boardModel.AroundCells.Contains(currentCell)) return;
-
-            // Lấy path tiến
-            List<CellModel> path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
-
-            if (path == null || path.Count == 0) return;
-
-            // Không cho đi xuyên unit
-            if (IsPathBlocked(path, unitModel.TeamOwner)) return;
-
-            CellModel targetCell = path.Last();
-
-            // Không cho đứng chồng lên đồng đội
-            if (targetCell.HasUnit) return;
-
-            // === EXECUTE MOVE ===
-            UnitView unitView = boardView.GetUnitView(unitModel);
-            CellView targetCellView = boardView.GetCellView(targetCell);
-
-            ExecuteMoveSuccess(unitModel, currentCell, targetCell);
-
-            unitView.transform.SetParent(targetCellView.transform);
-
-            List<Vector3> visualPath = boardView.GetPath(path);
-            MoveUA moveUA = new MoveUA(unitView, visualPath);
-
-            ActionSystem.Instance.Perform(moveUA, onMoveCompleted);
-            //Khuyen khich tien ve phia truoc
-            agentScript.AddReward(path.Count * 0.01f);
+            SpawnUnit(unit, () =>
+            {
+                _agents[unit.TeamOwner].AddReward(0.03f);
+                onCompleted?.Invoke();
+            });
         }
 
-        public void AttackForwardOnly(UnitModel attacker, int diceValue, Action onCompleted)
+        public void MoveForwardOnly(UnitModel unit, int diceValue, Action onCompleted)
         {
-            // Lấy ô hiện tại
-            CellModel currentCell = GetCurrentCellOfUnit(attacker);
-            if (currentCell == null) return;
-
-            // Phải đang ở vòng ngoài
-            if (!_boardModel.AroundCells.Contains(currentCell)) return;
-
-            // Lấy path tiến
-            List<CellModel> path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
-            if (path == null || path.Count == 0) return;
-
-            // Không được bị chặn giữa đường
-            for (int i = 1; i < path.Count - 1; i++)
-            {
-                if (path[i].HasUnit) return;
-            }
-
-            CellModel targetCell = path.Last();
-
-            // Ô cuối phải có địch
-            if (!targetCell.HasUnit || targetCell.Unit.TeamOwner == attacker.TeamOwner) return;
-
-            UnitModel victim = targetCell.Unit;
-
-            UnitView attackerView = boardView.GetUnitView(attacker);
-            UnitView victimView = boardView.GetUnitView(victim);
-
-            List<Vector3> visualPath = boardView.GetPath(path);
-
-            // Simulate combat
-            CombatResult result = _combatService.SimulateCombat(attacker, victim);
-
-            MoveUA moveUA = new MoveUA(attackerView, visualPath);
-            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead);
-
-            moveUA.PostActions.Add(attackUA);
-
-            if (result.IsVictimDead)
-            {
-                // Cập nhật model
-                victim.TakeDamage(result.DamageDealt);
-                boardView.UnitReturnNest(victim);
-                victim.Revive();
-
-                currentCell.Clear();
-                targetCell.Register(attacker);
-
-                int count = _boardModel.AroundCells.Count;
-                int distance = (targetCell.Index - currentCell.Index + count) % count;
-                attacker.AddSteps(distance);
-
-                attackerView.transform.SetParent(boardView.GetCellView(targetCell).transform);
-                // Thuong khi tieu diet dich
-                agentScript.AddReward(0.15f);
-            }
-            else
-            {
-                victim.TakeDamage(result.DamageDealt);
-                // Khuyen khich tan cong dich
-                agentScript.AddReward(0.01f * result.DamageDealt);
-            }
-
-            ActionSystem.Instance.Perform(moveUA, onCompleted);
+            ExecuteFilteredMove(unit, diceValue,
+                cell => IsForwardCell(unit, cell, diceValue) &&
+                        cell.Structure != CellStructure.Home,
+                0.01f,
+                onCompleted);
         }
 
-        public void AttackBackwardOnly(UnitModel attacker, int diceValue, Action onCompleted)
+        public void AttackForwardOnly(UnitModel unit, int diceValue, Action onCompleted)
         {
-            // Lấy ô hiện tại
-            CellModel currentCell = GetCurrentCellOfUnit(attacker);
-            if (currentCell == null) return;
-
-            // Phải ở vòng ngoài
-            if (!_boardModel.AroundCells.Contains(currentCell)) return;
-
-            // Lấy path lùi
-            List<CellModel> reversePath = PathfindingService.GetReversePath(_boardModel, currentCell, diceValue);
-            if (reversePath == null || reversePath.Count == 0) return;
-
-            // Không được bị chặn giữa đường
-            for (int i = 1; i < reversePath.Count - 1; i++)
-            {
-                if (reversePath[i].HasUnit) return;
-            }
-
-            CellModel targetCell = reversePath.Last();
-
-            // Ô cuối phải có địch
-            if (!targetCell.HasUnit || targetCell.Unit.TeamOwner == attacker.TeamOwner) return;
-
-            UnitModel victim = targetCell.Unit;
-
-            UnitView attackerView = boardView.GetUnitView(attacker);
-            UnitView victimView = boardView.GetUnitView(victim);
-
-            List<Vector3> visualPath = boardView.GetPath(reversePath);
-
-            // Combat
-            CombatResult result = _combatService.SimulateCombat(attacker, victim);
-
-            MoveUA moveUA = new MoveUA(attackerView, visualPath);
-            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead);
-
-            moveUA.PostActions.Add(attackUA);
-
-            if (result.IsVictimDead)
-            {
-                victim.TakeDamage(result.DamageDealt);
-                boardView.UnitReturnNest(victim);
-                victim.Revive();
-
-                // Update model
-                currentCell.Clear();
-                targetCell.Register(attacker);
-
-                int count = _boardModel.AroundCells.Count;
-                int distance = (currentCell.Index - targetCell.Index + count) % count;
-                attacker.AddSteps(distance);
-
-                attackerView.transform.SetParent(boardView.GetCellView(targetCell).transform);
-                // Thuong khi tieu diet dich
-                agentScript.AddReward(0.15f);
-            }
-            else
-            {
-                victim.TakeDamage(result.DamageDealt);
-                // Khuyen khich tan cong dich
-                agentScript.AddReward(0.01f * result.DamageDealt);
-            }
-
-            ActionSystem.Instance.Perform(moveUA, onCompleted);
+            ExecuteFilteredMove(unit, diceValue,
+                cell => cell.HasUnit &&
+                        cell.Unit.TeamOwner != unit.TeamOwner &&
+                        IsForwardCell(unit, cell, diceValue),
+                0.05f,
+                onCompleted);
         }
 
-        public void MoveToHomeOnly(UnitModel unitModel, int diceValue, Action onCompleted)
+        public void AttackBackwardOnly(UnitModel unit, int diceValue, Action onCompleted)
         {
-            // Lấy ô hiện tại
-            CellModel currentCell = GetCurrentCellOfUnit(unitModel);
-            if (currentCell == null) return;
-
-            // Phải đang ở Gate của team mình
-            if (currentCell.Structure != CellStructure.Gate || currentCell.TeamOwner != unitModel.TeamOwner) return;
-
-            // Lấy path vào home
-            List<CellModel> homePath = PathfindingService.GetPathToHome(_boardModel, currentCell, diceValue);
-            if (homePath == null || homePath.Count == 0) return;
-
-            // Không được bị chặn giữa đường
-            for (int i = 0; i < homePath.Count; i++)
-            {
-                if (homePath[i].HasUnit) return;
-            }
-
-            CellModel targetCell = homePath.Last();
-
-            // ExecutFe Move
-            UnitView unitView = boardView.GetUnitView(unitModel);
-            CellView targetCellView = boardView.GetCellView(targetCell);
-
-            // Clear ô Gate
-            currentCell.Clear();
-
-            // Register vào home
-            targetCell.Register(unitModel);
-            unitModel.SetState(UnitState.InHome);
-
-            // Tính step (nếu bạn cần tracking)
-            unitModel.AddSteps(diceValue);
-            unitView.transform.SetParent(targetCellView.transform);
-
-            List<Vector3> visualPath = boardView.GetPath(homePath);
-            MoveUA moveUA = new MoveUA(unitView, visualPath);
-
-            ActionSystem.Instance.Perform(moveUA, onCompleted);
-            // Thuong khi vao home
-            agentScript.AddReward(0.25f);
+            ExecuteFilteredMove(unit, diceValue,
+                cell => cell.HasUnit &&
+                        cell.Unit.TeamOwner != unit.TeamOwner &&
+                        IsBackwardCell(unit, cell, diceValue),
+                0.05f,
+                onCompleted);
         }
 
-        public void MoveInsideHomeOnly(UnitModel unitModel, int diceValue, Action onCompleted)
+        public void MoveToHomeOnly(UnitModel unit, int diceValue, Action onCompleted)
         {
-            if (!_boardModel.HomeCells.TryGetValue(unitModel.TeamOwner, out var homeCells)) return;
+            ExecuteFilteredMove(unit, diceValue,
+                cell => cell.Structure == CellStructure.Home,
+                0.25f,
+                onCompleted);
+        }
 
-            CellModel currentCell = GetCurrentCellOfUnit(unitModel);
-            if (currentCell == null) return;
+        public void MoveInsideHomeOnly(UnitModel unit, int diceValue, Action onCompleted)
+        {
+            var currentCell = GetCurrentCellOfUnit(unit);
 
-            if (currentCell.Structure != CellStructure.Home) return;
+            if (currentCell == null || currentCell.Structure != CellStructure.Home)
+            {
+                _agents[unit.TeamOwner].AddReward(-0.02f);
+                onCompleted?.Invoke();
+                return;
+            }
 
-            int currentIndex = homeCells.IndexOf(currentCell);
-            if (currentIndex < 0) return;
+            ExecuteFilteredMove(unit, diceValue,
+                cell => cell.Structure == CellStructure.Home,
+                0.05f,
+                onCompleted);
+        }
 
-            int nextIndex = currentIndex + 1;
+        private void ExecuteFilteredMove(UnitModel unit, int diceValue, Func<CellModel, bool> filter, float reward,
+            Action onCompleted)
+        {
+            var validCells = GetPotentialDestinationCell(unit, diceValue);
 
-            // Không có ô tiếp theo
-            if (nextIndex >= homeCells.Count) return;
+            if (validCells == null || validCells.Count == 0)
+            {
+                _agents[unit.TeamOwner].AddReward(-0.02f);
+                onCompleted?.Invoke();
+                return;
+            }
 
-            // Điều kiện quan trọng: dice phải đúng số ô tiếp theo
-            if (diceValue != nextIndex + 1) return;
+            var target = validCells.FirstOrDefault(filter);
 
-            CellModel targetCell = homeCells[nextIndex];
+            if (target == null)
+            {
+                _agents[unit.TeamOwner].AddReward(-0.03f);
+                onCompleted?.Invoke();
+                return;
+            }
 
-            if (targetCell.HasUnit) return;
+            MoveUnit(unit, target, diceValue, () =>
+            {
+                _agents[unit.TeamOwner].AddReward(reward);
+                onCompleted?.Invoke();
+            });
+        }
 
-            // ===== Execute Move =====
+        private bool IsForwardCell(UnitModel unit, CellModel target, int diceValue)
+        {
+            var current = GetCurrentCellOfUnit(unit);
+            if (current == null) return false;
 
-            UnitView unitView = boardView.GetUnitView(unitModel);
-            CellView targetCellView = boardView.GetCellView(targetCell);
+            var path = PathfindingService.GetPath(_boardModel, current, diceValue);
+            return path.Count > 0 && path.Last() == target;
+        }
 
-            currentCell.Clear();
-            targetCell.Register(unitModel);
+        private bool IsBackwardCell(UnitModel unit, CellModel target, int diceValue)
+        {
+            var current = GetCurrentCellOfUnit(unit);
+            if (current == null) return false;
 
-            unitModel.AddSteps(1); // chỉ đi 1 ô
+            var path = PathfindingService.GetReversePath(_boardModel, current, diceValue);
+            return path.Count > 0 && path.Last() == target;
+        }
 
-            unitView.transform.SetParent(targetCellView.transform);
+        public void ResetBoard()
+        {
+            // Clear view trước
+            boardView.Reset();
 
-            List<Vector3> visualPath = boardView.GetPath(new List<CellModel> { targetCell });
+            // Re-generate data model
+            GenerateBoard();
+            GenerateUnits();
+        }
 
-            MoveUA moveUA = new MoveUA(unitView, visualPath);
-
-            ActionSystem.Instance.Perform(moveUA, onCompleted);
-            // Khuyen khich di den cuoi
-            agentScript.AddReward(0.05f);
+        public void SetAgents(Dictionary<TeamColor, TeamAgent> agents)
+        {
+            _agents = agents;
         }
 
         #endregion

@@ -4,6 +4,7 @@ using MADP.Controllers;
 using MADP.Models;
 using MADP.Services;
 using MADP.Services.Gold;
+using MADP.Services.Gold.Interfaces;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -15,15 +16,15 @@ namespace _03_SCRIPTS.AI
     {
         [SerializeField] private BoardController boardController;
         [SerializeField] private TurnController turnController;
+        [SerializeField] private TeamColor agentColor;
+        public TeamColor AgentColor => agentColor;
         [SerializeField] public int maxAgentTurn = 30;
         [SerializeField] private int maxGold = 50;
         [SerializeField] private int maxCell = 56;
         [SerializeField] private int maxStat = 5;
 
-        private readonly GoldService _goldService = new();
+        private IGoldService GoldService => boardController.GoldService;      
         private readonly FindNearestUnitService _findNearestUnit = new();
-
-        private readonly TeamColor _playerColor = TeamColor.Red;
         private List<UnitModel> _units;
         private int _diceValue;
         private int _goldValue;
@@ -32,16 +33,17 @@ namespace _03_SCRIPTS.AI
         public override void OnEpisodeBegin()
         {
             base.OnEpisodeBegin();
+            turnController.ResetEnvironment();
             TurnCounter = 0;
         }
 
         public override void CollectObservations(VectorSensor sensor)
         {
             base.CollectObservations(sensor);
-
-            _units = boardController.GetAllUnitsByColor(_playerColor).OrderBy(u => u.Id).ToList();
+            
+            _units = boardController.GetAllUnitsByColor(agentColor).OrderBy(u => u.Id).ToList();
             _diceValue = turnController.CurrentDiceValue;
-            _goldValue = _goldService.GetGold(_playerColor);
+            _goldValue = GoldService.GetGold(agentColor);
 
             // Thu thập thông tin theo từng unit
             foreach (var unit in _units)
@@ -57,7 +59,7 @@ namespace _03_SCRIPTS.AI
 
                 // Thu thập thông tin kẻ thù gần nhất phía trước
                 var nearestForwardEnemy = _findNearestUnit.FindNearestEnemyForward(boardController.Board.AroundCells,
-                    cellNormalIndex, _playerColor);
+                    cellNormalIndex, agentColor);
 
                 var normalizedForwardHealth =
                     (nearestForwardEnemy.Unit != null)
@@ -71,7 +73,7 @@ namespace _03_SCRIPTS.AI
 
                 // Thu thập thông tin về kẻ thù gần nhất phía sau
                 var nearestBackwardEnemy = _findNearestUnit.FindNearestEnemyBackward(boardController.Board.AroundCells,
-                    cellNormalIndex, _playerColor);
+                    cellNormalIndex, agentColor);
                 var normalizedBackwardHealth =
                     (nearestBackwardEnemy.Unit != null)
                         ? (float)nearestBackwardEnemy.Unit.Stat.CurrentHealth / maxStat
@@ -143,6 +145,11 @@ namespace _03_SCRIPTS.AI
             sensor.AddObservation(normalizedDiceValue);
             sensor.AddObservation(normalizedGoldValue);
             sensor.AddObservation(normalizedTurn);
+            
+            sensor.AddObservation(agentColor == TeamColor.Red ? 1 : 0);
+            sensor.AddObservation(agentColor == TeamColor.Yellow ? 1 : 0);
+            sensor.AddObservation(agentColor == TeamColor.Blue ? 1 : 0);
+            sensor.AddObservation(agentColor == TeamColor.Green ? 1 : 0);
         }
 
         public override void OnActionReceived(ActionBuffers actions)
@@ -160,10 +167,10 @@ namespace _03_SCRIPTS.AI
             switch (playerAction)
             {
                 case 0:
-                    boardController.SpawnUnit(_units[unitIdx], turnController.EndTurn);
+                    boardController.SpawnOnly(_units[unitIdx], _diceValue, turnController.EndTurn);
                     break;
                 case 1:
-                    boardController.MoveOnNormalCellOnly(_units[unitIdx], _diceValue, turnController.EndTurn);
+                    boardController.MoveForwardOnly(_units[unitIdx], _diceValue, turnController.EndTurn);
                     break;
                 case 2:
                     boardController.AttackForwardOnly(_units[unitIdx], _diceValue, turnController.EndTurn);

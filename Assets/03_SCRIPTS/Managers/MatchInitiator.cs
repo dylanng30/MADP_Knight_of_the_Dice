@@ -65,7 +65,9 @@ namespace MADP.Managers
                 Slots = new[]
                 {
                     new LobbySlotModel(0, TeamColor.Red) { PlayerType = PlayerType.Human },
-                    new LobbySlotModel(1, TeamColor.Blue) { PlayerType = PlayerType.Bot }
+                    new LobbySlotModel(1, TeamColor.Blue) { PlayerType = PlayerType.Bot },
+                    new LobbySlotModel(2, TeamColor.Green) { PlayerType = PlayerType.Bot },
+                    new LobbySlotModel(3, TeamColor.Yellow) { PlayerType = PlayerType.Bot },
                 }
             };
         }
