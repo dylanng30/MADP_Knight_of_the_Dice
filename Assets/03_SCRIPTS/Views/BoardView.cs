@@ -12,10 +12,6 @@ namespace MADP.Views
     public class BoardView : MonoBehaviour
     {
         [Header("---SETTING---")]
-        [SerializeField] private TeamColorDatabaseSO _teamColorDatabase;
-        [SerializeField] private ColorPaletteSetting _colorPalette;
-        
-        [Space(10)]
         [SerializeField] private CellView _cellViewPrefab;
         
         [SerializeField] private UnitView firstUnitViewPrefab;
@@ -28,7 +24,6 @@ namespace MADP.Views
         
         //Services
         private BoardLayoutService _boardLayoutService = new ();
-        private BoardRotationService _rotationService = new ();
         
         //Mapper
         private Dictionary<CellModel, CellView> _cellMap = new();
@@ -36,21 +31,20 @@ namespace MADP.Views
 
         private List<CellView> _currentHighlightedCells = new();
         private MapType _currentMapType;
-
-        private void Update()
-        {
-            //_rotationService?.Update(transform);
-        }
+        private TeamColorDatabaseSO _teamColorDB;
 
         public void Initialize(
             BoardController controller, 
             Dictionary<TeamColor, int> teamToBaseMap,
-            MapType mapType)
+            MapType mapType,
+            TeamColorDatabaseSO teamColorDB)
         {
             StopAllCoroutines();
             
             _controller = controller;
             _currentMapType = mapType;
+
+            _teamColorDB = teamColorDB;
             
             _boardLayoutService.Initialize(teamToBaseMap);
 
@@ -165,7 +159,7 @@ namespace MADP.Views
 
             if (model.TeamOwner != TeamColor.None)
             {
-                finalColor = _teamColorDatabase.GetColor(model.TeamOwner, Priority.Primary);
+                finalColor = _teamColorDB.GetTeamColor(model.TeamOwner, Priority.Primary);
             }
             else if (model.Attribute != CellAttribute.None)
             {
@@ -184,31 +178,31 @@ namespace MADP.Views
         
         private Color GetAttributeColor(CellAttribute attribute)
         {
-            if (_colorPalette == null) return Color.white;
+            if (_teamColorDB == null) return Color.gray;
 
             return attribute switch
             {
-                CellAttribute.Red => _colorPalette.TeamColorSetting.Red,
-                CellAttribute.Yellow => _colorPalette.TeamColorSetting.Yellow,
-                CellAttribute.Purple => _colorPalette.TeamColorSetting.Purple,
-                CellAttribute.Blue => _colorPalette.TeamColorSetting.Blue,
-                CellAttribute.Green => _colorPalette.TeamColorSetting.Green,
-                _ => _colorPalette.TeamColorSetting.DefaultColor
+                CellAttribute.Red => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Yellow => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Purple => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Blue => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Green => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                _ => Color.gray
             };
         }
 
         private Color GetMapThemeColor(MapType mapType, bool isEvenIndex)
         {
-            if (_colorPalette == null || _colorPalette.MapSettings == null) 
-                return Color.gray; // Fallback an toàn
+            if (_teamColorDB == null || _teamColorDB.MapSettings == null || _teamColorDB.MapSettings.Count <= 0) 
+                return Color.gray;
 
-            foreach (var setting in _colorPalette.MapSettings)
+            foreach (var setting in _teamColorDB.MapSettings)
             {
                 if (setting.MapType == mapType)
                     return isEvenIndex ? setting.PrimaryColor : setting.SecondaryColor;
             }
 
-            return _colorPalette.TeamColorSetting.DefaultColor;
+            return Color.gray;
         }
         #endregion
 
@@ -260,7 +254,7 @@ namespace MADP.Views
 
         private Color GetUnitColor(UnitModel model, Priority priority)
         {
-            return _teamColorDatabase.GetColor(model.TeamOwner, priority);
+            return _teamColorDB.GetTeamColor(model.TeamOwner, priority);
         }
 
         private UnitView GetUnitViewPrefab(int id)

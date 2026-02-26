@@ -46,7 +46,7 @@ namespace MADP.Services
             Reset();
             CreateSpecialCellIndexes(redCount, yellowCount, purpleCount);
             
-            for (int i = 0; i < 56; i++)
+            for (int i = 0; i < Constants.AroundCellCount; i++)
             {
                 (CellStructure structure, TeamColor owner) = IdentifyStructure(i);
                 CellAttribute attribute = IdentifyAttribute(i);
@@ -59,16 +59,16 @@ namespace MADP.Services
         
         private (CellStructure, TeamColor) IdentifyStructure(int index)
         {
-            if (index % 14 == 0)
+            if (index % Constants.CellCountPerTeam == 1)
             {
-                int baseIndex = index / 14;
+                int baseIndex = index / Constants.CellCountPerTeam;
                 TeamColor teamOwner = GetTeamByBaseIndex(baseIndex);
                 return (CellStructure.Spawn, teamOwner);
             }
             
-            if ((index + 1) % 14 == 0)
+            if ((index + 1) % Constants.CellCountPerTeam == 0)
             {
-                int baseIndex = (index + 1) % 56 / 14; 
+                int baseIndex = (index + 1) % Constants.AroundCellCount / Constants.CellCountPerTeam; 
                 TeamColor teamOwner = GetTeamByBaseIndex(baseIndex);
                 return (CellStructure.Gate, teamOwner);
             }
@@ -120,10 +120,10 @@ namespace MADP.Services
         {
             List<int> availableIndexes = new List<int>();
 
-            for (int i = 0; i < 56; i++)
+            for (int i = 0; i < Constants.AroundCellCount; i++)
             {
-                int except = i % 14;
-                if (except == 0 || except == 13)
+                int except = i % Constants.CellCountPerTeam;
+                if (except == 1 || except == Constants.AroundCellCount - 1)
                     continue;
 
                 availableIndexes.Add(i);

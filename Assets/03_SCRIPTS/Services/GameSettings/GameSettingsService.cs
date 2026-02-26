@@ -132,24 +132,6 @@ namespace MADP.Services.GameSettings
             Vector2Int res = _supportedResolutions[index];
             Screen.SetResolution(res.x, res.y, isFullScreen);
         }
-
-        private int FindClosestResolutionIndex()
-        {
-            int bestIndex = 0;
-            int minDiff = int.MaxValue;
-            int currentWidth = Screen.currentResolution.width;
-
-            for (int i = 0; i < _supportedResolutions.Length; i++)
-            {
-                int diff = Mathf.Abs(_supportedResolutions[i].x - currentWidth);
-                if (diff < minDiff)
-                {
-                    minDiff = diff;
-                    bestIndex = i;
-                }
-            }
-            return bestIndex;
-        }
         #endregion
 
     }

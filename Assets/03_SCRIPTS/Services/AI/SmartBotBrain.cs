@@ -29,6 +29,7 @@ namespace MADP.Services.AI
             foreach (var unit in allUnits)
             {
                 if (!_boardController.CanInteract(unit, diceValue)) continue;
+                if (unit.State == UnitState.Moving && _boardController.IsOvershootingGate(unit, diceValue)) continue; 
                 
                 if (unit.State == UnitState.InNest)
                 {

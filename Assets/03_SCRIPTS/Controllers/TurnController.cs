@@ -26,13 +26,18 @@ namespace MADP.Controllers
 
     public class TurnController : MonoBehaviour
     {
+        [Header("Turn Settings")]
+        [SerializeField] private TurnView turnView;
+
+        public TurnView TurnView => turnView;
+        
+        [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
-        [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
+        
         private Dictionary<TeamColor, TeamAgent> _agents;
 
-        private Dictionary<TurnState, ITurnState> _turnStates;
         public int CurrentDiceValue { get; private set; }
 
         private UnitModel _selectedUnit;
@@ -42,21 +47,25 @@ namespace MADP.Controllers
         //Services
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
-
-
-        private List<LobbySlotModel> _activeSlots = new List<LobbySlotModel>();
+        
+        private List<LobbySlotModel> _activeSlots = new ();
         private int _currentTeamIndex = 0;
-        public int CurrentTeamIndex => _currentTeamIndex;
+        private Dictionary<TurnState, ITurnState> _turnStates;
+        private DiceView _diceView;
+        
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
+        public int CurrentTeamIndex => _currentTeamIndex;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
 
         public void Initialize(
-            IGoldService goldService,
-            List<LobbySlotModel> activeSlots)
+            IGoldService goldService, 
+            List<LobbySlotModel> activeSlots, 
+            DiceView diceView)
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
-
+            _diceView = diceView;
+            
             _botDecisionService = new BotDecisionService();
 
             foreach (var slot in activeSlots)
@@ -79,11 +88,14 @@ namespace MADP.Controllers
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
+            
+            LoadTurnStates();
+            _currentTeamIndex = 0;
+            StartTurnProcess();
         }
 
         private void Start()
         {
-            LoadTurnStates();
             _agents = new Dictionary<TeamColor, TeamAgent>();
 
             foreach (var agent in FindObjectsOfType<TeamAgent>())
@@ -100,7 +112,21 @@ namespace MADP.Controllers
         {
             _currentTurnState?.ExecuteTurn();
         }
-
+        
+        private void StartTurnProcess()
+        {
+            if (turnView != null)
+            {
+                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
+                {
+                    SwitchState(TurnState.Rolling);
+                });
+            }
+            else
+            {
+                SwitchState(TurnState.Rolling);
+            }
+        }
         public void SwitchState(TurnState newState)
         {
             _currentTurnState?.ExitTurn();
@@ -110,17 +136,12 @@ namespace MADP.Controllers
                 _currentTurnState.EnterTurn();
             }
         }
-
-        public void ShowDiceView(bool show)
-        {
-            diceView.gameObject.SetActive(show);
-        }
-
+        
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            // Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
-            diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
+             //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
         private void OnDiceRollCompleted()
@@ -256,7 +277,7 @@ namespace MADP.Controllers
             }
 
             _selectedUnit = null;
-            SwitchState(TurnState.Rolling);
+            StartTurnProcess();
         }
 
         private void LoadTurnStates()
@@ -269,7 +290,6 @@ namespace MADP.Controllers
         }
 
         //BOT - Temp
-
         public void HandleBotTurn()
         {
             StartCoroutine(BotThinkingProcecss());

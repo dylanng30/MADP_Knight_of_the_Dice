@@ -54,10 +54,10 @@ namespace MADP.Controllers
             ICombatService combatService,
             ICellEventService cellEventService,
             List<LobbySlotModel> activeSlots,
-            MapType mapType)
+            MapType mapType,
+            TeamColorDatabaseSO teamColorDB)
         {
             _unitModelGenerationService = new UnitModelGenerationService(teamStatDB);
-
 
             _goldService = goldService;
             PathfindingService = pathfindingService;
@@ -71,11 +71,8 @@ namespace MADP.Controllers
             {
                 _teamToBaseMap[slot.TeamColor] = slot.SlotIndex;
             }
-        }
-
-        private void Start()
-        {
-            boardView.Initialize(this, _teamToBaseMap, _currentMapType);
+            
+            boardView.Initialize(this, _teamToBaseMap, _currentMapType, teamColorDB);
             StartGame();
         }
 
@@ -569,6 +566,24 @@ namespace MADP.Controllers
             return _boardModel?.AroundCells.FirstOrDefault(c =>
                 c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
         }
+        
+        public bool IsOvershootingGate(UnitModel unit, int diceValue)
+        {
+            if (unit.State != UnitState.Moving) return false;
+
+            CellModel currentCell = GetCurrentCellOfUnit(unit);
+            var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
+            
+            for (int i = 0; i < path.Count; i++)
+            {
+                CellModel cell = path[i];
+                if (cell.Structure == CellStructure.Gate && cell.TeamOwner == unit.TeamOwner)
+                {
+                    if (i < path.Count - 1) return true;
+                }
+            }
+            return false;
+        }
 
         #endregion
 
@@ -704,7 +719,7 @@ namespace MADP.Controllers
         {
             _agents = agents;
         }
-
         #endregion
+
     }
 }

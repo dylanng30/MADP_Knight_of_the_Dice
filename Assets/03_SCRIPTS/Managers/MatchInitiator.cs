@@ -10,7 +10,9 @@ using MADP.Services.Gold;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.Pathfinding;
 using MADP.Services.Pathfinding.Interfaces;
+using MADP.Settings;
 using MADP.Utilities;
+using MADP.Views;
 using UnityEngine;
 
 namespace MADP.Managers
@@ -18,17 +20,21 @@ namespace MADP.Managers
     public class MatchInitiator : MonoBehaviour
     {
         [SerializeField] private GoldUIManager _goldUIManager;
+        [SerializeField] private DiceView diceView;
         
         [Header("---CONTROLLERS---")]
         [SerializeField] private BoardController _boardController;
         [SerializeField] private TurnController _turnController;
+        
+        [Header("---COLOR DB---")]
+        [SerializeField] private TeamColorDatabaseSO teamColorDB;
         
         private IGoldService _goldService;
         private IPathfindingService _pathfindingService;
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
 
-        private void Awake()
+        private void Start()
         {
             MatchSettingsModel settings = GameManager.Instance != null 
                 ? GameManager.Instance.CurrentMatchSettings 
@@ -37,6 +43,9 @@ namespace MADP.Managers
             List<LobbySlotModel> activePlayers = settings.Slots
                 .Where(slot => slot.PlayerType != PlayerType.Empty)
                 .ToList();
+            
+            teamColorDB = teamColorDB != null ? teamColorDB : Resources.Load<TeamColorDatabaseSO>("TeamColorDB");
+            diceView.Setup(teamColorDB.GetMapColor(settings.SelectedMap, Priority.Tertiary));
             
             //SERVICES
             _goldService = new GoldService();
@@ -51,9 +60,10 @@ namespace MADP.Managers
                 _combatService, 
                 _cellEventService, 
                 activePlayers, 
-                settings.SelectedMap);
-            _turnController.Initialize(_goldService, activePlayers);
-            _goldUIManager.Initialize(_goldService, activePlayers);
+                settings.SelectedMap, 
+                teamColorDB);
+            _turnController.Initialize(_goldService, activePlayers, diceView);
+            _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
             
             _goldService.Initialize(Constants.InitialGold, activePlayers);
         }

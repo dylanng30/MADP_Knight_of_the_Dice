@@ -25,8 +25,7 @@ namespace MADP.Views.Unit
         public int Health;
         public int Damage;
         public int Armor;
-
-
+        
         public void Setup(UnitModel model)
         {
             Model = model;

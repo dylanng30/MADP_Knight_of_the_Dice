@@ -21,7 +21,7 @@ namespace MADP.Models
         public RoleType RoleType;
         public BotType BotType;
         public string PlayerName;
-        public int AvatarId;
+        public string AvatarPath;
         public bool IsHost = false;
         
         public bool HasPlayer => PlayerType != PlayerType.Empty;

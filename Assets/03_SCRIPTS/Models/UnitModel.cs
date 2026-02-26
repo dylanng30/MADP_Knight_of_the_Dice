@@ -1,4 +1,6 @@
+using System;
 using MADP.Models;
+using MADP.Models.Inventory;
 using UnityEngine;
 
 namespace MADP.Models
@@ -19,6 +21,15 @@ namespace MADP.Models
 
         public int Cost { get; private set; }
         public int StepsMoved { get; private set; }
+        
+        //Inventory
+        public UnitInventoryModel Inventory { get; private set; }
+        public Action OnStatsChanged;
+        
+        public int MaxHealth => Stat.MaxHealth + Inventory.GetTotalBonusHealth();
+        public int CurrentHealth => Mathf.Min(Stat.CurrentHealth + Inventory.GetTotalBonusHealth(), MaxHealth);
+        public int Damage => Stat.Damage + Inventory.GetTotalBonusDamage();
+        public int Armor => Stat.Armor + Inventory.GetTotalBonusArmor();
 
         public UnitModel(int id, TeamColor teamOwner, UnitStatModel stat, RoleType roleType)
         {
@@ -27,6 +38,9 @@ namespace MADP.Models
             Stat = stat;
             Cost = id;
             RoleType = roleType;
+
+            Inventory = new UnitInventoryModel();
+            Inventory.OnInventoryUpdated += () => OnStatsChanged?.Invoke();
         }
 
         public void Reset()
@@ -40,7 +54,6 @@ namespace MADP.Models
         }
         public void SetState(UnitState newState)
         {
-            //Debug.Log($"Unit {Id} state changed from {State} to {newState}");
             State = newState;
         }
 
@@ -48,6 +61,7 @@ namespace MADP.Models
         {
             Debug.Log($"Unit {Id} takes {amount} damage");
             Stat.CurrentHealth -= amount;
+            OnStatsChanged?.Invoke();
         }
 
         public void Heal(int amount)
@@ -55,9 +69,10 @@ namespace MADP.Models
             Stat.CurrentHealth += amount;
             if(Stat.CurrentHealth > Stat.MaxHealth)
                 Stat.CurrentHealth = Stat.MaxHealth;
+            OnStatsChanged?.Invoke();
         }
-        
-        public bool IsDead() => Stat.CurrentHealth <= 0;
+
+        public bool IsDead() => CurrentHealth <= 0;
 
         public void Revive()
         {

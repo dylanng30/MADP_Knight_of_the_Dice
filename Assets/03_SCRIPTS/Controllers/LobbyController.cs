@@ -134,7 +134,7 @@ namespace MADP.Controllers
             }
 
             GameManager.Instance.CurrentMatchSettings = matchSettings;          
-            SceneManager.LoadScene("Match");
+            SceneManager.LoadScene(matchSettings.SelectedMap.ToString());
         }
         #endregion
 
