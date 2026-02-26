@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using MADP.Utilities;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,6 +13,9 @@ namespace MADP.Views
     {
         [SerializeField] private float rotateDuration = 0.8f;
         [SerializeField] private float jumpHeight = 150f;
+
+        [Header("---MAP SETUP---")]
+        [SerializeField] private List<TextMeshProUGUI> numbers;
 
         private Vector3 originalPos;
         
@@ -23,6 +28,14 @@ namespace MADP.Views
             new Vector3(-90, 0, 0),
             new Vector3(180, 0, 0)
         };
+
+        public void Setup(Color mapColor)
+        {
+            foreach (var number in numbers)
+            {
+                number.color = mapColor;
+            }   
+        }
         
         public void Roll(int targetResult, Action onCompleted)
         {

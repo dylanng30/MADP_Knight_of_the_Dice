@@ -10,15 +10,18 @@ namespace MADP.Managers
 {
     public class GoldUIManager : MonoBehaviour
     {
-        [SerializeField] private TeamColorDatabaseSO teamColorDB;
         [SerializeField] private List<GoldView> goldViews;
         
         private IGoldService _goldService;
         private Dictionary<TeamColor, GoldView> _activeViews = new ();
+        private TeamColorDatabaseSO _teamColorDB;
 
-        public void Initialize(IGoldService goldService, List<LobbySlotModel> activePlayers)
+        public void Initialize(IGoldService goldService, 
+            List<LobbySlotModel> activePlayers, 
+            TeamColorDatabaseSO teamColorDB)
         {
             _goldService = goldService;
+            _teamColorDB = teamColorDB;
             _goldService.OnGoldChanged += UpdateUI;
             
             _activeViews.Clear();
@@ -31,8 +34,8 @@ namespace MADP.Managers
 
                 TeamColor team = activePlayers[i].TeamColor;
                 GoldView view = goldViews[i];
-                Color teamColorUI = teamColorDB.GetColor(team, Priority.Primary);
-                Color frameColorUI = teamColorDB.GetColor(team, Priority.Tertiary);
+                Color teamColorUI = _teamColorDB.GetTeamColor(team, Priority.Primary);
+                Color frameColorUI = _teamColorDB.GetTeamColor(team, Priority.Tertiary);
                 view.Setup(team, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
                 _activeViews.Add(team, view);
             }

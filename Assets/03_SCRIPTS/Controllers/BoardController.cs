@@ -50,11 +50,10 @@ namespace MADP.Controllers
             ICombatService combatService,
             ICellEventService cellEventService,
             List<LobbySlotModel> activeSlots,
-            MapType mapType)
+            MapType mapType,
+            TeamColorDatabaseSO teamColorDB)
         {
-
             _unitModelGenerationService = new UnitModelGenerationService(teamStatDB);
-
 
             _goldService = goldService;
             PathfindingService = pathfindingService;
@@ -68,11 +67,8 @@ namespace MADP.Controllers
             {
                 _teamToBaseMap[slot.TeamColor] = slot.SlotIndex;
             }
-        }
-
-        private void Start()
-        {
-            boardView.Initialize(this, _teamToBaseMap, _currentMapType);
+            
+            boardView.Initialize(this, _teamToBaseMap, _currentMapType, teamColorDB);
             StartGame();
         }
 

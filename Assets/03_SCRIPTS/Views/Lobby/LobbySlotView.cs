@@ -88,7 +88,7 @@ namespace MADP.Views.Lobby
         
         private Color GetTeamColor(TeamColor color)
         {
-            return teamColorDB.GetColor(color, Priority.Primary);
+            return teamColorDB.GetTeamColor(color, Priority.Primary);
         }
 
         #region ---ANIMATION ---

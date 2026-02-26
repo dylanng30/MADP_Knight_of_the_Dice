@@ -30,10 +30,8 @@ namespace MADP.Controllers
         [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
-        [SerializeField] private DiceView diceView;
         [SerializeField] private UIManager _uiManager;
         
-        private Dictionary<TurnState, ITurnState> _turnStates;
         public int CurrentDiceValue { get; private set; }
         
         private UnitModel _selectedUnit;
@@ -44,17 +42,22 @@ namespace MADP.Controllers
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
         
-        private List<LobbySlotModel> _activeSlots = new List<LobbySlotModel>();
+        private List<LobbySlotModel> _activeSlots = new ();
         private int _currentTeamIndex = 0;
+        private Dictionary<TurnState, ITurnState> _turnStates;
+        private DiceView _diceView;
+        
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
         
         public void Initialize(
             IGoldService goldService, 
-            List<LobbySlotModel> activeSlots)
+            List<LobbySlotModel> activeSlots, 
+            DiceView diceView)
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
+            _diceView = diceView;
             
             _botDecisionService = new BotDecisionService();
             
@@ -78,14 +81,12 @@ namespace MADP.Controllers
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
-        }
-        
-        private void Start()
-        {
+            
             LoadTurnStates();
             _currentTeamIndex = 0;
             StartTurnProcess();
         }
+        
         private void Update()
         {
             _currentTurnState?.ExecuteTurn();
@@ -118,7 +119,7 @@ namespace MADP.Controllers
         {
             CurrentDiceValue = Random.Range(1, 7);
             Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
-            diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
+            _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
         private void OnDiceRollCompleted()
