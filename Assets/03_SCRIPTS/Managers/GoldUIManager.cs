@@ -32,7 +32,8 @@ namespace MADP.Managers
                 TeamColor team = activePlayers[i].TeamColor;
                 GoldView view = goldViews[i];
                 Color teamColorUI = teamColorDB.GetColor(team, Priority.Primary);
-                view.Setup(team, teamColorUI);
+                Color frameColorUI = teamColorDB.GetColor(team, Priority.Tertiary);
+                view.Setup(team, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
                 _activeViews.Add(team, view);
             }
         }

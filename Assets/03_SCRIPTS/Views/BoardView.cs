@@ -28,7 +28,6 @@ namespace MADP.Views
         
         //Services
         private BoardLayoutService _boardLayoutService = new ();
-        private BoardRotationService _rotationService = new ();
         
         //Mapper
         private Dictionary<CellModel, CellView> _cellMap = new();
@@ -36,11 +35,6 @@ namespace MADP.Views
 
         private List<CellView> _currentHighlightedCells = new();
         private MapType _currentMapType;
-
-        private void Update()
-        {
-            //_rotationService?.Update(transform);
-        }
 
         public void Initialize(
             BoardController controller, 

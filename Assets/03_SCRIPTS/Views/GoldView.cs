@@ -13,20 +13,26 @@ namespace MADP.Views
 {
     public class GoldView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI teamNameText;
-        [SerializeField] private TextMeshProUGUI goldText;
+        [SerializeField] private Image avatar;
         [SerializeField] private Image bgImage;
-        public void Setup(TeamColor team, Color uiColor)
+        [SerializeField] private Image frameImage;
+        
+        [SerializeField] private TextMeshProUGUI goldText;
+        
+        public void Setup(TeamColor team, Color uiColor, Color frameColor, string avatarPath)
         {
-            if (teamNameText) teamNameText.text = team.ToString();
+            
             if (bgImage) bgImage.color = uiColor;
-            if (goldText) goldText.color = uiColor;
+            if (frameImage) frameImage.color = frameColor;
+            //if (goldText) goldText.color = uiColor;
+            
+            //Load Avatar
 
             gameObject.SetActive(true);
         }
         public void SetGold(int goldAmount)
         {
-            goldText.text = $"Gold: {goldAmount}";
+            goldText.text = $"{goldAmount}$";
         }
         public void Hide()
         {

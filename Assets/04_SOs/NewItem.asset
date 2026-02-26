@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: NewItem
   m_EditorClassIdentifier: 
   ItemName: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 9ec83b7ff9eb8594d914706585bf0482, type: 3}
   Description: 
-  BonusHealth: 0
-  BonusDamage: 0
-  BonusArmor: 0
+  BonusHealth: 2
+  BonusDamage: 2
+  BonusArmor: 2

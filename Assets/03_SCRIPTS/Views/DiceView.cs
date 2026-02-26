@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using DG.Tweening;
+using MADP.Utilities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,8 +10,10 @@ namespace MADP.Views
     public class DiceView: MonoBehaviour
     {
         [SerializeField] private float rotateDuration = 0.8f;
+        [SerializeField] private float jumpHeight = 150f;
+
+        private Vector3 originalPos;
         
-        private bool _isRolling;
         private readonly Vector3[] _faceRotations = 
         {
             new Vector3(0, 0, 0),
@@ -22,17 +26,15 @@ namespace MADP.Views
         
         public void Roll(int targetResult, Action onCompleted)
         {
-            if (_isRolling) 
-                return;
-            
-            _isRolling = true;
-            
+            originalPos = transform.position;
             Vector3 targetRotation = _faceRotations[targetResult - 1];
             Quaternion finalQuat = Quaternion.Euler(targetRotation);
             transform.localRotation = finalQuat;
-
-            _isRolling = false;
-            onCompleted?.Invoke();
+            UIAnimator.RoleDice(transform, targetRotation, jumpHeight, rotateDuration).OnComplete(() =>
+            {
+                onCompleted?.Invoke();
+                transform.position = originalPos;
+            });
         }
     }
 }

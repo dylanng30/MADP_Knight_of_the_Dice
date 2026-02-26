@@ -22,6 +22,12 @@ namespace MADP.Controllers
     }
     public class TurnController : MonoBehaviour
     {
+        [Header("Turn Settings")]
+        [SerializeField] private TurnView turnView;
+
+        public TurnView TurnView => turnView;
+        
+        [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
         [SerializeField] private DiceView diceView;
@@ -37,7 +43,6 @@ namespace MADP.Controllers
         //Services
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
-        
         
         private List<LobbySlotModel> _activeSlots = new List<LobbySlotModel>();
         private int _currentTeamIndex = 0;
@@ -78,11 +83,26 @@ namespace MADP.Controllers
         private void Start()
         {
             LoadTurnStates();
-            SwitchState(TurnState.Rolling);
+            _currentTeamIndex = 0;
+            StartTurnProcess();
         }
         private void Update()
         {
             _currentTurnState?.ExecuteTurn();
+        }
+        private void StartTurnProcess()
+        {
+            if (turnView != null)
+            {
+                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
+                {
+                    SwitchState(TurnState.Rolling);
+                });
+            }
+            else
+            {
+                SwitchState(TurnState.Rolling);
+            }
         }
         public void SwitchState(TurnState newState)
         {
@@ -92,10 +112,6 @@ namespace MADP.Controllers
                 _currentTurnState = state;
                 _currentTurnState.EnterTurn();
             }
-        }
-        public void ShowDiceView(bool show)
-        {
-            diceView.gameObject.SetActive(show);
         }
         
         public void RollDice()
@@ -209,7 +225,7 @@ namespace MADP.Controllers
             }
             
             _selectedUnit = null;
-            SwitchState(TurnState.Rolling);
+            StartTurnProcess();
         }
         
         private void LoadTurnStates()
@@ -222,7 +238,6 @@ namespace MADP.Controllers
         }
         
         //BOT - Temp
-
         public void HandleBotTurn()
         {
             StartCoroutine(BotThinkingProcecss());

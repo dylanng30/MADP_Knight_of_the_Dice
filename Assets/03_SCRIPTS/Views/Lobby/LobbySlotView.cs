@@ -13,7 +13,7 @@ namespace MADP.Views.Lobby
     public class LobbySlotView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("---SET UP---")]
-        [SerializeField] private TeamColorSetting teamColorSetting;
+        [SerializeField] private TeamColorDatabaseSO teamColorDB;
         [SerializeField] private RectTransform emptySlot;
         [SerializeField] private RectTransform playerSlot;
         
@@ -86,14 +86,10 @@ namespace MADP.Views.Lobby
             if (_hasPlayer && !_isHost) removeButton.gameObject.SetActive(false);
         }
         
-        private Color GetTeamColor(TeamColor color) => color switch {
-            TeamColor.Blue => teamColorSetting.Blue,
-            TeamColor.Red => teamColorSetting.Red,
-            TeamColor.Green => teamColorSetting.Green,
-            TeamColor.Yellow => teamColorSetting.Yellow,
-            TeamColor.Purple =>  teamColorSetting.Purple,
-            _ => teamColorSetting.DefaultColor
-        };
+        private Color GetTeamColor(TeamColor color)
+        {
+            return teamColorDB.GetColor(color, Priority.Primary);
+        }
 
         #region ---ANIMATION ---
 

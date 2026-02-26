@@ -1,4 +1,5 @@
-﻿using MADP.Models;
+﻿using System;
+using MADP.Models;
 using MADP.Views.Inventory;
 using TMPro;
 using UnityEngine;
@@ -23,7 +24,18 @@ namespace MADP.Views.UnitInfo
         [Header("INVENTORY")]
         [SerializeField] private UnitInventoryView inventoryView;
 
+        [Header("OTHERS")]
+        [SerializeField] private Button hideButton;
+        
+        public Action HideAction;
+        
         private UnitModel unitModel;
+        
+
+        private void Awake()
+        {
+            hideButton.onClick.AddListener((() => {HideAction?.Invoke();}));
+        }
 
         public void Show(UnitModel model)
         {

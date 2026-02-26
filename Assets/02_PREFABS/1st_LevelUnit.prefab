@@ -53,7 +53,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.6
   m_Height: 2.3
   m_Direction: 1
   m_Center: {x: 0, y: 1.15, z: 0}
@@ -77,6 +77,11 @@ MonoBehaviour:
   TertiarySign: []
   collider: {fileID: 19721036122415437}
   animator: {fileID: 0}
+  Role: 0
+  Level: 0
+  Health: 0
+  Damage: 0
+  Armor: 0
 --- !u!1001 &1587287189206885400
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -85,6 +90,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 22719793506686046}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -124,6 +141,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dd6f0e812c2f3544ab4b107ef14ea329, type: 3}
       propertyPath: m_Name

@@ -11,7 +11,7 @@ namespace MADP.Services
         private float _cellSize = 1f;
         private Vector3 _offset = new Vector3(0, 0, 8);
         //Unit
-        private float _cageOffset = 4.0f;
+        private float _cageOffset = 8.0f;
         private float _unitGap = 2f;
         
         private Vector3 _currentPosition;

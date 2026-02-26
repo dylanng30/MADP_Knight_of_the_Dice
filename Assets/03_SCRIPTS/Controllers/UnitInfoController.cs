@@ -22,6 +22,7 @@ namespace MADP.Controllers
 
         private void Awake()
         {
+            unitInfoView.HideAction += Clear;
             unitInfoView.Clear();
         }
         private void Update()
@@ -57,6 +58,7 @@ namespace MADP.Controllers
 
         private void Clear()
         {
+            _selectedUnit = null;
             unitInfoView.Clear();
         }
     }
