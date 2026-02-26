@@ -19,7 +19,7 @@ namespace _03_SCRIPTS.AI
         [SerializeField] private TeamColor agentColor;
         public TeamColor AgentColor => agentColor;
         [SerializeField] public int maxAgentTurn = 30;
-        [SerializeField] private int maxGold = 50;
+        // [SerializeField] private int maxGold = 50;
         [SerializeField] private int maxCell = 56;
         [SerializeField] private int maxStat = 5;
 
@@ -137,13 +137,13 @@ namespace _03_SCRIPTS.AI
             var normalizedInHomeCell = inHomeCell / 4f;
             var normalizedInNormalCell = inNormalCell / 4f;
             var normalizedDiceValue = _diceValue / 6f;
-            var normalizedGoldValue = (float)_goldValue / maxGold;
+            // var normalizedGoldValue = (float)_goldValue / maxGold;
             var normalizedTurn = (float)TurnCounter / maxAgentTurn;
 
             sensor.AddObservation(normalizedInHomeCell);
             sensor.AddObservation(normalizedInNormalCell);
             sensor.AddObservation(normalizedDiceValue);
-            sensor.AddObservation(normalizedGoldValue);
+            // sensor.AddObservation(normalizedGoldValue);
             sensor.AddObservation(normalizedTurn);
             
             sensor.AddObservation(agentColor == TeamColor.Red ? 1 : 0);

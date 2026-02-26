@@ -836,12 +836,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 30
+  MaxStep: 5000
   boardController: {fileID: 33901811}
   turnController: {fileID: 335208605}
   agentColor: 3
-  maxAgentTurn: 30
-  maxGold: 50
+  maxAgentTurn: 100
   maxCell: 56
   maxStat: 10
 --- !u!114 &459831970
@@ -857,7 +856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 77
+    VectorObservationSize: 76
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -1461,12 +1460,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 30
+  MaxStep: 10000
   boardController: {fileID: 33901811}
   turnController: {fileID: 335208605}
   agentColor: 4
-  maxAgentTurn: 30
-  maxGold: 50
+  maxAgentTurn: 100
   maxCell: 56
   maxStat: 10
 --- !u!114 &680428910
@@ -1482,7 +1480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 77
+    VectorObservationSize: 76
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -1645,12 +1643,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 30
+  MaxStep: 5000
   boardController: {fileID: 33901811}
   turnController: {fileID: 335208605}
   agentColor: 2
-  maxAgentTurn: 30
-  maxGold: 50
+  maxAgentTurn: 100
   maxCell: 56
   maxStat: 10
 --- !u!114 &706389098
@@ -1666,7 +1663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 77
+    VectorObservationSize: 76
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -2803,12 +2800,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 30
+  MaxStep: 5000
   boardController: {fileID: 33901811}
   turnController: {fileID: 335208605}
   agentColor: 1
-  maxAgentTurn: 30
-  maxGold: 50
+  maxAgentTurn: 100
   maxCell: 56
   maxStat: 10
 --- !u!114 &1496006069
@@ -2824,7 +2820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 77
+    VectorObservationSize: 76
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0

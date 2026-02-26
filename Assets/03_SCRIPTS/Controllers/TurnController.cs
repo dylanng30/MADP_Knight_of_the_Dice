@@ -307,6 +307,7 @@ namespace MADP.Controllers
 
         public void ResetEnvironment()
         {
+            StopAllCoroutines();
             boardController.ResetBoard();
             _currentTeamIndex = 0;
             _selectedUnit = null;

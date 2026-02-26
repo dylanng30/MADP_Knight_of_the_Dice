@@ -9,13 +9,13 @@ namespace MADP.Views.Unit
 {
     public class UnitView : MonoBehaviour
     {
-        [Header("---MATERIALS---")]
-        public List<Renderer> PrimarySign;
+        [Header("---MATERIALS---")] public List<Renderer> PrimarySign;
         public List<Renderer> SecondarySign;
         public List<Renderer> TertiarySign;
-        
-        [Header("---COMPONENTS---")]
-        [SerializeField] private Collider collider;
+
+        [Header("---COMPONENTS---")] [SerializeField]
+        private Collider collider;
+
         [SerializeField] private Animator animator;
         public Collider Collider => collider;
         public UnitModel Model { get; private set; }
@@ -40,7 +40,7 @@ namespace MADP.Views.Unit
 
         public void PlayAnimation(string animationName)
         {
-            Debug.Log("Playing animation: " + animationName); 
+            // Debug.Log("Playing animation: " + animationName); 
             //animator.Play(animationName);
         }
 
@@ -51,33 +51,48 @@ namespace MADP.Views.Unit
 
         public IEnumerator MoveTo(Vector3 targetPosition)
         {
+            if (!this || !gameObject)
+                yield break;
+
             Vector3 moveDirection = targetPosition - transform.position;
             Rotate(moveDirection);
-            while (Vector3.Distance(transform.position, targetPosition) > 0.05f)
+
+            while (true)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.1f);
+                if (!this || !gameObject)
+                    yield break;
+
+                if (!isActiveAndEnabled)
+                    yield break;
+
+                if (Vector3.Distance(transform.position, targetPosition) <= 0.05f)
+                    break;
+
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    targetPosition,
+                    0.1f
+                );
+
                 yield return null;
             }
-            
-            yield return new WaitForSeconds(0.5f);
         }
 
         public void OnAnimationStarted()
         {
-            
         }
+
         public void OnAnimationTriggerCalled()
         {
-            
         }
+
         public void OnAnimationFinished()
         {
-            
         }
 
         public void Rotate(Vector3 direction)
         {
-            direction.y = 0; 
+            direction.y = 0;
             if (direction.sqrMagnitude > 0.01f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);

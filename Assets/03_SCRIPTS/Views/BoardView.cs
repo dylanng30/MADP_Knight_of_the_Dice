@@ -47,6 +47,8 @@ namespace MADP.Views
             Dictionary<TeamColor, int> teamToBaseMap,
             MapType mapType)
         {
+            StopAllCoroutines();
+            
             _controller = controller;
             _currentMapType = mapType;
             
@@ -63,6 +65,7 @@ namespace MADP.Views
         }
         public void Reset()
         {
+            StopAllCoroutines();
             _boardLayoutService.Reset();
             
             foreach (Transform child in transform)
