@@ -5,26 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/LobbyController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/LobbyController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/CharacterDatabaseSO.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/CharacterDatabaseSO.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ColorPaletteSetting.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ColorPaletteSetting.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/MapSetting.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/MapSetting.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/TeamColorDatabaseSO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/TeamColorDatabaseSO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/DiceView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/DiceView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/LobbySlotView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/LobbySlotView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/TeamColorDB.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/TeamColorDB.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/TeamColorPalette.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/TeamColorPalette.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/PathfindingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/PathfindingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/TurnView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/TurnView.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Lobby.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Lobby.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,13 +67,13 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Lobby/LobbyService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/Interfaces/IPathfindingService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/PathfindingService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Shop/ShopService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileSO.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/CharacterDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ColorPaletteSetting.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ItemDataSO.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/MapSetting.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ShopDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/TeamColorDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GeneralSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
@@ -95,6 +86,8 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/RoleItemView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/RoleSettingView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/MainPanels/Interfaces/IMainPanel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Shop/ShopItemSlotView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Shop/ShopView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/TurnView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Unit/UnitView.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -228,6 +221,14 @@
       <workItem from="1772027278066" duration="17407000" />
       <workItem from="1772081141905" duration="1537000" />
       <workItem from="1772082759219" duration="2060000" />
+      <workItem from="1772129642540" duration="186000" />
+      <workItem from="1772163604504" duration="2061000" />
+      <workItem from="1772174627428" duration="1109000" />
+      <workItem from="1772177149937" duration="5319000" />
+      <workItem from="1772193421859" duration="11112000" />
+      <workItem from="1772209715582" duration="2836000" />
+      <workItem from="1772261236061" duration="3329000" />
+      <workItem from="1772271868052" duration="7056000" />
     </task>
     <task id="LOCAL-00001" summary="Stat + AttackAction">
       <option name="closed" value="true" />

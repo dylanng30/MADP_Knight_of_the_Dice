@@ -27,7 +27,7 @@ namespace MADP.Services.Lobby
 
             _lobbyModel.Slots[0] = new LobbySlotModel(0, TeamColor.Red)
             {
-                PlayerType = PlayerType.Human,
+                PlayerType = PlayerType.Bot,
                 IsHost = true
             };
             _lobbyModel.Slots[1] = new LobbySlotModel(1, TeamColor.None);
@@ -124,7 +124,7 @@ namespace MADP.Services.Lobby
                 if (originalSlot.RoleType == RoleType.Random)
                 {
                     newSlot.RoleType = EnumUtils.GetRandomRoleConcrete();
-                    Debug.Log($"Slot {newSlot.SlotIndex} Role 'Random' -> Resolved to '{newSlot.RoleType}'");
+                    //Debug.Log($"Slot {newSlot.SlotIndex} Role 'Random' -> Resolved to '{newSlot.RoleType}'");
                 }
                 else
                 {

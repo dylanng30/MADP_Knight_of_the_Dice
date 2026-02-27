@@ -16,6 +16,7 @@ namespace MADP.Views.Lobby
         [SerializeField] private TeamColorDatabaseSO teamColorDB;
         [SerializeField] private RectTransform emptySlot;
         [SerializeField] private RectTransform playerSlot;
+        [SerializeField] private RectTransform slotRect;
         
         [Space(10)]
         [Header("---UI---")]
@@ -95,7 +96,7 @@ namespace MADP.Views.Lobby
 
         private void SlideIn()
         {
-            var sequence = UIAnimator.SlideInFromTop(playerSlot, playerSlot.rect.height, 1f);
+            var sequence = UIAnimator.SlideInFromTop(slotRect, slotRect.rect.height, 1f);
         }
 
         #endregion

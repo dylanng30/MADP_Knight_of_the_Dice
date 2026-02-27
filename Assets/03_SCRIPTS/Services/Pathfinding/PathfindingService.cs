@@ -29,13 +29,17 @@ namespace MADP.Services.Pathfinding
             int currentIndex = aroundCells.IndexOf(startCell);
             path.Add(startCell);
             bool hasSpawnCell = false;
-            for (int i = 0; i <= steps; i++)
+            for (int i = 1; i <= steps; i++)
             {
                 var rawIndex = (currentIndex - i + aroundCells.Count) % aroundCells.Count;
                 
                 if (aroundCells[rawIndex].Structure == CellStructure.Spawn)
                 {
                     hasSpawnCell = true;
+                    if (startCell.HasUnit && startCell.Unit.TeamOwner == aroundCells[rawIndex].TeamOwner)
+                    {
+                        path.Add(aroundCells[rawIndex]);
+                    }
                 }
                 
                 int finalIndex = hasSpawnCell ? (rawIndex - 1 + aroundCells.Count) % aroundCells.Count : rawIndex;

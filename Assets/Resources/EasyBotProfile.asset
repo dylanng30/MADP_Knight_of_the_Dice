@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21355bfba2db45ebbd1036102cfec6f1, type: 3}
   m_Name: EasyBotProfile
   m_EditorClassIdentifier: 
-  WeightKick: 500
-  WeightSafe: 100
-  WeightHome: 300
-  WeightDistance: 10
-  WeightDanger: 200
+  WeightKick: 300
+  WeightSafe: 50
+  WeightHome: 500
+  WeightDistance: 5
+  WeightDanger: 50

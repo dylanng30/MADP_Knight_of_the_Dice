@@ -62,7 +62,7 @@ namespace MADP.Managers
                 activePlayers, 
                 settings.SelectedMap, 
                 teamColorDB);
-            _turnController.Initialize(_goldService, activePlayers, diceView);
+            _turnController.Initialize(_goldService, activePlayers, diceView, settings.TimePerTurn);
             _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
             
             _goldService.Initialize(Constants.InitialGold, activePlayers);

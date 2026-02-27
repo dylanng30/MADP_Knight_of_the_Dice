@@ -85,7 +85,6 @@ namespace MADP.Controllers
         {
             var currentSlot = _lobbyService.GetSlots()[slotIndex];
             var takenColors = _lobbyService.GetTakenColors(slotIndex);
-            //colorSettingView.Show(currentSlot, _lobbyService.GetSlots());
             colorSettingView.Show(currentSlot.TeamColor, takenColors, slotIndex);
         }
         private void HandleColorSaveRequested(int slotIndex, TeamColor newColor)
@@ -121,7 +120,7 @@ namespace MADP.Controllers
         }
         private void HandleStartGame()
         {
-            Debug.Log("Game Started!");
+            //Debug.Log("Game Started!");
             var matchSettings = _lobbyService.GetFinalizedMatchSettings();
             int activePlayers = 0;
             foreach (var slot in matchSettings.Slots)

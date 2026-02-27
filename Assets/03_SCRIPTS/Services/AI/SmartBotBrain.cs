@@ -30,27 +30,27 @@ namespace MADP.Services.AI
             {
                 if (!_boardController.CanInteract(unit, diceValue)) continue;
                 if (unit.State == UnitState.Moving && _boardController.IsOvershootingGate(unit, diceValue)) continue; 
-                
-                if (unit.State == UnitState.InNest)
+
+                if (_boardController.CanSpawnUnit(unit, diceValue))
                 {
                     CellModel spawnCell = _boardController.GetSpawnCell(unit.TeamOwner);
-                    float score = EvaluateState(unit, spawnCell, true, board);
+                    float score = EvaluateState(unit, spawnCell, board);
 
                     if (score > maxScore)
                     {
                         maxScore = score;
                         bestUnit = unit;
-                        bestDestination = null;
+                        bestDestination = spawnCell;
                     }
                 }
-                else
+                else if (_boardController.CanMoveUnit(unit, diceValue))
                 {
                     var destCells = _boardController.GetPotentialDestinationCell(unit, diceValue);
                     if (destCells == null || destCells.Count == 0) continue;
                     
                     foreach (var destCell in destCells)
                     {
-                        float score = EvaluateState(unit, destCell, false, board);
+                        float score = EvaluateState(unit, destCell, board);
 
                         if (score > maxScore)
                         {
@@ -65,8 +65,11 @@ namespace MADP.Services.AI
             return (bestUnit, bestDestination);
         }
 
-        private float EvaluateState(UnitModel unit, CellModel targetCell, bool isSpawning, BoardModel board)
+        private float EvaluateState(UnitModel unit, CellModel targetCell, BoardModel board)
         {
+            if (targetCell.Structure == CellStructure.Home)
+                return _profile.WeightHome * unit.StepsMoved;
+            
             float score = 0f;
 
             //Kick
@@ -74,19 +77,20 @@ namespace MADP.Services.AI
                 score += _profile.WeightKick;
 
             //Safe
-            if (targetCell.Structure == CellStructure.Gate || targetCell.Structure == CellStructure.Spawn)
+            if (targetCell.Structure == CellStructure.Spawn)
+            {
                 score += _profile.WeightSafe;
-
+                score += 200f;
+            }
+                
+            
             //Home
-            if (targetCell.Structure == CellStructure.Home)
+            if (targetCell.Structure == CellStructure.Gate)
                 score += _profile.WeightHome;
 
             //Distance
-            int steps = isSpawning ? 0 : unit.StepsMoved + 1; 
+            int steps = unit.StepsMoved + 1; 
             score += (_profile.WeightDistance * steps);
-
-            //Khuyến khích ra quân nếu có cơ hội
-            if (isSpawning) score += 200f; 
 
             //Danger
             float expectedDanger = CalculateExpectedDanger(unit.TeamOwner, targetCell, board);
@@ -98,8 +102,7 @@ namespace MADP.Services.AI
         private float CalculateExpectedDanger(TeamColor myTeam, CellModel targetCell, BoardModel board)
         {
             //Các ô này miễn nhiễm sát thương
-            if (targetCell.Structure == CellStructure.Gate || 
-                targetCell.Structure == CellStructure.Spawn || 
+            if (targetCell.Structure == CellStructure.Spawn || 
                 targetCell.Structure == CellStructure.Home)
             {
                 return 0f;

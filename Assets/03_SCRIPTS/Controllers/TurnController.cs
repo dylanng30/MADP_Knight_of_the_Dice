@@ -10,6 +10,7 @@ using MADP.Services.Gold.Interfaces;
 using MADP.Settings;
 using MADP.States.TurnStates;
 using MADP.States.TurnStates.Interfaces;
+using MADP.Systems;
 using MADP.Views;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,11 +23,6 @@ namespace MADP.Controllers
     }
     public class TurnController : MonoBehaviour
     {
-        [Header("Turn Settings")]
-        [SerializeField] private TurnView turnView;
-
-        public TurnView TurnView => turnView;
-        
         [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
@@ -43,21 +39,36 @@ namespace MADP.Controllers
         private BotDecisionService _botDecisionService;
         
         private List<LobbySlotModel> _activeSlots = new ();
-        private int _currentTeamIndex = 0;
         private Dictionary<TurnState, ITurnState> _turnStates;
         private DiceView _diceView;
+        
+        [Header("Phase Settings")]
+        [SerializeField] private ShoppingPhaseController shoppingPhaseController;
+        private int _currentRound = 1;
+        private const int SHOPPING_PHASE_INTERVAL = 5;
+        
+        [Header("Turn Settings")]
+        [SerializeField] private TurnView turnView;
+        private int _currentTeamIndex = 0;
+        private float _timePerTurn;
+        private float _currentTurnTimer;
+        
+        public float CurrentTurnTimer => _currentTurnTimer;
         
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
         
+        
         public void Initialize(
             IGoldService goldService, 
             List<LobbySlotModel> activeSlots, 
-            DiceView diceView)
+            DiceView diceView,
+            float timePerTurn)
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
             _diceView = diceView;
+            _timePerTurn = timePerTurn;
             
             _botDecisionService = new BotDecisionService();
             
@@ -77,7 +88,8 @@ namespace MADP.Controllers
                     {
                         botBrain = new RandomBotBrain(boardController);
                     }
-                    
+
+                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} ");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
@@ -85,25 +97,37 @@ namespace MADP.Controllers
             LoadTurnStates();
             _currentTeamIndex = 0;
             StartTurnProcess();
+
+            Time.timeScale = 100;
         }
         
         private void Update()
         {
             _currentTurnState?.ExecuteTurn();
+            
+            if (!ActionSystem.Instance.IsPerforming)
+            {
+                if (_currentTurnTimer > 0)
+                {
+                    _currentTurnTimer -= Time.deltaTime;
+                    turnView.UpdateTimer(_currentTurnTimer);
+
+                    if (_currentTurnTimer <= 0)
+                    {
+                        Debug.Log($"[Time Out] Đội {CurrentTeam} đã hết thời gian lượt đấu! Tự động qua lượt.");
+                        EndTurn();
+                    }
+                }
+            }
         }
         private void StartTurnProcess()
         {
-            if (turnView != null)
-            {
-                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
-                {
-                    SwitchState(TurnState.Rolling);
-                });
-            }
-            else
+            _currentTurnTimer = _timePerTurn;
+            turnView.UpdateTimer(_currentTurnTimer);
+            turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
             {
                 SwitchState(TurnState.Rolling);
-            }
+            });
         }
         public void SwitchState(TurnState newState)
         {
@@ -118,7 +142,7 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -186,11 +210,6 @@ namespace MADP.Controllers
             boardController.HighlightCells(_potentialDestination);
         }
 
-        public void ShowUnitInfo(UnitModel unit)
-        {
-            
-        }
-
         public void DeselectCurrent()
         {
             boardController.ClearAllHighlights();
@@ -204,7 +223,6 @@ namespace MADP.Controllers
             {
                 if (boardController.CheckWinCondition(CurrentTeam))
                 {
-                    //GameManager.Instance.HandleVictory(CurrentTeam);
                     SwitchState(TurnState.WaitingForActions);
                 }
                 else
@@ -215,17 +233,25 @@ namespace MADP.Controllers
         }
         public void EndTurn()
         {
+            _selectedUnit = null;
+            
             if (CurrentDiceValue != 6)
             {
                 _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
 
                 if(_currentTeamIndex == 0)
                 {
+                    _currentRound++;
                     _goldService.ApplyRoundBonus();
+                    /*if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
+                    {
+                        turnView.AnimateShopPhaseNotification();
+                        shoppingPhaseController.ShowPhaseShop(EndTurn);
+                        return;
+                    }*/
                 }
             }
             
-            _selectedUnit = null;
             StartTurnProcess();
         }
         
@@ -234,7 +260,8 @@ namespace MADP.Controllers
             _turnStates = new Dictionary<TurnState, ITurnState>
             {
                 { TurnState.Rolling, new RollingState(this) },
-                { TurnState.Choosing, new ChoosingState(this) }
+                { TurnState.Choosing, new ChoosingState(this) },
+                { TurnState.WaitingForActions, new WinState(this) }
             };
         }
         
@@ -253,12 +280,11 @@ namespace MADP.Controllers
             {
                 if (bestMove.Unit.State == UnitState.InNest)
                 {
-                    Debug.Log($"Bot {CurrentTeam} quyết định SINH QUÂN {bestMove.Unit.Id}");
+                    Debug.Log($"Bot {CurrentTeam} quyết định sinh quân {bestMove.Unit.Id}");
                     boardController.SpawnUnit(bestMove.Unit, EndTurn);
                 }
                 else if (bestMove.Destination != null)
                 {
-                    Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestMove.Unit.Id} đến {bestMove.Destination.Index}");
                     ExecuteMove(bestMove.Unit, bestMove.Destination); 
                 }
                 else

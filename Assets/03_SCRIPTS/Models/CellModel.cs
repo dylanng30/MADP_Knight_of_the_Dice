@@ -37,7 +37,7 @@ namespace MADP.Models
         {
             if (Unit != null)
             {
-                Debug.Log("Loi logic");
+                Debug.LogWarning($"Đang có unit {unit.Id} của team {unit.TeamOwner}");
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace MADP.Models
         }
         public void Clear()
         {
-            Debug.Log($"Unit {Unit.Id} cua team {Unit.TeamOwner.ToString()} roi o {Index}");
+            //Debug.Log($"Unit {Unit.Id} cua team {Unit.TeamOwner.ToString()} roi o {Index}");
             Unit = null;
         }
     }

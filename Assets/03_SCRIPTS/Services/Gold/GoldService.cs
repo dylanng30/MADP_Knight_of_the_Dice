@@ -8,16 +8,13 @@ namespace MADP.Services.Gold
 {
     public class GoldService : IGoldService
     {
-        private readonly GoldModel _goldModel;
-        
-        public GoldService()
-        {
-            _goldModel = new GoldModel();
-            _goldModel.OnTeamGoldChanged += HandleGoldChanged;
-        }
+        private GoldModel _goldModel;
 
         public void Initialize(int initialGold, List<LobbySlotModel> activePlayers)
         {
+            _goldModel = new GoldModel();
+            _goldModel.OnTeamGoldChanged += HandleGoldChanged;
+            
             List<TeamColor> teams =  new List<TeamColor>();
             foreach (var player in activePlayers)
             {
