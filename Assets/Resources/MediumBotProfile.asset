@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MediumBotProfile
   m_EditorClassIdentifier: 
   WeightKick: 500
-  WeightSafe: 100
-  WeightHome: 300
-  WeightDistance: 10
-  WeightDanger: 200
+  WeightSafe: 200
+  WeightHome: 1000
+  WeightDistance: 12
+  WeightDanger: 350

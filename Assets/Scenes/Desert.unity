@@ -279,9 +279,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamStatDB: {fileID: 11400000, guid: 2a592f95a6eb8334c83c74b361385b24, type: 2}
   boardSetting:
-    RedCellCount: 1
-    YellowCellCount: 1
-    PurpleCellCount: 1
+    RedCellCount: 0
+    YellowCellCount: 0
+    PurpleCellCount: 0
   boardView: {fileID: 985050421}
 --- !u!1 &114542784
 GameObject:
@@ -1159,6 +1159,7 @@ MonoBehaviour:
   botDB: {fileID: 11400000, guid: 0b66456dd136f5749b8ea37af8e8b2a9, type: 2}
   boardController: {fileID: 33901811}
   _uiManager: {fileID: 0}
+  shoppingPhaseController: {fileID: 0}
 --- !u!4 &335208606
 Transform:
   m_ObjectHideFlags: 0

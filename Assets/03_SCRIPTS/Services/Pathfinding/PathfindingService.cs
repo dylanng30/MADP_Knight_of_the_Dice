@@ -29,7 +29,7 @@ namespace MADP.Services.Pathfinding
             int currentIndex = aroundCells.IndexOf(startCell);
             path.Add(startCell);
             bool hasSpawnCell = false;
-            for (int i = 0; i <= steps; i++)
+            for (int i = 1; i <= steps; i++)
             {
                 var rawIndex = (currentIndex - i + aroundCells.Count) % aroundCells.Count;
                 

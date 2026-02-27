@@ -11,7 +11,7 @@ namespace MADP.Services
         private readonly Dictionary<TeamColor, IBotBrain> _bots = new ();
         public void RegisterBotStrategy(TeamColor team, IBotBrain botBrain)
         {
-            Debug.Log($"Team {team} dùng {botBrain.GetType()}");
+            //Debug.Log($"Team {team} dùng {botBrain.GetType()}");
             _bots[team] = botBrain;
         }
         

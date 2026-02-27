@@ -15,11 +15,22 @@ namespace MADP.Views
 
         [SerializeField] private float displayDuration = 1.5f;
 
-        public void AnimateTurnNotification(TeamColor teamColor, bool playerTurn, Action onAnimationComplete)
+        public void AnimateTurnNotification(TeamColor teamColor, bool playerTurn, Action onAnimationCompleted)
         {
             string turnString = playerTurn ? "Your turn" : $"{teamColor.ToString()}'s turn";
             if (turnTxt) turnTxt.text = turnString;
             
+            Popup(onAnimationCompleted);
+        }
+
+        public void AnimateShopPhaseNotification()
+        {
+            if(turnTxt) turnTxt.text = $"SHOPPING PHASE";
+            Popup();
+        }
+
+        private void Popup(Action onAnimationCompleted = null)
+        {
             gameObject.SetActive(true);
 
             Sequence seq = UIAnimator.Popup(rect, 1f);
@@ -27,7 +38,7 @@ namespace MADP.Views
             seq.OnComplete(() => 
             {
                 gameObject.SetActive(false);
-                onAnimationComplete?.Invoke();
+                onAnimationCompleted?.Invoke();
             });
         }
     }

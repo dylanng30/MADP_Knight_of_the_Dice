@@ -24,8 +24,6 @@ namespace MADP.Controllers
     {
         [Header("Turn Settings")]
         [SerializeField] private TurnView turnView;
-
-        public TurnView TurnView => turnView;
         
         [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
@@ -43,9 +41,16 @@ namespace MADP.Controllers
         private BotDecisionService _botDecisionService;
         
         private List<LobbySlotModel> _activeSlots = new ();
-        private int _currentTeamIndex = 0;
         private Dictionary<TurnState, ITurnState> _turnStates;
         private DiceView _diceView;
+        
+        
+        private int _currentTeamIndex = 0;
+        
+        [Header("Phase Settings")]
+        [SerializeField] private ShoppingPhaseController shoppingPhaseController;
+        private int _currentRound = 1;
+        private const int SHOPPING_PHASE_INTERVAL = 5;
         
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
@@ -77,7 +82,8 @@ namespace MADP.Controllers
                     {
                         botBrain = new RandomBotBrain(boardController);
                     }
-                    
+
+                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} ");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
@@ -85,6 +91,8 @@ namespace MADP.Controllers
             LoadTurnStates();
             _currentTeamIndex = 0;
             StartTurnProcess();
+
+            Time.timeScale = 50;
         }
         
         private void Update()
@@ -93,17 +101,10 @@ namespace MADP.Controllers
         }
         private void StartTurnProcess()
         {
-            if (turnView != null)
-            {
-                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
-                {
-                    SwitchState(TurnState.Rolling);
-                });
-            }
-            else
+            turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
             {
                 SwitchState(TurnState.Rolling);
-            }
+            });
         }
         public void SwitchState(TurnState newState)
         {
@@ -118,7 +119,7 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -204,7 +205,6 @@ namespace MADP.Controllers
             {
                 if (boardController.CheckWinCondition(CurrentTeam))
                 {
-                    //GameManager.Instance.HandleVictory(CurrentTeam);
                     SwitchState(TurnState.WaitingForActions);
                 }
                 else
@@ -215,17 +215,25 @@ namespace MADP.Controllers
         }
         public void EndTurn()
         {
+            _selectedUnit = null;
+            
             if (CurrentDiceValue != 6)
             {
                 _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
 
                 if(_currentTeamIndex == 0)
                 {
+                    _currentRound++;
                     _goldService.ApplyRoundBonus();
+                    /*if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
+                    {
+                        turnView.AnimateShopPhaseNotification();
+                        shoppingPhaseController.ShowPhaseShop(EndTurn);
+                        return;
+                    }*/
                 }
             }
             
-            _selectedUnit = null;
             StartTurnProcess();
         }
         
@@ -253,12 +261,11 @@ namespace MADP.Controllers
             {
                 if (bestMove.Unit.State == UnitState.InNest)
                 {
-                    Debug.Log($"Bot {CurrentTeam} quyết định SINH QUÂN {bestMove.Unit.Id}");
+                    Debug.Log($"Bot {CurrentTeam} quyết định sinh quân {bestMove.Unit.Id}");
                     boardController.SpawnUnit(bestMove.Unit, EndTurn);
                 }
                 else if (bestMove.Destination != null)
                 {
-                    Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestMove.Unit.Id} đến {bestMove.Destination.Index}");
                     ExecuteMove(bestMove.Unit, bestMove.Destination); 
                 }
                 else

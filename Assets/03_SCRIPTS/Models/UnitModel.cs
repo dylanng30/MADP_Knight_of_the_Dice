@@ -42,12 +42,7 @@ namespace MADP.Models
             Inventory = new UnitInventoryModel();
             Inventory.OnInventoryUpdated += () => OnStatsChanged?.Invoke();
         }
-
-        public void Reset()
-        {
-            State = UnitState.InNest;
-            StepsMoved = 0;
-        }
+        
         public void AddSteps(int amount)
         {
             StepsMoved += amount;
@@ -59,7 +54,7 @@ namespace MADP.Models
 
         public void TakeDamage(int amount)
         {
-            Debug.Log($"Unit {Id} takes {amount} damage");
+            Debug.Log($"Unit {Id} team {TeamOwner} takes {amount} damage");
             Stat.CurrentHealth -= amount;
             OnStatsChanged?.Invoke();
         }
@@ -77,7 +72,8 @@ namespace MADP.Models
         public void Revive()
         {
             Stat.CurrentHealth = Stat.MaxHealth;
-            Reset();
+            State = UnitState.InNest;
+            StepsMoved = 0;
         }
     }
 }

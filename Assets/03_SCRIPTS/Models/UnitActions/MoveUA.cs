@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MADP.Views;
 using MADP.Views.Unit;
 using UnityEngine;
 
@@ -9,13 +8,13 @@ namespace MADP.Models.UnitActions
     {
         public UnitView UnitView { get; private set; }
         public List<Vector3> Path { get; private set; }
-        public bool WillAttack { get; private set; }
+        public Vector3 DefaultDirection { get; private set; }
         
-        public MoveUA(UnitView unitView, List<Vector3> path, bool willAttack = false)
+        public MoveUA(UnitView unitView, List<Vector3> path, Vector3 defaultDirection = default)
         {
             UnitView = unitView;
             Path = path;
-            WillAttack = willAttack;
+            DefaultDirection = defaultDirection;
         }
     }
 }

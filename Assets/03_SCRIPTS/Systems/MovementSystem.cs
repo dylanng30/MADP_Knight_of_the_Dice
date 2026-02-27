@@ -27,6 +27,10 @@ namespace MADP.Systems
                 Vector3 targetPosition = moveUA.Path[i];
                 yield return unitView.MoveTo(targetPosition);
             }
+            
+            if (moveUA.DefaultDirection != Vector3.zero)
+                unitView.Rotate(moveUA.DefaultDirection);
+            
             unitView.PlayAnimation("Idle");
         }
     }

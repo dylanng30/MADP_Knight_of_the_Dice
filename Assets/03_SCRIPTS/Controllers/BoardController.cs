@@ -111,10 +111,28 @@ namespace MADP.Controllers
             bool isSpecialGateJump = (diceValue == 1) &&
                                      (targetCellModel.Structure == CellStructure.Gate) &&
                                      !IsNextCell(currentCellModel, targetCellModel);
-
-            List<CellModel> pathCells = isSpecialGateJump ?
-                PathfindingService.GetPathToGate(_boardModel, currentCellModel) :
-                PathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
+            
+            bool isReverseKick = false;
+            var reversePath = PathfindingService.GetReversePath(_boardModel, currentCellModel, diceValue);
+            if (reversePath.Count > 0 && reversePath.Last() == targetCellModel)
+            {
+                isReverseKick = true;
+                //Debug.LogError($"[ĐÁ HẬU] Unit {unitModel.Id} (Team {unitModel.TeamOwner}) đang thực hiện ĐÁ HẬU lùi về ô {targetCellModel.Index} có unit {targetCellModel.Unit.Id} của team {targetCellModel.Unit.TeamOwner}!");
+            }
+            
+            List<CellModel> pathCells;
+            if (isReverseKick)
+            {
+                pathCells = reversePath;
+            }
+            else if (isSpecialGateJump)
+            {
+                pathCells = PathfindingService.GetPathToGate(_boardModel, currentCellModel);
+            }
+            else
+            {
+                pathCells = PathfindingService.GetPath(_boardModel, currentCellModel, diceValue);
+            }
 
             List<Vector3> fullVisualPath = boardView.GetPath(pathCells);
 
@@ -135,8 +153,10 @@ namespace MADP.Controllers
             List<CellModel> homePath = PathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
             List<Vector3> homeVisualPath = boardView.GetPath(homePath);
 
+
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
-            MoveUA moveToHomeUA = new MoveUA(boardView.GetUnitView(unitModel), homeVisualPath);
+            Vector3 forwarDirection = GetForwardDirection(targetCellModel);
+            MoveUA moveToHomeUA = new MoveUA(boardView.GetUnitView(unitModel), homeVisualPath, forwarDirection);
             ActionSystem.Instance.Perform(moveToHomeUA, onMoveCompleted);
         }
 
@@ -164,8 +184,7 @@ namespace MADP.Controllers
             }
             else
             {
-                HandleCombatFail(victim, attackerView, attackUA, approachPath, result.DamageDealt);
-                
+                HandleCombatFail(victim, attackerView, attackUA, approachPath, result.DamageDealt, currentCell);
             }
             ActionSystem.Instance.Perform(approachMoveUA, onMoveCompleted);
         }
@@ -176,27 +195,28 @@ namespace MADP.Controllers
             UnitView attackerUnitView, AttackUA attackUA, 
             Vector3 approachEndPos, Vector3 fullPathEndPos, int damageDealt)
         {
-            Debug.Log($"Unit {victim.Id} chết. Unit {attacker.Id} chiếm ô.");
+            Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chiếm ô.");
             victim.TakeDamage(damageDealt);
             boardView.UnitReturnNest(victim);
             victim.Revive();
+            targetCellModel.Clear();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
-            CellView targetCellView = boardView.GetCellView(targetCellModel);
-            attackerUnitView.transform.SetParent(targetCellView.transform);
             var winStepPath = new List<Vector3> { approachEndPos, fullPathEndPos };
-            MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath);
+            Vector3 forwardDirection = GetForwardDirection(targetCellModel);
+            MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath, forwardDirection);
             attackUA.PostActions.Add(winMoveUA);
             TryAddCellEventAction(attacker, targetCellModel, winMoveUA);
         }
 
         private void HandleCombatFail(
             UnitModel victim, UnitView attackerView, 
-            BaseUnitAction parentAction, List<Vector3> approachPath, int damage)
+            BaseUnitAction parentAction, List<Vector3> approachPath, int damage, CellModel currentCell)
         {
             victim.TakeDamage(damage);
             var returnPath = new List<Vector3>(approachPath);
             returnPath.Reverse();
-            parentAction.PostActions.Add(new MoveUA(attackerView, returnPath));
+            
+            parentAction.PostActions.Add(new MoveUA(attackerView, returnPath, GetForwardDirection(currentCell)));
         }
 
         private void HandleNormalMove(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, List<Vector3> fullVisualPath, Action onMoveCompleted)
@@ -205,7 +225,8 @@ namespace MADP.Controllers
             CellView targetCellView = boardView.GetCellView(targetCellModel);
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
             unitView.transform.SetParent(targetCellView.transform);
-            MoveUA moveUA = new MoveUA(unitView, fullVisualPath);
+            Vector3 forwardDirection = GetForwardDirection(targetCellModel);
+            MoveUA moveUA = new MoveUA(unitView, fullVisualPath, forwardDirection);
             TryAddCellEventAction(unitModel, targetCellModel, moveUA);
             ActionSystem.Instance.Perform(moveUA, onMoveCompleted);
         }
@@ -230,15 +251,19 @@ namespace MADP.Controllers
         #endregion
 
         #region --- GAMEPLAY LOGIC ---
-
         public void SpawnUnit(UnitModel unitModel, Action OnComplete)
         {
+            //Debug.Log($"Team {unitModel.TeamOwner} spawn unit {unitModel.Id}");
             CellModel spawnCell = _boardModel.AroundCells.FirstOrDefault(c => 
                 c.Structure == CellStructure.Spawn && 
                 c.TeamOwner == unitModel.TeamOwner &&
                 !c.HasUnit);
-            
-            if (spawnCell == null) return;
+
+            if (spawnCell == null)
+            {
+                Debug.Log("Khong tim thay spawn cell");
+                return;
+            }
 
             if(_goldService.TrySpendGold(unitModel.TeamOwner, unitModel.Cost))
             {
@@ -253,7 +278,7 @@ namespace MADP.Controllers
                     unitView.transform.SetParent(spawnCellView.transform);
                     Vector3 targetPos = boardView.GetCellPosition(spawnCell);
                     unitView.Spawn(targetPos);
-                    var direction = GetDirectionWhenSpawn(unitModel);
+                    var direction = GetForwardDirection(spawnCell);
                     unitView.Rotate(direction);
                     unitView.Collider.enabled = false;
                 }
@@ -374,7 +399,23 @@ namespace MADP.Controllers
 
             //Đá hậu
             var reversePath = PathfindingService.GetReversePath(_boardModel, currentCell, diceValue);
-            if (reversePath.Count > 0 && !IsPathBlocked(reversePath, unit.TeamOwner))
+            bool isInvalidReverse = false;
+            if (currentCell.Structure == CellStructure.Spawn && currentCell.TeamOwner == unit.TeamOwner)
+            {
+                isInvalidReverse = true;
+            }
+            else
+            {
+                for (int i = 1; i < reversePath.Count; i++)
+                {
+                    if (reversePath[i].Structure == CellStructure.Spawn && reversePath[i].TeamOwner == unit.TeamOwner)
+                    {
+                        isInvalidReverse = true;
+                        break;
+                    }
+                }
+            }
+            if (!isInvalidReverse && reversePath.Count > 0 && !IsPathBlocked(reversePath, unit.TeamOwner))
             {
                 var targetCell = reversePath.Last();
                 //Chỉ được đá nếu ô đích CÓ ĐỊCH
@@ -467,24 +508,32 @@ namespace MADP.Controllers
 
         private void ExecuteMoveSuccess(UnitModel unit, CellModel currentCell, CellModel targetCell)
         {
-            if (currentCell != null)
+            currentCell.Clear();
+            Debug.Log($"Unit {unit.Id} của team {unit.TeamOwner} đi từ ô {currentCell.Index} đến {targetCell.Index}");
+            targetCell.Register(unit);
+            
+            int distance = 0;
+            if (targetCell.Structure == CellStructure.Home)
             {
-                currentCell.Clear();
+                distance = 1; 
+                unit.SetState(UnitState.InHome);
             }
             else
             {
-                Debug.LogWarning($"Không tìm thấy ô cũ của Unit {unit.Id}");
-            }
+                var forwardPath = PathfindingService.GetPath(_boardModel, currentCell, 64);
+                int forwardDist = forwardPath.IndexOf(targetCell); 
+        
+                var revPath = PathfindingService.GetReversePath(_boardModel, currentCell, 64);
+                int reverseDist = revPath.IndexOf(targetCell);
 
-            targetCell.Register(unit);
+                if (forwardDist != -1 && (reverseDist == -1 || forwardDist <= reverseDist)) {
+                    distance = forwardDist;
+                } else if (reverseDist != -1) {
+                    distance = -reverseDist;
+                }
+            }
             
-            var distance = Mathf.Abs(targetCell.Index - currentCell.Index);
             unit.AddSteps(distance);
-
-            if (targetCell.Structure == CellStructure.Home)
-            {
-                unit.SetState(UnitState.InHome);
-            }
         }
 
         private CellModel GetCurrentCellOfUnit(UnitModel unit)
@@ -525,21 +574,6 @@ namespace MADP.Controllers
         #endregion
         
         #region ---HELPER---
-
-        private Vector3 GetDirectionWhenSpawn(UnitModel unit)
-        {
-            var spawnCell = _boardModel.AroundCells.FirstOrDefault(c => c.Unit == unit);
-            int nextCellIndex = (spawnCell.Index + 1) % _boardModel.AroundCells.Count;
-            var nextCell = _boardModel.AroundCells[nextCellIndex];
-            if (nextCell != null && spawnCell != null)
-            {
-                var spawnView = boardView.GetCellView(spawnCell);
-                var nextView = boardView.GetCellView(nextCell);
-                Vector3 direction = nextView.transform.position - spawnView.transform.position;
-                return direction;
-            }
-            return Vector3.zero;
-        }
         public CellModel GetSpawnCell(TeamColor teamColor)
         {
             return _boardModel?.AroundCells.FirstOrDefault(c => c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
@@ -549,6 +583,9 @@ namespace MADP.Controllers
             if (unit.State != UnitState.Moving) return false;
 
             CellModel currentCell = GetCurrentCellOfUnit(unit);
+            if (currentCell.Structure == CellStructure.Gate && currentCell.TeamOwner == unit.TeamOwner)
+                return false;
+            
             var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
             
             for (int i = 0; i < path.Count; i++)
@@ -560,6 +597,32 @@ namespace MADP.Controllers
                 }
             }
             return false;
+        }
+        private Vector3 GetForwardDirection(CellModel cell)
+        {
+            if (cell.Structure == CellStructure.Home)
+            {
+                var homeCells = _boardModel.HomeCells[cell.TeamOwner];
+                int currentIndex = homeCells.IndexOf(cell);
+                if (currentIndex >= 0 && currentIndex < homeCells.Count - 1)
+                {
+                    var currentView = boardView.GetCellView(cell);
+                    var nextView = boardView.GetCellView(homeCells[currentIndex + 1]);
+                    return nextView.transform.position - currentView.transform.position;
+                }
+            }
+            else
+            {
+                int nextCellIndex = (cell.Index + 1) % _boardModel.AroundCells.Count;
+                var nextCell = _boardModel.AroundCells[nextCellIndex];
+                if (nextCell != null)
+                {
+                    var currentView = boardView.GetCellView(cell);
+                    var nextView = boardView.GetCellView(nextCell);
+                    return nextView.transform.position - currentView.transform.position;
+                }
+            }
+            return Vector3.zero;
         }
         #endregion
 

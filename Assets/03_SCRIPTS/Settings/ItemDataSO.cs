@@ -8,12 +8,13 @@ namespace MADP.Settings
         [Header("Display")]
         public string ItemName;
         public Sprite Icon;
-        [TextArea] public string Description;
+        public string Description;
 
         [Header("Stat Bonuses")]
         public int BonusHealth;
         public int BonusDamage;
         public int BonusArmor;
-        
+
+        public int Price;
     }
 }

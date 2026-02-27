@@ -33,6 +33,8 @@ namespace MADP.States.TurnStates
                     roled = true;
                 }
             }
+            
+            //_turnController.RollDice();
         }
 
         private bool CanBotRole()
