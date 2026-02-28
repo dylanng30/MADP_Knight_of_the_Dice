@@ -70,7 +70,7 @@ namespace MADP.Views.Unit
                 transform.position = Vector3.MoveTowards(
                     transform.position,
                     targetPosition,
-                    0.1f
+                    10f
                 );
 
                 yield return null;

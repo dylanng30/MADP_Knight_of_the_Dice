@@ -7,6 +7,7 @@ namespace MADP.Services
     {
         public UnitModel Unit;
         public int Distance;
+        public bool Found;
     }
 
     public class FindNearestUnitService
@@ -25,12 +26,18 @@ namespace MADP.Services
                     return new NearestUnitResult
                     {
                         Unit = cell.Unit,
-                        Distance = step
+                        Distance = step,
+                        Found =  true
                     };
                 }
             }
 
-            return new NearestUnitResult();
+            return new NearestUnitResult
+            {
+                Unit = null,
+                Distance = -1,
+                Found = false
+            };
         }
 
         public NearestUnitResult FindNearestEnemyBackward(List<CellModel> cells, int currentIndex, TeamColor myTeam)
@@ -47,12 +54,18 @@ namespace MADP.Services
                     return new NearestUnitResult
                     {
                         Unit = cell.Unit,
-                        Distance = step
+                        Distance = step,
+                        Found = true
                     };
                 }
             }
 
-            return new NearestUnitResult();
+            return new NearestUnitResult
+            {
+                Unit = null,
+                Distance = -1,
+                Found = false
+            };
         }
 
         public NearestUnitResult FindNearestUnitForward(List<CellModel> cells, int currentIndex)
@@ -69,12 +82,18 @@ namespace MADP.Services
                     return new NearestUnitResult
                     {
                         Unit = cell.Unit,
-                        Distance = step
+                        Distance = step,
+                        Found = true
                     };
                 }
             }
 
-            return new NearestUnitResult(); // không có unit nào phía trước
+            return new NearestUnitResult
+            {
+                Unit = null,
+                Distance = -1,
+                Found = false
+            };
         }
     }
 }

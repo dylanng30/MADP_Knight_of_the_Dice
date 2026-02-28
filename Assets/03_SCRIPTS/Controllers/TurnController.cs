@@ -26,16 +26,15 @@ namespace MADP.Controllers
 
     public class TurnController : MonoBehaviour
     {
-        [Header("Turn Settings")]
-        [SerializeField] private TurnView turnView;
+        [Header("Turn Settings")] [SerializeField]
+        private TurnView turnView;
 
         public TurnView TurnView => turnView;
-        
-        [Space(10)]
-        [SerializeField] private BotProfileDatabaseSO botDB;
+
+        [Space(10)] [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
         [SerializeField] private UIManager _uiManager;
-        
+
         private Dictionary<TeamColor, TeamAgent> _agents;
 
         public int CurrentDiceValue { get; private set; }
@@ -47,25 +46,24 @@ namespace MADP.Controllers
         //Services
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
-        
-        private List<LobbySlotModel> _activeSlots = new ();
+
+        private List<LobbySlotModel> _activeSlots = new();
         private int _currentTeamIndex = 0;
         private Dictionary<TurnState, ITurnState> _turnStates;
         private DiceView _diceView;
-        
+
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
-        public int CurrentTeamIndex => _currentTeamIndex;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
 
         public void Initialize(
-            IGoldService goldService, 
-            List<LobbySlotModel> activeSlots, 
+            IGoldService goldService,
+            List<LobbySlotModel> activeSlots,
             DiceView diceView)
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
             _diceView = diceView;
-            
+
             _botDecisionService = new BotDecisionService();
 
             foreach (var slot in activeSlots)
@@ -88,14 +86,15 @@ namespace MADP.Controllers
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
-            
-            LoadTurnStates();
+
+            //LoadTurnStates();
             _currentTeamIndex = 0;
-            StartTurnProcess();
+            //StartTurnProcess();
         }
 
         private void Start()
         {
+            LoadTurnStates();
             _agents = new Dictionary<TeamColor, TeamAgent>();
 
             foreach (var agent in FindObjectsOfType<TeamAgent>())
@@ -112,21 +111,19 @@ namespace MADP.Controllers
         {
             _currentTurnState?.ExecuteTurn();
         }
-        
+
         private void StartTurnProcess()
         {
             if (turnView != null)
             {
-                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
-                {
-                    SwitchState(TurnState.Rolling);
-                });
+                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => { SwitchState(TurnState.Rolling); });
             }
             else
             {
                 SwitchState(TurnState.Rolling);
             }
         }
+
         public void SwitchState(TurnState newState)
         {
             _currentTurnState?.ExitTurn();
@@ -136,11 +133,11 @@ namespace MADP.Controllers
                 _currentTurnState.EnterTurn();
             }
         }
-        
+
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-             //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
+            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
@@ -231,9 +228,9 @@ namespace MADP.Controllers
                     foreach (var kvp in _agents)
                     {
                         if (kvp.Key == CurrentTeam)
-                            kvp.Value.AddReward(1f);
+                            kvp.Value.AddReward(kvp.Value.winGameReward);
                         else
-                            kvp.Value.AddReward(-1f);
+                            kvp.Value.AddReward(kvp.Value.loseGameReward);
                     }
 
                     foreach (var agent in _agents.Values)
@@ -254,11 +251,8 @@ namespace MADP.Controllers
 
         public void EndTurn()
         {
-            // Kiểm tra để dừng huấn luyện
             _agents[CurrentTeam].TurnCounter += 1;
-            // Phat sau moi turn, khuyen kich hoan thanh nhanh
-            _agents[CurrentTeam].AddReward(-1f / _agents[CurrentTeam].maxAgentTurn);
-            if (_agents[CurrentTeam].TurnCounter > _agents[CurrentTeam].maxAgentTurn)
+            if (_agents[CurrentTeam].TurnCounter >= _agents[CurrentTeam].maxTurn)
             {
                 foreach (var agent in _agents.Values)
                 {
@@ -330,13 +324,7 @@ namespace MADP.Controllers
             StopAllCoroutines();
             boardController.ResetBoard();
             _currentTeamIndex = 0;
-            _selectedUnit = null;
             CurrentDiceValue = 0;
-
-            foreach (var agent in _agents.Values)
-            {
-                agent.TurnCounter = 0;
-            }
 
             SwitchState(TurnState.Rolling);
         }

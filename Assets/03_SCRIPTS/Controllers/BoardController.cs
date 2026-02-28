@@ -71,7 +71,7 @@ namespace MADP.Controllers
             {
                 _teamToBaseMap[slot.TeamColor] = slot.SlotIndex;
             }
-            
+
             boardView.Initialize(this, _teamToBaseMap, _currentMapType, teamColorDB);
             StartGame();
         }
@@ -184,8 +184,8 @@ namespace MADP.Controllers
             UnitView attackerUnitView, AttackUA attackUA,
             Vector3 approachEndPos, Vector3 fullPathEndPos, int damageDealt)
         {
-            _agents[attacker.TeamOwner].AddReward(0.15f);
-            _agents[victim.TeamOwner].AddReward(-0.15f);
+            _agents[attacker.TeamOwner].AddReward(_agents[attacker.TeamOwner].attackWinReward);
+            _agents[victim.TeamOwner].AddReward(-_agents[attacker.TeamOwner].attackWinReward);
             Debug.Log($"Unit {victim.Id} chết. Unit {attacker.Id} chiếm ô.");
             victim.TakeDamage(damageDealt);
             boardView.UnitReturnNest(victim);
@@ -204,7 +204,8 @@ namespace MADP.Controllers
             UnitModel victim, UnitView attackerView,
             BaseUnitAction parentAction, List<Vector3> approachPath, int damage)
         {
-            _agents[victim.TeamOwner].AddReward(-damage * 0.01f);
+            _agents[victim.TeamOwner].AddReward(-damage * _agents[victim.TeamOwner].attackWinReward /
+                                                _agents[victim.TeamOwner].maxStat);
             victim.TakeDamage(damage);
             var returnPath = new List<Vector3>(approachPath);
             returnPath.Reverse();
@@ -566,14 +567,14 @@ namespace MADP.Controllers
             return _boardModel?.AroundCells.FirstOrDefault(c =>
                 c.Structure == CellStructure.Spawn && c.TeamOwner == teamColor);
         }
-        
+
         public bool IsOvershootingGate(UnitModel unit, int diceValue)
         {
             if (unit.State != UnitState.Moving) return false;
 
             CellModel currentCell = GetCurrentCellOfUnit(unit);
             var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
-            
+
             for (int i = 0; i < path.Count; i++)
             {
                 CellModel cell = path[i];
@@ -582,6 +583,7 @@ namespace MADP.Controllers
                     if (i < path.Count - 1) return true;
                 }
             }
+
             return false;
         }
 
@@ -593,14 +595,14 @@ namespace MADP.Controllers
         {
             if (!CanSpawnUnit(unit, diceValue))
             {
-                _agents[unit.TeamOwner].AddReward(-0.02f);
+                _agents[unit.TeamOwner].AddReward(_agents[unit.TeamOwner].actionPenalty / 2);
                 onCompleted?.Invoke();
                 return;
             }
 
             SpawnUnit(unit, () =>
             {
-                _agents[unit.TeamOwner].AddReward(0.03f);
+                _agents[unit.TeamOwner].AddReward(_agents[unit.TeamOwner].spawnReward);
                 onCompleted?.Invoke();
             });
         }
@@ -610,7 +612,7 @@ namespace MADP.Controllers
             ExecuteFilteredMove(unit, diceValue,
                 cell => IsForwardCell(unit, cell, diceValue) &&
                         cell.Structure != CellStructure.Home,
-                0.01f,
+                _agents[unit.TeamOwner].moveForwardReward,
                 onCompleted);
         }
 
@@ -620,7 +622,7 @@ namespace MADP.Controllers
                 cell => cell.HasUnit &&
                         cell.Unit.TeamOwner != unit.TeamOwner &&
                         IsForwardCell(unit, cell, diceValue),
-                0.05f,
+                _agents[unit.TeamOwner].attackReward,
                 onCompleted);
         }
 
@@ -630,7 +632,7 @@ namespace MADP.Controllers
                 cell => cell.HasUnit &&
                         cell.Unit.TeamOwner != unit.TeamOwner &&
                         IsBackwardCell(unit, cell, diceValue),
-                0.05f,
+                _agents[unit.TeamOwner].attackReward,
                 onCompleted);
         }
 
@@ -638,7 +640,7 @@ namespace MADP.Controllers
         {
             ExecuteFilteredMove(unit, diceValue,
                 cell => cell.Structure == CellStructure.Home,
-                0.25f,
+                _agents[unit.TeamOwner].moveToHomeReward,
                 onCompleted);
         }
 
@@ -648,14 +650,14 @@ namespace MADP.Controllers
 
             if (currentCell == null || currentCell.Structure != CellStructure.Home)
             {
-                _agents[unit.TeamOwner].AddReward(-0.02f);
+                _agents[unit.TeamOwner].AddReward(_agents[unit.TeamOwner].actionPenalty / 2);
                 onCompleted?.Invoke();
                 return;
             }
 
             ExecuteFilteredMove(unit, diceValue,
                 cell => cell.Structure == CellStructure.Home,
-                0.05f,
+                _agents[unit.TeamOwner].moveInsideHomeReward,
                 onCompleted);
         }
 
@@ -666,7 +668,7 @@ namespace MADP.Controllers
 
             if (validCells == null || validCells.Count == 0)
             {
-                _agents[unit.TeamOwner].AddReward(-0.02f);
+                _agents[unit.TeamOwner].AddReward(_agents[unit.TeamOwner].actionPenalty / 2);
                 onCompleted?.Invoke();
                 return;
             }
@@ -675,7 +677,7 @@ namespace MADP.Controllers
 
             if (target == null)
             {
-                _agents[unit.TeamOwner].AddReward(-0.03f);
+                _agents[unit.TeamOwner].AddReward(_agents[unit.TeamOwner].actionPenalty / 2);
                 onCompleted?.Invoke();
                 return;
             }
@@ -719,7 +721,7 @@ namespace MADP.Controllers
         {
             _agents = agents;
         }
-        #endregion
 
+        #endregion
     }
 }
