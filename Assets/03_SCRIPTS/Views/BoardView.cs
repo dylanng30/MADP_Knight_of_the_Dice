@@ -55,7 +55,7 @@ namespace MADP.Views
         public void UnitReturnNest(UnitModel model)
         {
             var pos = _boardLayoutService.GetUnitPositionInCage(model.TeamOwner, model.Id);
-            _unitMap[model].transform.localPosition = pos;
+            _unitMap[model].transform.position = pos;
         }
         public void Reset()
         {
@@ -236,6 +236,7 @@ namespace MADP.Views
             //Hướng nhìn ban đầu
             Vector3 directionToTarget = Vector3.zero - view.transform.position;
             view.transform.LookAt(Vector3.zero);
+            
             
             if(view.PrimarySign.Count > 0)
                 foreach (var sign in view.PrimarySign)

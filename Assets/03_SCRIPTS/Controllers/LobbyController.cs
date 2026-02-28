@@ -121,7 +121,7 @@ namespace MADP.Controllers
         }
         private void HandleStartGame()
         {
-            Debug.Log("Game Started!");
+            //Debug.Log("Game Started!");
             var matchSettings = _lobbyService.GetFinalizedMatchSettings();
             int activePlayers = 0;
             foreach (var slot in matchSettings.Slots)

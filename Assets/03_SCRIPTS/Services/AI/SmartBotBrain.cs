@@ -67,6 +67,9 @@ namespace MADP.Services.AI
 
         private float EvaluateState(UnitModel unit, CellModel targetCell, bool isSpawning, BoardModel board)
         {
+            if (targetCell.Structure == CellStructure.Home)
+                return _profile.WeightHome * unit.StepsMoved;
+            
             float score = 0f;
 
             //Kick
@@ -74,11 +77,11 @@ namespace MADP.Services.AI
                 score += _profile.WeightKick;
 
             //Safe
-            if (targetCell.Structure == CellStructure.Gate || targetCell.Structure == CellStructure.Spawn)
+            if (targetCell.Structure == CellStructure.Spawn)
                 score += _profile.WeightSafe;
-
+            
             //Home
-            if (targetCell.Structure == CellStructure.Home)
+            if (targetCell.Structure == CellStructure.Gate)
                 score += _profile.WeightHome;
 
             //Distance
@@ -86,7 +89,7 @@ namespace MADP.Services.AI
             score += (_profile.WeightDistance * steps);
 
             //Khuyến khích ra quân nếu có cơ hội
-            if (isSpawning) score += 200f; 
+            if (isSpawning) score += 200f;
 
             //Danger
             float expectedDanger = CalculateExpectedDanger(unit.TeamOwner, targetCell, board);
@@ -98,8 +101,7 @@ namespace MADP.Services.AI
         private float CalculateExpectedDanger(TeamColor myTeam, CellModel targetCell, BoardModel board)
         {
             //Các ô này miễn nhiễm sát thương
-            if (targetCell.Structure == CellStructure.Gate || 
-                targetCell.Structure == CellStructure.Spawn || 
+            if (targetCell.Structure == CellStructure.Spawn || 
                 targetCell.Structure == CellStructure.Home)
             {
                 return 0f;

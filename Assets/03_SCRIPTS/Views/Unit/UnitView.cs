@@ -39,7 +39,7 @@ namespace MADP.Views.Unit
 
         public void PlayAnimation(string animationName)
         {
-            // Debug.Log("Playing animation: " + animationName); 
+            //Debug.Log("Playing animation: " + animationName); 
             //animator.Play(animationName);
         }
 

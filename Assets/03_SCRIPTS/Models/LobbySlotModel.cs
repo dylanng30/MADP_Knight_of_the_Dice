@@ -1,4 +1,5 @@
 ﻿using System;
+using MADP.Models.Inventory;
 using MADP.Settings;
 
 namespace MADP.Models
@@ -24,6 +25,8 @@ namespace MADP.Models
         public string AvatarPath;
         public bool IsHost = false;
         
+        public PlayerInventoryModel Inventory { get; private set; }
+        
         public bool HasPlayer => PlayerType != PlayerType.Empty;
 
         public LobbySlotModel(int index, TeamColor color)
@@ -33,7 +36,9 @@ namespace MADP.Models
             PlayerType = PlayerType.Empty;
             PlayerName = "Empty";
             RoleType = RoleType.Random;
-            BotType = SlotIndex % 2 == 0 ? BotType.Easy : BotType.Medium;
+            //BotType = SlotIndex % 2 == 0 ? BotType.Easy : BotType.Medium;
+            BotType = BotType.Medium;
+            Inventory = new PlayerInventoryModel();
         }
     }
 }

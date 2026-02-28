@@ -26,10 +26,7 @@ namespace MADP.Controllers
 
     public class TurnController : MonoBehaviour
     {
-        [Header("Turn Settings")] [SerializeField]
-        private TurnView turnView;
-
-        public TurnView TurnView => turnView;
+        [Header("Turn Settings")] [SerializeField] private TurnView turnView;
 
         [Space(10)] [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
@@ -48,10 +45,15 @@ namespace MADP.Controllers
         private BotDecisionService _botDecisionService;
 
         private List<LobbySlotModel> _activeSlots = new();
-        private int _currentTeamIndex = 0;
         private Dictionary<TurnState, ITurnState> _turnStates;
         private DiceView _diceView;
-
+private int _currentTeamIndex = 0;
+        
+        [Header("Phase Settings")]
+        [SerializeField] private ShoppingPhaseController shoppingPhaseController;
+        private int _currentRound = 1;
+        private const int SHOPPING_PHASE_INTERVAL = 5;
+        
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
 
@@ -83,6 +85,7 @@ namespace MADP.Controllers
                         botBrain = new RandomBotBrain(boardController);
                     }
 
+                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} ");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
@@ -114,14 +117,10 @@ namespace MADP.Controllers
 
         private void StartTurnProcess()
         {
-            if (turnView != null)
-            {
-                turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => { SwitchState(TurnState.Rolling); });
-            }
-            else
+            turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
             {
                 SwitchState(TurnState.Rolling);
-            }
+            });
         }
 
         public void SwitchState(TurnState newState)
@@ -260,17 +259,27 @@ namespace MADP.Controllers
                 }
             }
 
+            _selectedUnit = null;
+            
             if (CurrentDiceValue != 6)
             {
                 _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
 
                 if (_currentTeamIndex == 0)
                 {
+                    _currentRound++;
                     _goldService.ApplyRoundBonus();
+                    /*if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
+                    {
+                        turnView.AnimateShopPhaseNotification();
+                        shoppingPhaseController.ShowPhaseShop(EndTurn);
+                        return;
+                    }*/
                 }
             }
 
             _selectedUnit = null;
+            
             StartTurnProcess();
         }
 
@@ -304,8 +313,7 @@ namespace MADP.Controllers
                 }
                 else if (bestMove.Destination != null)
                 {
-                    Debug.Log($"Bot {CurrentTeam} di chuyển unit {bestMove.Unit.Id} đến {bestMove.Destination.Index}");
-                    ExecuteMove(bestMove.Unit, bestMove.Destination);
+                    ExecuteMove(bestMove.Unit, bestMove.Destination); 
                 }
                 else
                 {
