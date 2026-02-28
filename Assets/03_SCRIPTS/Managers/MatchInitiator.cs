@@ -53,8 +53,6 @@ namespace MADP.Managers
             _combatService = new CombatService();
             _cellEventService = new CellEventService(_goldService);
             
-            _goldService.Initialize(Constants.InitialGold, activePlayers);
-            
             //CONTROLLERS
             _boardController.Initialize(
                 _goldService, 
@@ -64,8 +62,10 @@ namespace MADP.Managers
                 activePlayers, 
                 settings.SelectedMap, 
                 teamColorDB);
-            _turnController.Initialize(_goldService, activePlayers, diceView);
+            _turnController.Initialize(_goldService, activePlayers, diceView, settings.TimePerTurn);
             _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
+            
+            _goldService.Initialize(Constants.InitialGold, activePlayers);
         }
         
         private MatchSettingsModel GetMockSettings()

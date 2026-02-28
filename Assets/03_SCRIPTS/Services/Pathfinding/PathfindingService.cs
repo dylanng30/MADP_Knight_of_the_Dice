@@ -36,6 +36,10 @@ namespace MADP.Services.Pathfinding
                 if (aroundCells[rawIndex].Structure == CellStructure.Spawn)
                 {
                     hasSpawnCell = true;
+                    if (startCell.HasUnit && startCell.Unit.TeamOwner == aroundCells[rawIndex].TeamOwner)
+                    {
+                        path.Add(aroundCells[rawIndex]);
+                    }
                 }
                 
                 int finalIndex = hasSpawnCell ? (rawIndex - 1 + aroundCells.Count) % aroundCells.Count : rawIndex;

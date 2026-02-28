@@ -10,6 +10,7 @@ using MADP.Services.Gold.Interfaces;
 using MADP.Settings;
 using MADP.States.TurnStates;
 using MADP.States.TurnStates.Interfaces;
+using MADP.Systems;
 using MADP.Views;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,9 +23,6 @@ namespace MADP.Controllers
     }
     public class TurnController : MonoBehaviour
     {
-        [Header("Turn Settings")]
-        [SerializeField] private TurnView turnView;
-        
         [Space(10)]
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
@@ -44,25 +42,33 @@ namespace MADP.Controllers
         private Dictionary<TurnState, ITurnState> _turnStates;
         private DiceView _diceView;
         
-        
-        private int _currentTeamIndex = 0;
-        
         [Header("Phase Settings")]
         [SerializeField] private ShoppingPhaseController shoppingPhaseController;
         private int _currentRound = 1;
         private const int SHOPPING_PHASE_INTERVAL = 5;
         
+        [Header("Turn Settings")]
+        [SerializeField] private TurnView turnView;
+        private int _currentTeamIndex = 0;
+        private float _timePerTurn;
+        private float _currentTurnTimer;
+        
+        public float CurrentTurnTimer => _currentTurnTimer;
+        
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
+        
         
         public void Initialize(
             IGoldService goldService, 
             List<LobbySlotModel> activeSlots, 
-            DiceView diceView)
+            DiceView diceView,
+            float timePerTurn)
         {
             _goldService = goldService;
             _activeSlots = activeSlots;
             _diceView = diceView;
+            _timePerTurn = timePerTurn;
             
             _botDecisionService = new BotDecisionService();
             
@@ -92,15 +98,32 @@ namespace MADP.Controllers
             _currentTeamIndex = 0;
             StartTurnProcess();
 
-            Time.timeScale = 50;
+            Time.timeScale = 100;
         }
         
         private void Update()
         {
             _currentTurnState?.ExecuteTurn();
+            
+            if (!ActionSystem.Instance.IsPerforming)
+            {
+                if (_currentTurnTimer > 0)
+                {
+                    _currentTurnTimer -= Time.deltaTime;
+                    turnView.UpdateTimer(_currentTurnTimer);
+
+                    if (_currentTurnTimer <= 0)
+                    {
+                        Debug.Log($"[Time Out] Đội {CurrentTeam} đã hết thời gian lượt đấu! Tự động qua lượt.");
+                        EndTurn();
+                    }
+                }
+            }
         }
         private void StartTurnProcess()
         {
+            _currentTurnTimer = _timePerTurn;
+            turnView.UpdateTimer(_currentTurnTimer);
             turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
             {
                 SwitchState(TurnState.Rolling);
@@ -187,11 +210,6 @@ namespace MADP.Controllers
             boardController.HighlightCells(_potentialDestination);
         }
 
-        public void ShowUnitInfo(UnitModel unit)
-        {
-            
-        }
-
         public void DeselectCurrent()
         {
             boardController.ClearAllHighlights();
@@ -242,7 +260,8 @@ namespace MADP.Controllers
             _turnStates = new Dictionary<TurnState, ITurnState>
             {
                 { TurnState.Rolling, new RollingState(this) },
-                { TurnState.Choosing, new ChoosingState(this) }
+                { TurnState.Choosing, new ChoosingState(this) },
+                { TurnState.WaitingForActions, new WinState(this) }
             };
         }
         

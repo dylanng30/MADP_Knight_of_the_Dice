@@ -81,18 +81,24 @@ namespace MADP.Controllers
 
         public bool CheckWinCondition(TeamColor teamColor)
         {
-            var homeCells = _boardModel.HomeCells[teamColor];
-            int rightCell = 0;
+            if (!_boardModel.HomeCells.TryGetValue(teamColor, out var homeCells))
+                return false;
+            
+            int unitsInWinningPosition = 0;
+            
             foreach (var cell in homeCells)
             {
-                int index = cell.Index;
-                if((index == 6 || index == 5 || index == 4 || index == 3) && 
-                   cell.HasUnit)
+                if (cell.HasUnit && cell.Unit.TeamOwner == teamColor)
                 {
-                    rightCell++;
+                    int index = cell.Index;
+                    if (index == 2 || index == 3 || index == 4 || index == 5)
+                    {
+                        unitsInWinningPosition++;
+                    }
                 }
             }
-            return rightCell == 4;
+
+            return unitsInWinningPosition == 4;
         }
         
 
@@ -199,6 +205,8 @@ namespace MADP.Controllers
             victim.TakeDamage(damageDealt);
             boardView.UnitReturnNest(victim);
             victim.Revive();
+            var victimView = boardView.GetUnitView(victim);
+            victimView.Collider.enabled = true;
             targetCellModel.Clear();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
             var winStepPath = new List<Vector3> { approachEndPos, fullPathEndPos };
@@ -261,7 +269,7 @@ namespace MADP.Controllers
 
             if (spawnCell == null)
             {
-                Debug.Log("Khong tim thay spawn cell");
+                Debug.LogError("Khong tim thay spawn cell");
                 return;
             }
 
@@ -468,7 +476,7 @@ namespace MADP.Controllers
 
         public bool CanSpawnUnit(UnitModel unitModel, int diceValue)
         {
-            if (unitModel.State == UnitState.Moving) 
+            if (unitModel.State != UnitState.InNest) 
                 return false;
 
             var spawnCell = _boardModel.AroundCells.FirstOrDefault(
@@ -585,17 +593,22 @@ namespace MADP.Controllers
             CellModel currentCell = GetCurrentCellOfUnit(unit);
             if (currentCell.Structure == CellStructure.Gate && currentCell.TeamOwner == unit.TeamOwner)
                 return false;
-            
+
             var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
-            
-            for (int i = 0; i < path.Count; i++)
+
+            for (int i = 1; i < path.Count; i++)
             {
                 CellModel cell = path[i];
                 if (cell.Structure == CellStructure.Gate && cell.TeamOwner == unit.TeamOwner)
                 {
-                    if (i < path.Count - 1) return true;
+                    if (i < path.Count - 1)
+                    {
+                        //Debug.LogError($"Unit {unit.Id} của team {unit.TeamOwner} có thể đi qua với xúc xắc {diceValue}");
+                        return true;
+                    }
                 }
             }
+
             return false;
         }
         private Vector3 GetForwardDirection(CellModel cell)
