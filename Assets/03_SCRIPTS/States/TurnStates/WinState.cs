@@ -26,6 +26,5 @@ namespace MADP.States.TurnStates
         {
             base.ExitTurn();
         }
-
     }
 }

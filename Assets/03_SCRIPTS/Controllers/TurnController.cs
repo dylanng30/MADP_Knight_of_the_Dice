@@ -98,7 +98,7 @@ namespace MADP.Controllers
             _currentTeamIndex = 0;
             StartTurnProcess();
 
-            Time.timeScale = 100;
+            Time.timeScale = 2;
         }
         
         private void Update()
@@ -272,7 +272,7 @@ namespace MADP.Controllers
         }
         private IEnumerator BotThinkingProcecss()
         {
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
             
             var bestMove = _botDecisionService.GetBestMove(CurrentTeam, CurrentDiceValue, boardController.Board);
 

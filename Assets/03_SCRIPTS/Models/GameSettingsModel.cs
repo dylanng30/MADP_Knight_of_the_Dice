@@ -17,6 +17,10 @@ namespace MADP.Models
         public float MasterVolume = 1.0f;
         public float MusicVolume = 1.0f;
         public float SfxVolume = 1.0f;
-        public bool IsMuted = false;
+        
+        //Trạng thái Mute cho từng kênh
+        public bool IsMasterMuted = false;
+        public bool IsMusicMuted = false;
+        public bool IsSfxMuted = false;
     }
 }

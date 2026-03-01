@@ -18,7 +18,6 @@ namespace MADP.Systems
 
         private IEnumerator ExecuteCellEvent(CellEventUA cellEventUA)
         {
-            
             cellEventUA.CellEvent.Execute(cellEventUA.UnitModel, cellEventUA.CellModel);
             yield return new WaitForEndOfFrame();
         }

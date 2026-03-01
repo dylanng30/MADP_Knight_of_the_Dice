@@ -70,23 +70,55 @@ namespace MADP.Services.GameSettings
             ApplyResolutionInternal(_model.ResolutionIndex, _model.IsFullScreen);
         }
 
+        #region --- SOUND SETTINGS ---
         public void SetMasterVolume(float value)
         {
             _model.MasterVolume = value;
-            SetMixerVolume("MasterVol", value);
+            UpdateMixerVolume("MasterVol", _model.MasterVolume, _model.IsMasterMuted);
+        }
+        public void SetMasterMute(bool isMuted)
+        {
+            _model.IsMasterMuted = isMuted;
+            UpdateMixerVolume("MasterVol", _model.MasterVolume, _model.IsMasterMuted);
+            
+            _model.IsMusicMuted = isMuted;
+            UpdateMixerVolume("MusicVol", _model.MusicVolume, _model.IsMusicMuted);
+            
+            _model.IsSfxMuted = isMuted;
+            UpdateMixerVolume("SFXVol", _model.SfxVolume, _model.IsSfxMuted);
         }
 
         public void SetMusicVolume(float value)
         {
             _model.MusicVolume = value;
-            SetMixerVolume("MusicVol", value);
+            UpdateMixerVolume("MusicVol", _model.MusicVolume, _model.IsMusicMuted);
+        }
+        public void SetMusicMute(bool isMuted)
+        {
+            _model.IsMusicMuted = isMuted;
+            UpdateMixerVolume("MusicVol", _model.MusicVolume, _model.IsMusicMuted);
         }
 
         public void SetSfxVolume(float value)
         {
             _model.SfxVolume = value;
-            SetMixerVolume("SFXVol", value);
+            UpdateMixerVolume("SFXVol", _model.SfxVolume, _model.IsSfxMuted);
         }
+        public void SetSfxMute(bool isMuted)
+        {
+            _model.IsSfxMuted = isMuted;
+            UpdateMixerVolume("SFXVol", _model.SfxVolume, _model.IsSfxMuted);
+        }
+        private void UpdateMixerVolume(string paramName, float rawVolume, bool isMuted)
+        {
+            if (_audioMixer == null) return;
+            
+            float targetVol = isMuted ? 0.0001f : rawVolume;
+            float db = targetVol <= 0.001f ? MIN_DB : Mathf.Log10(targetVol) * 20;
+            _audioMixer.SetFloat(paramName, db);
+        }
+
+        #endregion
 
         #region ---RESOLUTION---
         public List<string> GetResolutionOptions()

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MADP.Models;
+﻿using MADP.Models;
 using MADP.Settings;
-using MADP.Utilities;
 using MADP.Views;
 using MADP.Views.UnitInfo;
 using UnityEngine;

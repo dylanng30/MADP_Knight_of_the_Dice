@@ -3700,8 +3700,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cellViewPrefab: {fileID: 4458282822056727695, guid: 14b386531158ba4458ef430082b950a8, type: 3}
-  firstUnitViewPrefab: {fileID: 992176373225617957, guid: b5bc7875176316849a58c53c444bb521, type: 3}
-  secondUnitViewPrefab: {fileID: 5168573483681331228, guid: af69bfa2889000e4589b5f1e752da0ca, type: 3}
+  firstUnitViewPrefab: {fileID: 3537657560405999304, guid: 1e7342f9296d4a64ba5db1b8807fdf92, type: 3}
+  secondUnitViewPrefab: {fileID: 3537657560405999304, guid: 1e7342f9296d4a64ba5db1b8807fdf92, type: 3}
   thirdUnitViewPrefab: {fileID: 1113348919265313270, guid: 2a5d3e19ab316b247abbe5f72108b2c8, type: 3}
   fourthUnitViewPrefab: {fileID: 3537657560405999304, guid: 1e7342f9296d4a64ba5db1b8807fdf92, type: 3}
 --- !u!4 &985050422
