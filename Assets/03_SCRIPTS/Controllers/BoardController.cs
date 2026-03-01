@@ -354,8 +354,7 @@ namespace MADP.Controllers
             if (currentCell == null) return;
 
             //Unit đang ở Gate
-            if (currentCell.Structure == CellStructure.Gate &&
-                currentCell.TeamOwner == unit.TeamOwner)
+            if (currentCell.Structure == CellStructure.Gate && currentCell.TeamOwner == unit.TeamOwner)
             {
                 GetGateEntryOptions(unit, diceValue, results);
             }
