@@ -13,8 +13,13 @@ namespace MADP.Services.GameSettings.Interfaces
 
         //Actions
         void SetMasterVolume(float value);
+        void SetMasterMute(bool isMuted);
+        
         void SetMusicVolume(float value);
+        void SetMusicMute(bool isMuted);
+        
         void SetSfxVolume(float value);
+        void SetSfxMute(bool isMuted);
         
         //WindowMode
         void SetFullScreen(bool isFullScreen);

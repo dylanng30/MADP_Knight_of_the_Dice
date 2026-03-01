@@ -180,8 +180,19 @@ namespace MADP.Controllers
             MoveUA approachMoveUA = new MoveUA(attackerView, approachPath);
 
             CombatResult result = _combatService.SimulateCombat(attacker, victim);
+            
+            Action onHit = () => {
+                victim.TakeDamage(result.DamageDealt);
+            };
+            
+            Action onDeathAnimationFinished = () => {
+                Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chuẩn bị chiếm ô.");
+                boardView.UnitReturnNest(victim);
+                victim.Revive();
+                victimView.Collider.enabled = true;
+            };
 
-            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead);
+            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead, onHit, onDeathAnimationFinished);
             approachMoveUA.PostActions.Add(attackUA);
 
             if (result.IsVictimDead)
@@ -199,19 +210,16 @@ namespace MADP.Controllers
             UnitModel attacker, UnitModel victim, 
             CellModel currentCellModel, CellModel targetCellModel, 
             UnitView attackerUnitView, AttackUA attackUA, 
-            Vector3 approachEndPos, Vector3 fullPathEndPos, int damageDealt)
+            Vector3 approachEndPos, Vector3 fullPathEndPos, int damage)
         {
             Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chiếm ô.");
-            victim.TakeDamage(damageDealt);
-            boardView.UnitReturnNest(victim);
-            victim.Revive();
-            var victimView = boardView.GetUnitView(victim);
-            victimView.Collider.enabled = true;
             targetCellModel.Clear();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
+            
             var winStepPath = new List<Vector3> { approachEndPos, fullPathEndPos };
             Vector3 forwardDirection = GetForwardDirection(targetCellModel);
             MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath, forwardDirection);
+            
             attackUA.PostActions.Add(winMoveUA);
             TryAddCellEventAction(attacker, targetCellModel, winMoveUA);
         }
@@ -220,11 +228,12 @@ namespace MADP.Controllers
             UnitModel victim, UnitView attackerView, 
             BaseUnitAction parentAction, List<Vector3> approachPath, int damage, CellModel currentCell)
         {
-            victim.TakeDamage(damage);
             var returnPath = new List<Vector3>(approachPath);
             returnPath.Reverse();
             
-            parentAction.PostActions.Add(new MoveUA(attackerView, returnPath, GetForwardDirection(currentCell)));
+            Vector3 finalDirection = GetForwardDirection(currentCell);
+            MoveUA returnMoveUA = new MoveUA(attackerView, returnPath, finalDirection);
+            parentAction.PostActions.Add(returnMoveUA);
         }
 
         private void HandleNormalMove(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel, List<Vector3> fullVisualPath, Action onMoveCompleted)
