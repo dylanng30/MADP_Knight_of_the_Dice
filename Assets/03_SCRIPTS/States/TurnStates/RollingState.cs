@@ -15,7 +15,7 @@ namespace MADP.States.TurnStates
         public override void EnterTurn()
         {
             base.EnterTurn();
-            timer = 2f;
+            timer = 0f;
             roled =  false;
         }
 

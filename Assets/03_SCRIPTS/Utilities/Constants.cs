@@ -4,6 +4,10 @@ namespace MADP.Utilities
 {
     public class Constants
     {
+        public const string PrimaryMaterial = "Primary";
+        public const string SecondaryMaterial = "Secondary";
+        public const string TertiaryMaterial = "Tertiary";
+        
         public const string CellView = "Cell";
         public const string UnitView = "Unit";
 

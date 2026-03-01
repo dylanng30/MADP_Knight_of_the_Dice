@@ -9,7 +9,12 @@ namespace MADP.Views.Unit
 {
     public class UnitView : MonoBehaviour
     {
-        [Header("---MATERIALS---")] public List<Renderer> PrimarySign;
+        [Header("Test")]
+        public List<Renderer> Renderers;
+        
+        
+        [Header("---MATERIALS---")]
+        public List<Renderer> PrimarySign;
         public List<Renderer> SecondarySign;
         public List<Renderer> TertiarySign;
 
@@ -39,8 +44,8 @@ namespace MADP.Views.Unit
 
         public void PlayAnimation(string animationName)
         {
-            //Debug.Log("Playing animation: " + animationName); 
-            //animator.Play(animationName);
+            if(animator != null)
+                animator.Play(animationName);
         }
 
         public void Spawn(Vector3 position)

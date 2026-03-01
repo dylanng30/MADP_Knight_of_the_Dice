@@ -85,19 +85,24 @@ namespace MADP.Controllers
 
         public bool CheckWinCondition(TeamColor teamColor)
         {
-            var homeCells = _boardModel.HomeCells[teamColor];
-            int rightCell = 0;
+            if (!_boardModel.HomeCells.TryGetValue(teamColor, out var homeCells))
+                return false;
+            
+            int unitsInWinningPosition = 0;
+            
             foreach (var cell in homeCells)
             {
-                int index = cell.Index;
-                if ((index == 6 || index == 5 || index == 4 || index == 3) &&
-                    cell.HasUnit)
+                if (cell.HasUnit && cell.Unit.TeamOwner == teamColor)
                 {
-                    rightCell++;
+                    int index = cell.Index;
+                    if (index == 2 || index == 3 || index == 4 || index == 5)
+                    {
+                        unitsInWinningPosition++;
+                    }
                 }
             }
 
-            return rightCell == 4;
+            return unitsInWinningPosition == 4;
         }
 
 
@@ -180,8 +185,19 @@ namespace MADP.Controllers
             MoveUA approachMoveUA = new MoveUA(attackerView, approachPath);
 
             CombatResult result = _combatService.SimulateCombat(attacker, victim);
+            
+            Action onHit = () => {
+                victim.TakeDamage(result.DamageDealt);
+            };
+            
+            Action onDeathAnimationFinished = () => {
+                Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chuẩn bị chiếm ô.");
+                boardView.UnitReturnNest(victim);
+                victim.Revive();
+                victimView.Collider.enabled = true;
+            };
 
-            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead);
+            AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead, onHit, onDeathAnimationFinished);
             approachMoveUA.PostActions.Add(attackUA);
 
             if (result.IsVictimDead)
@@ -198,22 +214,21 @@ namespace MADP.Controllers
         }
 
         private void HandleCombatWin(
-            UnitModel attacker, UnitModel victim,
-            CellModel currentCellModel, CellModel targetCellModel,
-            UnitView attackerUnitView, AttackUA attackUA,
-            Vector3 approachEndPos, Vector3 fullPathEndPos, int damageDealt)
+            UnitModel attacker, UnitModel victim, 
+            CellModel currentCellModel, CellModel targetCellModel, 
+            UnitView attackerUnitView, AttackUA attackUA, 
+            Vector3 approachEndPos, Vector3 fullPathEndPos, int damage)
         {
             Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chiếm ô.");
             _agents[attacker.TeamOwner].AddReward(_agents[attacker.TeamOwner].attackWinReward);
             _agents[victim.TeamOwner].AddReward(-_agents[attacker.TeamOwner].attackWinReward);
-            victim.TakeDamage(damageDealt);
-            boardView.UnitReturnNest(victim);
-            victim.Revive();
             targetCellModel.Clear();
             ExecuteMoveSuccess(attacker, currentCellModel, targetCellModel);
+            
             var winStepPath = new List<Vector3> { approachEndPos, fullPathEndPos };
             Vector3 forwardDirection = GetForwardDirection(targetCellModel);
             MoveUA winMoveUA = new MoveUA(attackerUnitView, winStepPath, forwardDirection);
+            
             attackUA.PostActions.Add(winMoveUA);
             TryAddCellEventAction(attacker, targetCellModel, winMoveUA);
         }
@@ -224,11 +239,12 @@ namespace MADP.Controllers
         {
             _agents[victim.TeamOwner].AddReward(-damage * _agents[victim.TeamOwner].attackWinReward /
                                                 _agents[victim.TeamOwner].maxStat);
-            victim.TakeDamage(damage);
             var returnPath = new List<Vector3>(approachPath);
             returnPath.Reverse();
             
-            parentAction.PostActions.Add(new MoveUA(attackerView, returnPath, GetForwardDirection(currentCell)));
+            Vector3 finalDirection = GetForwardDirection(currentCell);
+            MoveUA returnMoveUA = new MoveUA(attackerView, returnPath, finalDirection);
+            parentAction.PostActions.Add(returnMoveUA);
         }
 
         private void HandleNormalMove(UnitModel unitModel, CellModel currentCellModel, CellModel targetCellModel,
@@ -276,7 +292,7 @@ namespace MADP.Controllers
 
             if (spawnCell == null)
             {
-                Debug.Log("Khong tim thay spawn cell");
+                Debug.LogError("Khong tim thay spawn cell");
                 return;
             }
 
@@ -484,7 +500,7 @@ namespace MADP.Controllers
 
         public bool CanSpawnUnit(UnitModel unitModel, int diceValue)
         {
-            if (unitModel.State == UnitState.Moving)
+            if (unitModel.State != UnitState.InNest) 
                 return false;
 
             var spawnCell = _boardModel.AroundCells.FirstOrDefault(c => c.Structure == CellStructure.Spawn &&
@@ -606,15 +622,19 @@ namespace MADP.Controllers
             CellModel currentCell = GetCurrentCellOfUnit(unit);
             if (currentCell.Structure == CellStructure.Gate && currentCell.TeamOwner == unit.TeamOwner)
                 return false;
-            
+
             var path = PathfindingService.GetPath(_boardModel, currentCell, diceValue);
 
-            for (int i = 0; i < path.Count; i++)
+            for (int i = 1; i < path.Count; i++)
             {
                 CellModel cell = path[i];
                 if (cell.Structure == CellStructure.Gate && cell.TeamOwner == unit.TeamOwner)
                 {
-                    if (i < path.Count - 1) return true;
+                    if (i < path.Count - 1)
+                    {
+                        //Debug.LogError($"Unit {unit.Id} của team {unit.TeamOwner} có thể đi qua với xúc xắc {diceValue}");
+                        return true;
+                    }
                 }
             }
 

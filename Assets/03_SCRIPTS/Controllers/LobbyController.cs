@@ -85,7 +85,6 @@ namespace MADP.Controllers
         {
             var currentSlot = _lobbyService.GetSlots()[slotIndex];
             var takenColors = _lobbyService.GetTakenColors(slotIndex);
-            //colorSettingView.Show(currentSlot, _lobbyService.GetSlots());
             colorSettingView.Show(currentSlot.TeamColor, takenColors, slotIndex);
         }
         private void HandleColorSaveRequested(int slotIndex, TeamColor newColor)

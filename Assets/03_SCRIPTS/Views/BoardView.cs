@@ -4,6 +4,7 @@ using MADP.Controllers;
 using MADP.Models;
 using MADP.Services;
 using MADP.Settings;
+using MADP.Utilities;
 using MADP.Views.Unit;
 using UnityEngine;
 
@@ -236,19 +237,24 @@ namespace MADP.Views
             //Hướng nhìn ban đầu
             Vector3 directionToTarget = Vector3.zero - view.transform.position;
             view.transform.LookAt(Vector3.zero);
-            
-            
-            if(view.PrimarySign.Count > 0)
-                foreach (var sign in view.PrimarySign)
-                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Primary);
-            
-            if(view.SecondarySign.Count > 0)
-                foreach (var sign in view.SecondarySign)
-                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Secondary);
-            
-            if(view.TertiarySign.Count > 0)
-                foreach (var sign in view.TertiarySign)
-                    sign.materials[sign.materials.Length - 1].color = GetUnitColor(model, Priority.Tertiary);
+
+
+            if (view.Renderers.Count > 0)
+            {
+                foreach (var sign in view.Renderers)
+                {
+                    Material[] mats = sign.materials;
+                    for (int i = 0; i < mats.Length; i++)
+                    {
+                        if (mats[i].name.Contains(Constants.PrimaryMaterial))
+                            mats[i].color = GetUnitColor(model, Priority.Primary);
+                        else if (mats[i].name.Contains(Constants.SecondaryMaterial))
+                            mats[i].color = GetUnitColor(model, Priority.Secondary);
+                        else if (mats[i].name.Contains(Constants.TertiaryMaterial))
+                            mats[i].color = GetUnitColor(model, Priority.Tertiary);
+                    }
+                }
+            }
             
             _unitMap.Add(model, view);
         }
@@ -269,6 +275,7 @@ namespace MADP.Views
                 default: return firstUnitViewPrefab;
             }
         }
+        
         #endregion
     }
 }
