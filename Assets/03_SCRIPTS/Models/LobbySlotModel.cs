@@ -20,7 +20,7 @@ namespace MADP.Models
         public TeamColor TeamColor;
         public PlayerType PlayerType;
         public RoleType RoleType;
-        public BotType BotType;
+        public BotDifficulty BotType;
         public string PlayerName;
         public string AvatarPath;
         public bool IsHost = false;
@@ -36,8 +36,7 @@ namespace MADP.Models
             PlayerType = PlayerType.Empty;
             PlayerName = "Empty";
             RoleType = RoleType.Random;
-            //BotType = SlotIndex % 2 == 0 ? BotType.Easy : BotType.Medium;
-            BotType = BotType.Medium;
+            BotType = BotDifficulty.Medium;
             Inventory = new PlayerInventoryModel();
         }
     }

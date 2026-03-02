@@ -9,10 +9,7 @@ namespace MADP.Views.Lobby
 {
     public class LobbyView : MonoBehaviour
     {
-        [SerializeField] private Button _shopButton;
-        [SerializeField] private Button _settingsButton;
-        [SerializeField] private Button _homeButton;
-        [SerializeField] private Button _startGameButton;
+        [SerializeField] private Button startGameButton;
         [SerializeField] private Button matchSettingsButton;
 
         [SerializeField] private TextMeshProUGUI roomIdTxt;
@@ -27,7 +24,7 @@ namespace MADP.Views.Lobby
         
         private void Awake()
         {
-            _startGameButton.onClick.AddListener(() => OnStartGameClicked?.Invoke());
+            startGameButton.onClick.AddListener(() => OnStartGameClicked?.Invoke());
             matchSettingsButton.onClick.AddListener(() => OnMatchSettingsClicked?.Invoke());
             
             for (int i = 0; i < _slotViews.Count; i++)
@@ -40,6 +37,7 @@ namespace MADP.Views.Lobby
                 );
             }
         }
+
         public void Initialize(LobbySlotModel[] slotModels)
         {
             for (int i = 0; i < slotModels.Length && i < _slotViews.Count; i++)

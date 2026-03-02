@@ -89,7 +89,7 @@ namespace MADP.Controllers
                         botBrain = new RandomBotBrain(boardController);
                     }
 
-                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} ");
+                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} / {botBrain.GetType().Name}");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }

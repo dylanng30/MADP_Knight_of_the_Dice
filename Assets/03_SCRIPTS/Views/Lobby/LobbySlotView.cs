@@ -16,7 +16,6 @@ namespace MADP.Views.Lobby
         [SerializeField] private TeamColorDatabaseSO teamColorDB;
         [SerializeField] private RectTransform emptySlot;
         [SerializeField] private RectTransform playerSlot;
-        [SerializeField] private RectTransform slotRect;
         
         [Space(10)]
         [Header("---UI---")]
@@ -32,6 +31,9 @@ namespace MADP.Views.Lobby
         [SerializeField] private Button changeColorButton;
         [SerializeField] private Button changeRoleButton;
         
+        private RectTransform _rectTransform;
+        private Vector2 _originalPosition;
+        private Sequence sequence;
         
         private int _slotIndex;
         private Action<int> _onSlotChanged;
@@ -40,6 +42,17 @@ namespace MADP.Views.Lobby
         
         private bool _hasPlayer;
         private bool _isHost;
+
+        private void Awake()
+        {
+            _rectTransform = GetComponent<RectTransform>();
+            _originalPosition = _rectTransform.anchoredPosition;
+        }
+
+        private void OnEnable()
+        {
+            SlideIn();
+        }
 
         public void Initialize(int index, Action<int> onSlotChanged, Action<int> onColorEdit, Action<int> onRoleEdit)
         {
@@ -96,7 +109,12 @@ namespace MADP.Views.Lobby
 
         private void SlideIn()
         {
-            var sequence = UIAnimator.SlideInFromTop(slotRect, slotRect.rect.height, 1f);
+            sequence?.Kill();
+            if (_rectTransform != null)
+            {
+                _rectTransform.anchoredPosition = _originalPosition;
+                sequence = UIAnimator.SlideInFromTop(_rectTransform, _rectTransform.rect.height, 1f);
+            }
         }
 
         #endregion

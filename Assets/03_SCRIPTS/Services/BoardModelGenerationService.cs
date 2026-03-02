@@ -12,12 +12,14 @@ namespace MADP.Services
         private HashSet<int> _redIndexes;
         private HashSet<int> _yellowIndexes;
         private HashSet<int> _purpleIndexes;
+        private HashSet<int> _greenIndexes;
         
         private Dictionary<TeamColor, int> _teamToBaseMap;
         public BoardModel CreateFullBoard(
             int redCount, 
             int yellowCount, 
             int purpleCount, 
+            int greenCount,
             List<LobbySlotModel> activeSlots)
         {
             _teamToBaseMap = new Dictionary<TeamColor, int>();
@@ -28,7 +30,7 @@ namespace MADP.Services
             
             BoardModel boardModel = new BoardModel();
             
-            boardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount);
+            boardModel.AroundCells = CreateAroundCells(redCount, yellowCount, purpleCount, greenCount);
             boardModel.HomeCells = new  Dictionary<TeamColor, List<CellModel>>();
             
             foreach (var slot in activeSlots)
@@ -39,12 +41,12 @@ namespace MADP.Services
             return boardModel;
         }
         
-        private List<CellModel> CreateAroundCells(int redCount, int yellowCount, int purpleCount)
+        private List<CellModel> CreateAroundCells(int redCount, int yellowCount, int purpleCount, int greenCount)
         {
             List<CellModel> aroundCells = new List<CellModel>();
 
             Reset();
-            CreateSpecialCellIndexes(redCount, yellowCount, purpleCount);
+            CreateSpecialCellIndexes(redCount, yellowCount, purpleCount,  greenCount);
             
             for (int i = 0; i < Constants.AroundCellCount; i++)
             {
@@ -100,9 +102,10 @@ namespace MADP.Services
         
         private CellAttribute IdentifyAttribute(int index)
         {
-            if (_redIndexes.Contains(index)) return CellAttribute.Red;
-            if (_yellowIndexes.Contains(index)) return CellAttribute.Yellow;
-            if (_purpleIndexes.Contains(index)) return CellAttribute.Purple;
+            if (_redIndexes.Contains(index)) return CellAttribute.Harm;
+            if (_yellowIndexes.Contains(index)) return CellAttribute.Gold;
+            if (_purpleIndexes.Contains(index)) return CellAttribute.Myth;
+            if (_greenIndexes.Contains(index)) return CellAttribute.Heal;
             return CellAttribute.None;
         }
         private void Reset()
@@ -110,26 +113,28 @@ namespace MADP.Services
             if (_redIndexes == null) _redIndexes = new HashSet<int>();
             if (_yellowIndexes == null) _yellowIndexes = new HashSet<int>();
             if (_purpleIndexes == null) _purpleIndexes = new HashSet<int>();
+            if (_greenIndexes == null) _greenIndexes = new HashSet<int>();
             
             _redIndexes.Clear();
             _yellowIndexes.Clear();
             _purpleIndexes.Clear();
+            _greenIndexes.Clear();
         }
         
-        private void CreateSpecialCellIndexes(int redCount, int yellowCount, int purpleCount)
+        private void CreateSpecialCellIndexes(int redCount, int yellowCount, int purpleCount, int greenCount)
         {
             List<int> availableIndexes = new List<int>();
 
             for (int i = 0; i < Constants.AroundCellCount; i++)
             {
                 int except = i % Constants.CellCountPerTeam;
-                if (except == 1 || except == Constants.AroundCellCount - 1)
+                if (except == 1 || except == 15)
                     continue;
 
                 availableIndexes.Add(i);
             }
             
-            int totalSpecialCells =  redCount + yellowCount + purpleCount;
+            int totalSpecialCells =  redCount + yellowCount + purpleCount + greenCount;
 
             if (totalSpecialCells > availableIndexes.Count)
             {
@@ -160,6 +165,14 @@ namespace MADP.Services
                 for (int i = 0; i < purpleCount; i++)
                 {
                     _purpleIndexes.Add(availableIndexes[redCount + yellowCount + i]);
+                }
+            }
+
+            if (greenCount > 0)
+            {
+                for (int i = 0; i < greenCount; i++)
+                {
+                    _greenIndexes.Add(availableIndexes[redCount + yellowCount + purpleCount + i]);
                 }
             }
         }

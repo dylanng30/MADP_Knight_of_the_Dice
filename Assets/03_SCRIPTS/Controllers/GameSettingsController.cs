@@ -35,7 +35,7 @@ namespace MADP.Controllers
             _view.GeneralPanel.OnWindowModeChanged += _service.SetFullScreen;
 
             _view.OnSaveClicked += HandleSave;
-            _view.OnCloseClicked += _view.Hide;
+            _view.OnCloseClicked += HideGameSettings;
         }
         
         #region --- HANDLERS ---
@@ -85,9 +85,14 @@ namespace MADP.Controllers
             _view.Hide();
         }
 
-        public void OpenSettings()
+        public void ShowGameSettings()
         {
             _view.Show();
+        }
+
+        public void HideGameSettings()
+        {
+            _view.Hide();
         }
     }
 }

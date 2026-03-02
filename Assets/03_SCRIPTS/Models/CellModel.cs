@@ -8,7 +8,7 @@ namespace MADP.Models
     }
     public enum CellAttribute
     {
-        None, Red, Yellow, Purple, Blue, Green, Orange
+        None, Harm, Heal, Gold, Myth
     }
     public enum TeamColor
     {

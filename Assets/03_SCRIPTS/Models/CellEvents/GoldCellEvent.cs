@@ -14,7 +14,7 @@ namespace MADP.Models.CellEvents
         }
         public bool CanExecute(CellModel cell)
         {
-            return cell.Attribute == CellAttribute.Yellow;
+            return cell.Attribute == CellAttribute.Gold;
         }
 
         public void Execute(UnitModel unit, CellModel cell)

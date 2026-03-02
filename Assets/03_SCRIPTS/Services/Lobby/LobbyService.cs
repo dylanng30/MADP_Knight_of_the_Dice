@@ -33,8 +33,7 @@ namespace MADP.Services.Lobby
             _lobbyModel.Slots[1] = new LobbySlotModel(1, TeamColor.None);
             _lobbyModel.Slots[2] = new LobbySlotModel(2, TeamColor.None);
             _lobbyModel.Slots[3] = new LobbySlotModel(3, TeamColor.None);
-
-            //Khởi tạo MatchSettings mặc định
+            
             _currentMatchSettings = new MatchSettingsModel
             {
                 TimePerTurn = 30,
@@ -45,14 +44,25 @@ namespace MADP.Services.Lobby
                 Slots = _lobbyModel.Slots
             };
         }
+        
+        public void SetAllBotsDifficulty(BotDifficulty difficulty)
+        {
+            if (_lobbyModel == null || _lobbyModel.Slots == null) return;
+    
+            foreach (var slot in _lobbyModel.Slots)
+            {
+                slot.BotType = difficulty;
+            }
+        }
 
-        public void UpdateMatchSettings(int time, MapType map, int redCellCount, int yellowCellCount, int purpleCellCount)
+        public void UpdateMatchSettings(int time, MapType map, int redCellCount, int yellowCellCount, int purpleCellCount, int healCells)
         {
             _currentMatchSettings.TimePerTurn = time;
             _currentMatchSettings.SelectedMap = map;
             _currentMatchSettings.RedCellCount = redCellCount;
             _currentMatchSettings.YellowCellCount = yellowCellCount;
             _currentMatchSettings.PurpleCellCount = purpleCellCount;
+            _currentMatchSettings.GreenCellCount = healCells;
         }
 
         public void ToggleSlotState(int index)

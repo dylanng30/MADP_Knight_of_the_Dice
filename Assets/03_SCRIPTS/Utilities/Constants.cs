@@ -15,5 +15,10 @@ namespace MADP.Utilities
 
         public const int AroundCellCount = 64;
         public const int CellCountPerTeam = AroundCellCount / 4;
+
+        public const string GoldIconPath = "GoldIcon";
+        public const string MythIconPath = "MythIcon";
+        public const string HealIconPath = "HealIcon";
+        public const string HarmIconPath = "HarmIcon";
     }
 }

@@ -9,14 +9,8 @@ namespace MADP.Views.Unit
 {
     public class UnitView : MonoBehaviour
     {
-        [Header("Test")]
+        [Header("MATERIAL SETUP")]
         public List<Renderer> Renderers;
-        
-        
-        [Header("---MATERIALS---")]
-        public List<Renderer> PrimarySign;
-        public List<Renderer> SecondarySign;
-        public List<Renderer> TertiarySign;
         
         [Header("---COMPONENTS---")]
         [SerializeField] private Collider collider;

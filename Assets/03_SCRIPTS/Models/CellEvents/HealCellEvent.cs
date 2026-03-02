@@ -12,7 +12,7 @@ namespace MADP.Models.CellEvents
         }
         public bool CanExecute(CellModel cell)
         {
-            return cell.Attribute == CellAttribute.Blue;
+            return cell.Attribute == CellAttribute.Heal;
         }
 
         public void Execute(UnitModel unit, CellModel cell)

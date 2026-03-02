@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace MADP.Settings
 {
-    public enum BotType
+    public enum BotDifficulty
     {
-        Easy, Medium, Hard
+        Easy, Medium, Hard, SuperHard
     }
     [Serializable]
     public struct BotRoleMapping
     {
-        public BotType Type;
+        public BotDifficulty Type;
         public BotProfileSO Profile;
     }
 
@@ -21,7 +21,7 @@ namespace MADP.Settings
     {
         public List<BotRoleMapping> Mappings;
         
-        public BotProfileSO GetProfile(BotType type)
+        public BotProfileSO GetProfile(BotDifficulty type)
         {
             var mapping = Mappings.Find(m => m.Type == type);
             return mapping.Profile; 

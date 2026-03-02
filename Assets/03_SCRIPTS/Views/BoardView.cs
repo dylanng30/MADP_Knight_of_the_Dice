@@ -100,10 +100,8 @@ namespace MADP.Views
             => _unitMap.ContainsKey(unitModel) ? _unitMap[unitModel] : null;
         
         public Vector3 GetCellPosition(CellModel cellModel)
-        {
-            return _cellMap.TryGetValue(cellModel, out var view) ? view.GetUnitPosition() : Vector3.zero;
-        }
-
+            => _cellMap.TryGetValue(cellModel, out var view) ? view.GetUnitPosition() : Vector3.zero;
+        
         public List<Vector3> GetPath(List<CellModel> pathModel)
         {
             List<Vector3> path = new List<Vector3>();
@@ -159,10 +157,10 @@ namespace MADP.Views
             {
                 finalColor = _teamColorDB.GetTeamColor(model.TeamOwner, Priority.Primary);
             }
-            else if (model.Attribute != CellAttribute.None)
+            /*else if (model.Attribute != CellAttribute.None)
             {
                 finalColor = GetAttributeColor(model.Attribute);
-            }
+            }*/
             else
             {
                 bool isEvenIndex = model.Index % 2 == 0;
@@ -180,11 +178,10 @@ namespace MADP.Views
 
             return attribute switch
             {
-                CellAttribute.Red => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
-                CellAttribute.Yellow => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
-                CellAttribute.Purple => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
-                CellAttribute.Blue => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
-                CellAttribute.Green => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Harm => _teamColorDB.GetTeamColor(TeamColor.Red, Priority.Primary),
+                CellAttribute.Gold => _teamColorDB.GetTeamColor(TeamColor.Yellow, Priority.Primary),
+                CellAttribute.Myth => _teamColorDB.GetTeamColor(TeamColor.Purple, Priority.Primary),
+                CellAttribute.Heal => _teamColorDB.GetTeamColor(TeamColor.Green, Priority.Primary),
                 _ => Color.gray
             };
         }
@@ -241,14 +238,14 @@ namespace MADP.Views
                 foreach (var sign in view.Renderers)
                 {
                     Material[] mats = sign.materials;
-                    for (int i = 0; i < mats.Length; i++)
+                    foreach (var mat in mats)
                     {
-                        if (mats[i].name.Contains(Constants.PrimaryMaterial))
-                            mats[i].color = GetUnitColor(model, Priority.Primary);
-                        else if (mats[i].name.Contains(Constants.SecondaryMaterial))
-                            mats[i].color = GetUnitColor(model, Priority.Secondary);
-                        else if (mats[i].name.Contains(Constants.TertiaryMaterial))
-                            mats[i].color = GetUnitColor(model, Priority.Tertiary);
+                        if (mat.name.Contains(Constants.PrimaryMaterial))
+                            mat.color = GetUnitColor(model, Priority.Primary);
+                        else if (mat.name.Contains(Constants.SecondaryMaterial))
+                            mat.color = GetUnitColor(model, Priority.Secondary);
+                        else if (mat.name.Contains(Constants.TertiaryMaterial))
+                            mat.color = GetUnitColor(model, Priority.Tertiary);
                     }
                 }
             }
