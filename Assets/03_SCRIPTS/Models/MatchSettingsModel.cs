@@ -3,7 +3,6 @@ using MADP.Settings;
 
 namespace MADP.Models
 {
-    [Serializable]
     public class MatchSettingsModel
     {
         public MapType SelectedMap = MapType.Desert;
@@ -11,6 +10,7 @@ namespace MADP.Models
         public int RedCellCount = 1;
         public int YellowCellCount = 1;
         public int PurpleCellCount = 1;
+        public int GreenCellCount = 1;
 
         public LobbySlotModel[] Slots;
     }

@@ -43,12 +43,21 @@ namespace MADP.Controllers
         private List<LobbySlotModel> _activeSlots;
         private Dictionary<TeamColor, int> _teamToBaseMap = new();
         private MapType _currentMapType;
+        
+        private int _redCells;
+        private int _yellowCells;
+        private int _purpleCells;
+        private int _greenCells;
 
         public void Initialize(
             IGoldService goldService, 
             IPathfindingService pathfindingService,
             ICombatService combatService,
-            ICellEventService cellEventService,
+            ICellEventService cellEventService, 
+            int redCells,
+            int yellowCells,
+            int purpleCells,
+            int greenCells,
             List<LobbySlotModel> activeSlots,
             MapType mapType,
             TeamColorDatabaseSO teamColorDB)
@@ -61,6 +70,11 @@ namespace MADP.Controllers
             _cellEventService = cellEventService;
             _activeSlots = activeSlots;
             _currentMapType = mapType;
+            
+            _redCells = redCells;
+            _yellowCells = yellowCells;
+            _purpleCells = purpleCells;
+            _greenCells = greenCells;
             
             _teamToBaseMap.Clear();
             foreach (var slot in activeSlots)
@@ -574,9 +588,10 @@ namespace MADP.Controllers
         private void GenerateBoard()
         {
             _boardModel = _boardModelGenerationService.CreateFullBoard(
-                boardSetting.RedCellCount,
-                boardSetting.YellowCellCount,
-                boardSetting.PurpleCellCount,
+                _redCells, 
+                _yellowCells,
+                _purpleCells,
+                _greenCells,
                 _activeSlots
             );
 
@@ -584,7 +599,6 @@ namespace MADP.Controllers
         }
         private void GenerateUnits()
         {
-            //List<TeamColor> activeTeams = _activeSlots.Select(s => s.TeamColor).ToList();
             _allUnits = _unitModelGenerationService.CreateAllUnits(_activeSlots); 
             OnAllUnitsGenerated?.Invoke(_allUnits);
         }

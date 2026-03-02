@@ -1,4 +1,5 @@
 ﻿using MADP.Models;
+using MADP.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ namespace MADP.Views
         public CellModel Model { get; private set; }
 
         public CellStructure structure;
+        public CellAttribute attribute;
 
         public int Id { get; private set; }
         
@@ -57,8 +59,31 @@ namespace MADP.Views
 
         private void SetupAttribute()
         {
-            var attribute = Model.Attribute;
-            specialImg.gameObject.SetActive(false);
+            attribute = Model.Attribute;
+            switch (attribute)
+            {
+                case CellAttribute.Heal:
+                    LoadIcon(Constants.HealIconPath);
+                    break;
+                case CellAttribute.Harm:
+                    LoadIcon(Constants.HarmIconPath);
+                    break;
+                case CellAttribute.Gold:
+                    LoadIcon(Constants.GoldIconPath);
+                    break;
+                case CellAttribute.Myth:
+                    LoadIcon(Constants.MythIconPath);
+                    break;
+                default:
+                    specialImg.gameObject.SetActive(false);
+                    break;
+            }
+        }
+
+        private void LoadIcon(string path)
+        {
+            specialImg.sprite = Resources.Load<Sprite>(path);
+            specialImg.gameObject.SetActive(true);
         }
     }
 }

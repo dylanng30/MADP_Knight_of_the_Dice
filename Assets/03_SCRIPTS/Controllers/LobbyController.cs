@@ -18,21 +18,10 @@ namespace MADP.Controllers
         [SerializeField] private RoleSettingView roleSettingView;
         [SerializeField] private MatchSettingsView matchSettingsView;
         
-        [Header("GameSettings")]
-        [SerializeField] private GameSettingsController gameSettingsController;
-        [SerializeField] private Button gameSettingsButton;
-
         private LobbyService _lobbyService = new();
 
         private void Start()
         {
-            if (gameSettingsController != null)
-            {
-                gameSettingsController.Initialize();
-                gameSettingsButton.onClick.AddListener(gameSettingsController.OpenSettings);
-            }
-            
-            
             lobbyView.OnSlotActionRequested += HandleSlotAction;
             lobbyView.OnColorEditRequested += HandleColorEditRequested;
             lobbyView.OnRoleEditRequested += HandleRoleEditRequested;
@@ -42,12 +31,9 @@ namespace MADP.Controllers
             colorSettingView.OnColorSaved += HandleColorSaveRequested;
             roleSettingView.OnRoleSaved += HandleRoleSaveRequested;
             matchSettingsView.OnSettingsSaved += HandleMatchSettingSaved;
-            CreateLobby(1);
-            
         }
         private void OnDestroy()
         {
-            // Hủy đăng ký khi Controller bị hủy
             if (lobbyView != null)
             {
                 lobbyView.OnSlotActionRequested -= HandleSlotAction;
@@ -57,6 +43,17 @@ namespace MADP.Controllers
             }
             if (colorSettingView != null) colorSettingView.OnColorSaved -= HandleColorSaveRequested;
             if (roleSettingView != null) roleSettingView.OnRoleSaved -= HandleRoleSaveRequested;
+        }
+        
+        public void SetupBotDifficulty(BotDifficulty difficulty)
+        {
+            _lobbyService.SetAllBotsDifficulty(difficulty);
+            
+            var slots = _lobbyService.GetSlots();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                lobbyView.RefreshSlot(i, slots[i]);
+            }
         }
 
         public void CreateLobby(int roomId)
@@ -114,9 +111,9 @@ namespace MADP.Controllers
             matchSettingsView.Show(currentSettings);
         }
 
-        private void HandleMatchSettingSaved(int time, MapType map, int redCells, int yellowCells, int purpleCells)
+        private void HandleMatchSettingSaved(int time, MapType map, int redCells, int yellowCells, int purpleCells, int healCells)
         {
-            _lobbyService.UpdateMatchSettings(time, map, redCells, yellowCells, purpleCells);
+            _lobbyService.UpdateMatchSettings(time, map, redCells, yellowCells, purpleCells, healCells);
         }
         private void HandleStartGame()
         {
@@ -136,6 +133,16 @@ namespace MADP.Controllers
             SceneManager.LoadScene(matchSettings.SelectedMap.ToString());
         }
         #endregion
+
+        public void ShowLobbyView()
+        {
+            lobbyView.gameObject.SetActive(true);
+        }
+
+        public void HideLobbyView()
+        {
+            lobbyView.gameObject.SetActive(false);
+        }
 
         
     }

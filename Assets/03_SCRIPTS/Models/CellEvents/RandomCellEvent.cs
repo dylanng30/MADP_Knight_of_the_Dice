@@ -14,7 +14,7 @@ namespace MADP.Models.CellEvents
         }
         public bool CanExecute(CellModel cell)
         {
-            return cell.Attribute == CellAttribute.Purple;
+            return cell.Attribute == CellAttribute.Myth;
         }
 
         public void Execute(UnitModel unit, CellModel cell)

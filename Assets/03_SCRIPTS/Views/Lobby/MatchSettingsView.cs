@@ -23,33 +23,41 @@ namespace MADP.Views.Lobby
         [SerializeField] private Button increaseTimeButton;
         [SerializeField] private Button decreaseTimeButton;
         
-        [Header("---RED---")]
+        [Header("---HARM---")]
         [SerializeField] private TextMeshProUGUI redText;
         [SerializeField] private Button increaseRedButton;
         [SerializeField] private Button decreaseRedButton;
         
-        [Header("---YELLOW---")]
+        [Header("---GOLD---")]
         [SerializeField] private TextMeshProUGUI yellowText;
         [SerializeField] private Button increaseYellowButton;
         [SerializeField] private Button decreaseYellowButton;
         
-        [Header("---PURPLE---")]
+        [Header("---MYTH---")]
         [SerializeField] private TextMeshProUGUI purpleText;
         [SerializeField] private Button increasePurpleButton;
         [SerializeField] private Button decreasePurpleButton;
+        
+        [Header("---HEAL---")]
+        [SerializeField] private TextMeshProUGUI greenText;
+        [SerializeField] private Button increaseGreenButton;
+        [SerializeField] private Button decreaseGreenButton;
+        
         
         private MapType _currentSelectedMap;
         private int _currentSelectedTime;
         private int _currentRedCells;
         private int _currentYellowCells;
         private int _currentPurpleCells;
+        private int _currentGreenCells;
         
-        public Action<int, MapType, int, int, int> OnSettingsSaved;
+        public Action<int, MapType, int, int, int, int> OnSettingsSaved;
         
         private const int MIN_TIME = 10;
         private const int MAX_TIME = 60;
         private const int MIN_SPECIAL = 0;
         private const int MAX_SPECIAL = 3;
+        
         private void Awake()
         {
             saveButton.onClick.AddListener(SaveAndHide);
@@ -69,6 +77,9 @@ namespace MADP.Views.Lobby
 
             decreasePurpleButton.onClick.AddListener(() => ChangePurple(-1));
             increasePurpleButton.onClick.AddListener(() => ChangePurple(1));
+            
+            decreaseGreenButton.onClick.AddListener(() => ChangeGreen(-1));
+            increaseGreenButton.onClick.AddListener(() => ChangeGreen(1));
         }
 
         public void Show(MatchSettingsModel currentSettings)
@@ -78,6 +89,7 @@ namespace MADP.Views.Lobby
             _currentRedCells = currentSettings.RedCellCount;
             _currentYellowCells = currentSettings.YellowCellCount;
             _currentPurpleCells = currentSettings.PurpleCellCount;
+            _currentGreenCells = currentSettings.GreenCellCount;
             
             RefreshAllUI();
             gameObject.SetActive(true);
@@ -95,6 +107,7 @@ namespace MADP.Views.Lobby
             redText.text = _currentRedCells.ToString();
             yellowText.text = _currentYellowCells.ToString();
             purpleText.text = _currentPurpleCells.ToString();
+            greenText.text = _currentGreenCells.ToString();
         }
         
         private void ChangeMap(int direction)
@@ -129,6 +142,11 @@ namespace MADP.Views.Lobby
             _currentPurpleCells = Mathf.Clamp(_currentPurpleCells + delta, MIN_SPECIAL, MAX_SPECIAL);
             purpleText.text = _currentPurpleCells.ToString();
         }
+        private void ChangeGreen(int delta)
+        {
+            _currentGreenCells = Mathf.Clamp(_currentGreenCells + delta, MIN_SPECIAL, MAX_SPECIAL);
+            greenText.text = _currentGreenCells.ToString();
+        }
         
         private void SaveAndHide()
         {
@@ -137,7 +155,8 @@ namespace MADP.Views.Lobby
                 _currentSelectedMap,
                 _currentRedCells,
                 _currentYellowCells,
-                _currentPurpleCells);
+                _currentPurpleCells,
+                _currentGreenCells);
             Hide();
         }
     }

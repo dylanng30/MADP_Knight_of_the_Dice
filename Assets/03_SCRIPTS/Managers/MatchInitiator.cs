@@ -59,6 +59,10 @@ namespace MADP.Managers
                 _pathfindingService, 
                 _combatService, 
                 _cellEventService, 
+                settings.RedCellCount,
+                settings.YellowCellCount,
+                settings.PurpleCellCount,
+                settings.GreenCellCount,
                 activePlayers, 
                 settings.SelectedMap, 
                 teamColorDB);

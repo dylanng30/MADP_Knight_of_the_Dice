@@ -10,7 +10,7 @@ namespace MADP.Views.GameSettings
     public struct GameSettingsButton
     {
         public Button Button;
-        public GameObject ChooseSign;
+        public GameObject ChosenSign;
     }
     public class GameSettingView : MonoBehaviour
     {
@@ -37,12 +37,12 @@ namespace MADP.Views.GameSettings
             //SIDE BAR
             generalButton.Button.onClick.AddListener(() =>
             {
-                SwitchTab(generalSettingsView.gameObject, generalButton.ChooseSign);
+                SwitchTab(generalSettingsView.gameObject, generalButton.ChosenSign);
             });
             
             soundButton.Button.onClick.AddListener(() =>
             {
-                SwitchTab(soundSettingsView.gameObject, soundButton.ChooseSign);
+                SwitchTab(soundSettingsView.gameObject, soundButton.ChosenSign);
             });
             
             //MAIN BUTTONS
@@ -54,8 +54,8 @@ namespace MADP.Views.GameSettings
         {
             soundSettingsView.Setup(currentSettings);
             
-            generalButton.ChooseSign.gameObject.SetActive(false);
-            soundButton.ChooseSign.gameObject.SetActive(false);
+            generalButton.ChosenSign.gameObject.SetActive(false);
+            soundButton.ChosenSign.gameObject.SetActive(false);
             
             gameObject.SetActive(false);
         }
@@ -65,8 +65,8 @@ namespace MADP.Views.GameSettings
             generalSettingsView.gameObject.SetActive(false);
             soundSettingsView.gameObject.SetActive(false);
             
-            generalButton.ChooseSign.SetActive(false);
-            soundButton.ChooseSign.SetActive(false);
+            generalButton.ChosenSign.SetActive(false);
+            soundButton.ChosenSign.SetActive(false);
             
             activePanel.SetActive(true);
             if (activeSign != null) 
@@ -79,7 +79,7 @@ namespace MADP.Views.GameSettings
         {
             gameObject.SetActive(true);
             //generalButton.ChooseSign.gameObject.SetActive(true);
-            SwitchTab(generalSettingsView.gameObject,  generalButton.ChooseSign);
+            SwitchTab(generalSettingsView.gameObject,  generalButton.ChosenSign);
         } 
         public void Hide() => gameObject.SetActive(false);
     }
