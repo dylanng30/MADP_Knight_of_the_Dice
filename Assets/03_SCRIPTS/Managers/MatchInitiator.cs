@@ -25,6 +25,7 @@ namespace MADP.Managers
         [Header("---CONTROLLERS---")]
         [SerializeField] private BoardController _boardController;
         [SerializeField] private TurnController _turnController;
+        [SerializeField] private UnitDeckController _unitDeckController;
         
         [Header("---COLOR DB---")]
         [SerializeField] private TeamColorDatabaseSO teamColorDB;
@@ -33,8 +34,26 @@ namespace MADP.Managers
         private IPathfindingService _pathfindingService;
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
-
+        
+        private void Awake()
+        {
+            if (SceneController.Instance != null)
+                SceneController.Instance.OnLoadingFinished += StartMatch;
+        }
+        
         private void Start()
+        {
+            if (SceneController.Instance == null)
+                StartMatch();
+        }
+
+        private void OnDestroy()
+        {
+            if (SceneController.Instance != null)
+                SceneController.Instance.OnLoadingFinished -= StartMatch;
+        }
+
+        private void StartMatch()
         {
             MatchSettingsModel settings = GameManager.Instance != null 
                 ? GameManager.Instance.CurrentMatchSettings 
@@ -44,6 +63,8 @@ namespace MADP.Managers
                 .Where(slot => slot.PlayerType != PlayerType.Empty)
                 .ToList();
             
+            var localPlayerSlot = activePlayers.FirstOrDefault(x => x.PlayerType == PlayerType.Human);
+            
             teamColorDB = teamColorDB != null ? teamColorDB : Resources.Load<TeamColorDatabaseSO>("TeamColorDB");
             diceView.Setup(teamColorDB.GetMapColor(settings.SelectedMap, Priority.Tertiary));
             
@@ -52,6 +73,7 @@ namespace MADP.Managers
             _pathfindingService = new PathfindingService();
             _combatService = new CombatService();
             _cellEventService = new CellEventService(_goldService);
+            
             
             //CONTROLLERS
             _boardController.Initialize(
@@ -70,6 +92,16 @@ namespace MADP.Managers
             _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
             
             _goldService.Initialize(Constants.InitialGold, activePlayers);
+            
+            if (localPlayerSlot != null && _unitDeckController != null)
+            {
+                List<UnitModel> myUnits = _boardController.GetAllUnitsByColor(localPlayerSlot.TeamColor);
+                _unitDeckController.Initialize(
+                    _turnController, 
+                    _boardController, 
+                    _goldService, 
+                    myUnits);
+            }
         }
         
         private MatchSettingsModel GetMockSettings()

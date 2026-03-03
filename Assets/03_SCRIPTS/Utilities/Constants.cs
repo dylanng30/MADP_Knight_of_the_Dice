@@ -20,5 +20,7 @@ namespace MADP.Utilities
         public const string MythIconPath = "MythIcon";
         public const string HealIconPath = "HealIcon";
         public const string HarmIconPath = "HarmIcon";
+
+        public const float UnitSpeed = 10f;
     }
 }

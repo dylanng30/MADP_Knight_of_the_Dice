@@ -17,9 +17,8 @@ namespace MADP.Utilities
 
         public static Sequence Popup(RectTransform rect, float duration)
         {
-            DOTween.Kill(rect);
-            rect.localScale = Vector3.zero;
             Sequence sequence = DOTween.Sequence();
+            rect.localScale = Vector3.zero;
             sequence.Append(rect.DOScale(Vector3.one, duration).SetEase(Ease.OutBack));
             return sequence;
         }

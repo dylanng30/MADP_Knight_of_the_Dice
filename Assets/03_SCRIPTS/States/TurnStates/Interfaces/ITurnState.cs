@@ -5,6 +5,7 @@
         void EnterTurn();
         void ExecuteTurn();
         void ExitTurn();
+        void OnInteract();
     }
 }
 

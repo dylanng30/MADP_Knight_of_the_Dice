@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using MADP.Managers;
 using MADP.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,18 +10,24 @@ namespace MADP.Controllers
 {
     public class SceneController : PersistentSingleton<SceneController>
     {
+        [SerializeField] private Canvas loadingCanvas;
         [SerializeField] private Image _loadingProgress;
-        
-        private string sceneToLoad;
 
-        public void LoadLevel(string sceneName)
+        public Action OnLoadingFinished;
+        
+        private void Start()
         {
-            sceneToLoad = sceneName;
-            SceneManager.LoadScene("LoadingScene");
+            StartCoroutine(LoadSceneAsync("Menu"));
         }
 
-        public IEnumerator LoadSceneAsync(string sceneName)
+        public void LoadScene(string sceneName)
         {
+            StartCoroutine(LoadSceneAsync(sceneName));
+        }
+
+        private IEnumerator LoadSceneAsync(string sceneName)
+        {
+            loadingCanvas.gameObject.SetActive(true);
             AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
             float displayProgress = 0f;
             while (!operation.isDone)
@@ -31,12 +39,18 @@ namespace MADP.Controllers
             }
             
             UpdateLoadingProgress(1);
+            loadingCanvas.gameObject.SetActive(false);
+            yield return null;
+            OnLoadingFinished?.Invoke();
         }
 
         private void UpdateLoadingProgress(float progress)
         {
             if(_loadingProgress != null)
                 _loadingProgress.fillAmount = progress;
+            
+            
+            
         }
     }
 }

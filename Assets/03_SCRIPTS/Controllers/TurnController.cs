@@ -53,11 +53,29 @@ namespace MADP.Controllers
         private float _timePerTurn;
         private float _currentTurnTimer;
         
+        [Header("UI Settings")]
+        [SerializeField] private RollButtonView rollButtonView;
+        [SerializeField] private EndTurnButtonView endTurnButtonView;
+        
         public float CurrentTurnTimer => _currentTurnTimer;
         
         public TeamColor CurrentTeam => _activeSlots[_currentTeamIndex].TeamColor;
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
         
+        //Events
+        public Action<int> OnDiceRolled;
+        //public event Action<TeamColor> OnTurnChanged;
+        
+        private void Start()
+        {
+            if (rollButtonView != null) rollButtonView.OnRollClicked += HandleInteractInput;
+            if (endTurnButtonView != null) endTurnButtonView.OnEndClicked += HandleInteractInput;
+        }
+        private void OnDestroy()
+        {
+            if (rollButtonView != null) rollButtonView.OnRollClicked -= HandleInteractInput;
+            if (endTurnButtonView != null) endTurnButtonView.OnEndClicked -= HandleInteractInput;
+        }
         
         public void Initialize(
             IGoldService goldService, 
@@ -89,7 +107,7 @@ namespace MADP.Controllers
                         botBrain = new RandomBotBrain(boardController);
                     }
 
-                    Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} / {botBrain.GetType().Name}");
+                    //Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} / {botBrain.GetType().Name}");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
             }
@@ -98,7 +116,7 @@ namespace MADP.Controllers
             _currentTeamIndex = 0;
             StartTurnProcess();
 
-            Time.timeScale = 2;
+            //Time.timeScale = 2;
         }
         
         private void Update()
@@ -120,10 +138,39 @@ namespace MADP.Controllers
                 }
             }
         }
+        
+        private void HandleInteractInput()
+        {
+            if (IsPlayerTurn && _currentTurnState != null)
+            {
+                _currentTurnState.OnInteract();
+            }
+        }
+        
+        public void SetRollButtonVisibility(bool isVisible)
+        {
+            if (rollButtonView) 
+            {
+                rollButtonView.SetActive(isVisible);
+                rollButtonView.SetInteractable(isVisible);
+            }
+        }
+
+        public void SetEndTurnButtonVisibility(bool isVisible)
+        {
+            if (endTurnButtonView)
+            {
+                endTurnButtonView.SetActive(isVisible);
+                endTurnButtonView.SetInteractable(isVisible);
+            }
+        }
+        
         private void StartTurnProcess()
         {
             _currentTurnTimer = _timePerTurn;
             turnView.UpdateTimer(_currentTurnTimer);
+            
+            //OnTurnChanged?.Invoke(CurrentTeam);
             turnView.AnimateTurnNotification(CurrentTeam, IsPlayerTurn, () => 
             {
                 SwitchState(TurnState.Rolling);
@@ -132,8 +179,12 @@ namespace MADP.Controllers
         public void SwitchState(TurnState newState)
         {
             _currentTurnState?.ExitTurn();
+            
             if (_turnStates.TryGetValue(newState, out var state))
             {
+                SetRollButtonVisibility(newState == TurnState.Rolling && IsPlayerTurn);
+                SetEndTurnButtonVisibility(newState == TurnState.Choosing && IsPlayerTurn);
+                
                 _currentTurnState = state;
                 _currentTurnState.EnterTurn();
             }
@@ -142,12 +193,13 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            //Debug.Log($"{CurrentTeam} is rolling a {CurrentDiceValue}");
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
         }
 
         private void OnDiceRollCompleted()
         {
+            OnDiceRolled?.Invoke(CurrentDiceValue);
+            
             bool canMoveAny = boardController.CheckIfAnyMovePossible(CurrentTeam, CurrentDiceValue);
             
             if (!canMoveAny)
@@ -233,7 +285,9 @@ namespace MADP.Controllers
         }
         public void EndTurn()
         {
+            //Reset
             _selectedUnit = null;
+            OnDiceRolled?.Invoke(0);
             
             if (CurrentDiceValue != 6)
             {
@@ -251,6 +305,7 @@ namespace MADP.Controllers
                     }*/
                 }
             }
+            
             
             StartTurnProcess();
         }

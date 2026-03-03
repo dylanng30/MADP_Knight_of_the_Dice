@@ -18,7 +18,8 @@ namespace MADP.Services.CellEvent
             {
                 new GoldCellEvent(goldService),
                 new HealCellEvent(),
-                new RandomCellEvent(goldService),
+                new MythCellEvent(goldService),
+                new HarmCellEvent()
             };
         }
         public ICellEvent GetEvent(CellModel cell)

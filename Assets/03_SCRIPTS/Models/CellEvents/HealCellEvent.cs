@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MADP.Models.CellEvents
 {
-    public class HealCellEvent: ICellEvent
+    public class HealCellEvent : ICellEvent
     {
         public HealCellEvent()
         {

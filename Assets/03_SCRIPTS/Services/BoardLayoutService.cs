@@ -12,7 +12,7 @@ namespace MADP.Services
         private Vector3 _offset = new Vector3(0, 0, 8);
         //Unit
         private float _cageOffset = 8.0f;
-        private float _unitGap = 1f;
+        private float _unitGap = 1.5f;
         
         private Vector3 _currentPosition;
         private Vector3 _currentDirection;

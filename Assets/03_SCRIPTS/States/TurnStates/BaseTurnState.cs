@@ -27,5 +27,10 @@ namespace MADP.States.TurnStates
             
         }
 
+        public virtual void OnInteract()
+        {
+            
+        }
+
     }
 }

@@ -6,8 +6,8 @@ namespace MADP.States.TurnStates
 {
     public class RollingState  : BaseTurnState
     {
-        private float timer;
-        private bool roled;
+        private float _timer;
+        private bool _roled;
         public RollingState(TurnController controller) : base(controller)
         {
         }
@@ -15,32 +15,40 @@ namespace MADP.States.TurnStates
         public override void EnterTurn()
         {
             base.EnterTurn();
-            timer = 0f;
-            roled =  false;
+            _timer = 1f;
+            _roled =  false;
         }
 
         public override void ExecuteTurn()
         {
-            if (_turnController.IsPlayerTurn && Input.GetKeyDown(KeyCode.Space))
+            if (_turnController.IsPlayerTurn)
             {
-                _turnController.RollDice();
+                if(Input.GetKeyDown(KeyCode.Space))
+                    _turnController.RollDice();
             }
-            else if (!_turnController.IsPlayerTurn)
+            else
             {
                 if (CanBotRole())
                 {
                     _turnController.RollDice();
-                    roled = true;
+                    _roled = true;
                 }
             }
-            
-            //_turnController.RollDice();
+        }
+        
+        public override void OnInteract()
+        {
+            if (_roled) return;
+
+            _roled = true;
+            _turnController.RollDice();
+            _turnController.SetRollButtonVisibility(false);
         }
 
         private bool CanBotRole()
         {
-            timer -= Time.deltaTime;
-            return timer <= 0f && !roled;
+            _timer -= Time.deltaTime;
+            return _timer <= 0f && !_roled;
         }
     }
 }
