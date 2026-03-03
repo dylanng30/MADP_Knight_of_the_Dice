@@ -27,7 +27,7 @@ namespace MADP.Services.Lobby
 
             _lobbyModel.Slots[0] = new LobbySlotModel(0, TeamColor.Red)
             {
-                PlayerType = PlayerType.Bot,
+                PlayerType = PlayerType.Human,
                 IsHost = true
             };
             _lobbyModel.Slots[1] = new LobbySlotModel(1, TeamColor.None);

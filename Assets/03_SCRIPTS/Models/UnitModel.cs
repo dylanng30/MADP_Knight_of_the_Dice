@@ -54,7 +54,6 @@ namespace MADP.Models
 
         public void TakeDamage(int amount)
         {
-            Debug.Log($"Unit {Id} team {TeamOwner} takes {amount} damage");
             Stat.CurrentHealth -= amount;
             OnStatsChanged?.Invoke();
         }
@@ -66,8 +65,7 @@ namespace MADP.Models
                 Stat.CurrentHealth = Stat.MaxHealth;
             OnStatsChanged?.Invoke();
         }
-
-        public bool IsDead() => CurrentHealth <= 0;
+        
 
         public void Revive()
         {

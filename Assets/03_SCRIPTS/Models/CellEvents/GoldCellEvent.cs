@@ -21,8 +21,7 @@ namespace MADP.Models.CellEvents
         {
             int bonusAmount = Random.Range(1, 6);
             if(unit.RoleType == RoleType.Miner)
-                bonusAmount += 2; // Miner nhận thêm 2 Gold
-            Debug.Log($"Unit {unit.Id} đi vào ô Gold Cell! +{bonusAmount} Gold");
+                bonusAmount += 2;
             _goldService.AddGold(unit.TeamOwner, bonusAmount);
         }
     }

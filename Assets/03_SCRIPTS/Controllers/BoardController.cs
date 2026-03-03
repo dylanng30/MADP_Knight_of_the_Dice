@@ -204,6 +204,7 @@ namespace MADP.Controllers
                 boardView.UnitReturnNest(victim);
                 victim.Revive();
                 victimView.Collider.enabled = true;
+                victimView.PlayAnimation("Idle");
             };
 
             AttackUA attackUA = new AttackUA(attackerView, victimView, result.IsVictimDead, onHit, onDeathAnimationFinished);
@@ -540,7 +541,7 @@ namespace MADP.Controllers
         private void ExecuteMoveSuccess(UnitModel unit, CellModel currentCell, CellModel targetCell)
         {
             currentCell.Clear();
-            Debug.Log($"Unit {unit.Id} của team {unit.TeamOwner} đi từ ô {currentCell.Index} đến {targetCell.Index}");
+            //Debug.Log($"Unit {unit.Id} của team {unit.TeamOwner} đi từ ô {currentCell.Index} đến {targetCell.Index}");
             targetCell.Register(unit);
             
             int distance = 0;

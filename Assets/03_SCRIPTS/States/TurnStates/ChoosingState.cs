@@ -31,6 +31,12 @@ namespace MADP.States.TurnStates
             }
         }
 
+        public override void OnInteract()
+        {
+            _turnController.EndTurn();
+            _turnController.SetEndTurnButtonVisibility(false);
+        }
+
         private void HandleInput()
         {
             if (Input.GetMouseButtonDown(0))
@@ -44,7 +50,7 @@ namespace MADP.States.TurnStates
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             int cellLayer = LayerMask.GetMask(Constants.CellView);
 
-            if (_turnController.CurrentDiceValue == 6)
+            /*if (_turnController.CurrentDiceValue == 6)
             {
                 int unitLayer = LayerMask.GetMask(Constants.UnitView);
                 if (Physics.Raycast(ray, out RaycastHit unitHit, 500, unitLayer))
@@ -56,7 +62,7 @@ namespace MADP.States.TurnStates
                         return;
                     }
                 }
-            }
+            }*/
             
             if (Physics.Raycast(ray, out RaycastHit cellHit, 500, cellLayer))
             {

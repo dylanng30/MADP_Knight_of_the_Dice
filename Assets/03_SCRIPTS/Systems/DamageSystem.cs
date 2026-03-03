@@ -31,15 +31,15 @@ namespace MADP.Systems
             attacker.transform.rotation = Quaternion.LookRotation(faceDirection);
             victim.transform.rotation = Quaternion.LookRotation(-faceDirection);
             
-            attackUA.AttackerView.PlayAnimation("Attack");
-            attackUA.VictimView.PlayAnimation("Attack");
+            attacker.PlayAnimation("Attack");
+            //victim.PlayAnimation("Attack");
             
             yield return new WaitForSeconds(2f);
             attackUA.OnHit?.Invoke();
             
             if (attackUA.IsDead)
             {
-                //victim.PlayAnimation("Death");
+                victim.PlayAnimation("Death");
                 yield return new WaitForSeconds(2f); 
                 attackUA.OnDeathAnimationFinished?.Invoke();
             }

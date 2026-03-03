@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MADP.Models;
 using MADP.Settings;
+using MADP.Utilities;
 using TMPro;
 using UnityEngine;
 
@@ -52,7 +53,7 @@ namespace MADP.Views.Unit
             Rotate(moveDirection);
             while (Vector3.Distance(transform.position, targetPosition) > 0.05f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.1f);
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, Constants.UnitSpeed * Time.deltaTime);
                 yield return null;
             }
             

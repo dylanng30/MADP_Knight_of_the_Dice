@@ -15,14 +15,13 @@ namespace MADP.Views
 
         [Header("TIMER UI")] 
         [SerializeField] private TextMeshProUGUI timerTxt;
-
-        [SerializeField] private float displayDuration = 1.5f;
+        [SerializeField] private float displayDuration = 3f;
         
         public void UpdateTimer(float timeLeft)
         {
             if (timerTxt != null)
             {
-                timerTxt.text = Mathf.CeilToInt(timeLeft).ToString() + "s";
+                timerTxt.text = $"{Mathf.CeilToInt(timeLeft)}s";
                 timerTxt.color = timeLeft <= 5f ? Color.red : Color.white;
             }
         }
@@ -30,28 +29,30 @@ namespace MADP.Views
         public void AnimateTurnNotification(TeamColor teamColor, bool playerTurn, Action onAnimationCompleted)
         {
             string turnString = playerTurn ? "Your turn" : $"{teamColor.ToString()}'s turn";
-            if (turnTxt) turnTxt.text = turnString;
+            if (turnTxt)
+                turnTxt.text = turnString;
             
-            Popup(turnTxt.gameObject, onAnimationCompleted);
+            Popup(turnTxtRect, onAnimationCompleted);
         }
 
-        public void AnimateShopPhaseNotification()
+        private void Popup(RectTransform rect, Action onAnimationCompleted = null)
         {
-            if(turnTxt) turnTxt.text = $"SHOPPING PHASE";
-            Popup(turnTxt.gameObject);
-        }
-
-        private void Popup(GameObject obj,Action onAnimationCompleted = null)
-        {
-            gameObject.SetActive(true);
-
-            Sequence seq = UIAnimator.Popup(turnTxtRect, 1f);
-            seq.AppendInterval(displayDuration);
-            seq.OnComplete(() => 
+            if (rect != null)
             {
-                obj.SetActive(false);
+                rect.gameObject.SetActive(true);
+                Sequence sequence = UIAnimator.Popup(turnTxtRect, 1f);
+                sequence.AppendInterval(displayDuration);
+                sequence.OnComplete(() => 
+                {
+                    rect.gameObject.SetActive(false);
+                    onAnimationCompleted?.Invoke();
+                });
+            }
+            else
+            {
                 onAnimationCompleted?.Invoke();
-            });
+            }
+            
         }
     }
 }
