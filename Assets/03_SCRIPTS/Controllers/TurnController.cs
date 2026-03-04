@@ -141,7 +141,7 @@ namespace MADP.Controllers
         
         private void HandleInteractInput()
         {
-            if (IsPlayerTurn && _currentTurnState != null)
+            if (IsPlayerTurn && _currentTurnState != null && !ActionSystem.Instance.IsPerforming)
             {
                 _currentTurnState.OnInteract();
             }
@@ -176,6 +176,26 @@ namespace MADP.Controllers
                 SwitchState(TurnState.Rolling);
             });
         }
+        private void OnTurnActionCompleted()
+        {
+            if (boardController.CheckWinCondition(CurrentTeam))
+            {
+                SwitchState(TurnState.WaitingForActions);
+                return;
+            }
+            
+            if (CurrentDiceValue == 6 && IsPlayerTurn)
+            {
+                DeselectCurrent();
+                SetEndTurnButtonVisibility(true);
+        
+                Debug.Log("Xúc xắc là 6: Vui lòng bấm End Turn để tiếp tục gieo.");
+            }
+            else
+            {
+                EndTurn();
+            }
+        }
         public void SwitchState(TurnState newState)
         {
             _currentTurnState?.ExitTurn();
@@ -194,6 +214,7 @@ namespace MADP.Controllers
         {
             CurrentDiceValue = Random.Range(1, 7);
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
+            SetRollButtonVisibility(false);
         }
 
         private void OnDiceRollCompleted()
@@ -218,7 +239,7 @@ namespace MADP.Controllers
             if(unit.TeamOwner != CurrentTeam)
                 return;
             
-            boardController.SpawnUnit(unit, EndTurn);
+            boardController.SpawnUnit(unit, OnTurnActionCompleted);
         }
         
         public void HandleCellClicked(CellModel clickedCell)
@@ -271,17 +292,8 @@ namespace MADP.Controllers
 
         private void ExecuteMove(UnitModel unitModel, CellModel destination)
         {
-            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () => 
-            {
-                if (boardController.CheckWinCondition(CurrentTeam))
-                {
-                    SwitchState(TurnState.WaitingForActions);
-                }
-                else
-                {
-                    EndTurn();
-                }
-            });
+            SetEndTurnButtonVisibility(false);
+            boardController.MoveUnit(unitModel, destination, CurrentDiceValue, OnTurnActionCompleted);
         }
         public void EndTurn()
         {

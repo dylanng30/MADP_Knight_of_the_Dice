@@ -1,20 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MADP.Models;
 using MADP.Services.Gold.Interfaces;
 using MADP.Settings;
 using MADP.Views;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MADP.Managers
 {
     public class GoldUIManager : MonoBehaviour
     {
         [SerializeField] private List<GoldView> goldViews;
+        [SerializeField] private Button teamButton;
         
         private IGoldService _goldService;
         private Dictionary<TeamColor, GoldView> _activeViews = new ();
         private TeamColorDatabaseSO _teamColorDB;
+        
+        private bool isVisiable = false;
+
+        private void Awake()
+        {
+            if (teamButton != null)
+            {
+                teamButton.onClick.RemoveAllListeners();
+                teamButton.onClick.AddListener(SwitchActiveGoldViewsVisibility);
+            }
+        }
 
         public void Initialize(IGoldService goldService, 
             List<LobbySlotModel> activePlayers, 
@@ -36,8 +50,18 @@ namespace MADP.Managers
                 GoldView view = goldViews[i];
                 Color teamColorUI = _teamColorDB.GetTeamColor(team, Priority.Primary);
                 Color frameColorUI = _teamColorDB.GetTeamColor(team, Priority.Tertiary);
-                view.Setup(team, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
+                view.Setup(i, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
                 _activeViews.Add(team, view);
+            }
+        }
+
+        private void SwitchActiveGoldViewsVisibility()
+        {
+            isVisiable = !isVisiable;
+            if(_activeViews.Values.Count <= 0) return;
+            foreach (var view in _activeViews.Values)
+            {
+                view.gameObject.SetActive(isVisiable);
             }
         }
         

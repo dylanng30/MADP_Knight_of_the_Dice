@@ -10,10 +10,7 @@ namespace MADP.Controllers
         [Header("---MODE---")] 
         [SerializeField] private ModeController modeController;
         [SerializeField] private Button playButton;
-
-        [Header("---GAME SETTINGS---")] 
-        [SerializeField] private GameSettingsController gameSettingsController;
-        [SerializeField] private Button gameSettingsButton;
+        
         
         [Header("---LOBBY---")]
         [SerializeField] private LobbyController lobbyController;
@@ -21,8 +18,6 @@ namespace MADP.Controllers
         [Space(10)]
         [SerializeField] private Button homeButton;
         
-
-        private Action OnShowGameSettingsViewRequested;
         private Action OnShowModeViewRequested;
         private Action OnBackToHomeRequested;
 
@@ -39,13 +34,6 @@ namespace MADP.Controllers
             {
                 OnBackToHomeRequested += HideModeView;
                 homeButton.onClick.AddListener(OnBackToHomeRequested.Invoke);
-            }
-            
-            if (gameSettingsController != null && gameSettingsButton != null)
-            {
-                gameSettingsController.Initialize();
-                OnShowGameSettingsViewRequested += gameSettingsController.ShowGameSettings;
-                gameSettingsButton.onClick.AddListener(OnShowGameSettingsViewRequested.Invoke);
             }
 
             if (modeController != null && playButton != null)
@@ -85,14 +73,11 @@ namespace MADP.Controllers
         private void HideAll()
         {
             if(modeController != null) modeController.HideModeView();
-            if(gameSettingsController != null) gameSettingsController.HideGameSettings();
             if(lobbyController != null) lobbyController.HideLobbyView();
         }
 
         private void OnDisable()
         {
-            OnShowGameSettingsViewRequested -= gameSettingsController.ShowGameSettings;
-            
             OnShowModeViewRequested -= HideAll;
             OnShowModeViewRequested -= modeController.ShowModeView;
             modeController.OnStartBotModeRequested -= HandleStartBotMode;

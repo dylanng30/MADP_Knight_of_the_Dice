@@ -1,20 +1,22 @@
 ﻿using MADP.Services.GameSettings;
 using MADP.Services.GameSettings.Interfaces;
+using MADP.Utilities;
 using MADP.Views.GameSettings;
 using UnityEngine;
 using UnityEngine.Audio;
 
 namespace MADP.Controllers
 {
-    public class GameSettingsController : MonoBehaviour
+    public class GameSettingsController : PersistentSingleton<GameSettingsController>
     {
         [SerializeField] private GameSettingView _view;
         [SerializeField] private AudioMixer _audioMixer;
 
         private IGameSettingsService _service;
 
-        public void Initialize()
+        protected override void Awake()
         {
+            base.Awake();
             _service = new GameSettingsService(_audioMixer);
             var resolutionOptions = _service.GetResolutionOptions();
             var windowModeOptions = _service.GetWindowModeOptions();

@@ -77,10 +77,15 @@ namespace MADP.Views.GameSettings
 
         public void Show()
         {
+            Time.timeScale = 0;
             gameObject.SetActive(true);
-            //generalButton.ChooseSign.gameObject.SetActive(true);
             SwitchTab(generalSettingsView.gameObject,  generalButton.ChosenSign);
+        }
+
+        public void Hide()
+        {
+            Time.timeScale = 1;
+            gameObject.SetActive(false);
         } 
-        public void Hide() => gameObject.SetActive(false);
     }
 }
