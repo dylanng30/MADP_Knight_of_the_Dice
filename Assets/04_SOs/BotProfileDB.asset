@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 433943ebb7e747459bf21d0cf0007449, type: 3}
+  m_Name: BotProfileDB
+  m_EditorClassIdentifier: 
+  Mappings:
+  - Type: 0
+    Profile: {fileID: 11400000, guid: 2f44a8da3557165409278d04203ecfa9, type: 2}
+  - Type: 1
+    Profile: {fileID: 11400000, guid: ff1fe9fafa281f1429cfe9d6d99b284d, type: 2}
+  - Type: 2
+    Profile: {fileID: 11400000, guid: 7728820ffcd1bb1429116b0d9f4c80e6, type: 2}

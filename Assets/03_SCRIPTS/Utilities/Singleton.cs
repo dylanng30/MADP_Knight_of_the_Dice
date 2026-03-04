@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace MADP.Utilities
 {
@@ -31,9 +31,8 @@ namespace MADP.Utilities
         protected override void Awake()
         {
             base.Awake();
-            if(Instance == this)
+            if (Instance == this)
                 DontDestroyOnLoad(gameObject);
         }
     }
 }
-

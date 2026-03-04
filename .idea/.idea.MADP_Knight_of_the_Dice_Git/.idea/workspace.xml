@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02_PREFABS/UnitCardView.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/02_PREFABS/UnitCardView.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/CameraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/CameraController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Snow.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Snow.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Snow.unity.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Snow.unity.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;dylanng30&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/dylanng30/MADP_Knight_of_the_Dice.git&quot;,
+    &quot;accountId&quot;: &quot;c969e90a-8f53-4a4a-b3e9-7b411bdc5050&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/AudioController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BotModeController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/CameraController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/LobbyController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/ModeController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/NavigationController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/SceneController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TutorialModeController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/UnitDeckController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/GoldCellEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HarmCellEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HealCellEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/Interfaces/ICellEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/MythCellEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CombatResult.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/GoldModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/Inventory/PlayerInventoryModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/Inventory/UnitInventoryModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbyModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbySlotModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/Menu/Tutorial/TutorialStepModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitActions/CellEventUA.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/RandomBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/AudioService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/Interfaces/IAudioService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/CellEvent/CellEventService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/CellEvent/Interfaces/ICellEventService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Combat/CombatService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Combat/Interfaces/ICombatService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/GoldService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Gold/Interfaces/IGoldService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Lobby/LobbyService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/Interfaces/IPathfindingService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Pathfinding/PathfindingService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Shop/ShopService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/AudioDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/BotProfileSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ItemDataSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ShopDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/TeamColorDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/EndTurnButtonView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GameSettingButtonView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GeneralSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/SoundSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Inventory/PlayerInventoryView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Inventory/UnitInventoryView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/ColorItemView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/LobbySlotView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/LobbyView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/RoleItemView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Lobby/RoleSettingView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/MainPanels/Interfaces/IMainPanel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Menu/BotMode/BotModeView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Menu/ModeView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Menu/TutorialMode/TutorialModeView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Menu/TutorialMode/TutorialStepItemView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/RollButtonView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Shop/ShopItemSlotView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Shop/ShopView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/TurnView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Unit/UnitView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/UnitCardView.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="392IvXze3LE1ohYOFnUD4AK92FM" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Duy&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="D:\UNITY\2022.3.21f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-projectPath D:\Game_Dev\MADP_Knight_of_the_Dice_Git -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="D:\Game_Dev\MADP_Knight_of_the_Dice_Git" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="PTY_MODE" value="Auto" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="D:\UNITY\2022.3.21f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath D:\Game_Dev\MADP_Knight_of_the_Dice_Git -testResults Logs/results.xml -logFile Logs/Editor.log -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="D:\Game_Dev\MADP_Knight_of_the_Dice_Git" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="ENV_FILE_PATHS" value="" />
+      <option name="REDIRECT_INPUT_PATH" value="" />
+      <option name="PTY_MODE" value="Auto" />
+      <option name="MIXED_MODE_DEBUG" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="runtimes">
+        <list />
+      </option>
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <option name="useMixedMode" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="runtimes">
+        <list />
+      </option>
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <option name="useMixedMode" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Device" type="UnityDevicePlayer" factoryName="UnityAttachToDevicePlayer">
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="" />
+      <created>1769887972973</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1769887972973</updated>
+      <workItem from="1769887972976" duration="582000" />
+      <workItem from="1769891019132" duration="10428000" />
+      <workItem from="1769951845158" duration="3586000" />
+      <workItem from="1769973527799" duration="12188000" />
+      <workItem from="1770128700217" duration="4741000" />
+      <workItem from="1770223785266" duration="184000" />
+      <workItem from="1770735765054" duration="1346000" />
+      <workItem from="1770742164282" duration="622000" />
+      <workItem from="1770781999916" duration="5030000" />
+      <workItem from="1770806202292" duration="5133000" />
+      <workItem from="1770882616715" duration="2547000" />
+      <workItem from="1770906391583" duration="28000" />
+      <workItem from="1770914453891" duration="771000" />
+      <workItem from="1770918450640" duration="105000" />
+      <workItem from="1770921453983" duration="1815000" />
+      <workItem from="1770954499945" duration="3088000" />
+      <workItem from="1771517697847" duration="3287000" />
+      <workItem from="1771552111557" duration="1475000" />
+      <workItem from="1771556198373" duration="3280000" />
+      <workItem from="1771571769171" duration="4828000" />
+      <workItem from="1771576807170" duration="3577000" />
+      <workItem from="1771601705334" duration="5469000" />
+      <workItem from="1771646678477" duration="3322000" />
+      <workItem from="1771654981899" duration="5536000" />
+      <workItem from="1771661156790" duration="4673000" />
+      <workItem from="1771685978554" duration="3106000" />
+      <workItem from="1771689147722" duration="156000" />
+      <workItem from="1771777469667" duration="4742000" />
+      <workItem from="1771863850803" duration="5496000" />
+      <workItem from="1771904808871" duration="605000" />
+      <workItem from="1771939880201" duration="9352000" />
+      <workItem from="1772027112177" duration="112000" />
+      <workItem from="1772027278066" duration="17407000" />
+      <workItem from="1772081141905" duration="1537000" />
+      <workItem from="1772082759219" duration="2060000" />
+      <workItem from="1772129642540" duration="186000" />
+      <workItem from="1772163604504" duration="2061000" />
+      <workItem from="1772174627428" duration="1109000" />
+      <workItem from="1772177149937" duration="5319000" />
+      <workItem from="1772193421859" duration="11112000" />
+      <workItem from="1772209715582" duration="2836000" />
+      <workItem from="1772261236061" duration="3329000" />
+      <workItem from="1772271868052" duration="7310000" />
+      <workItem from="1772296485534" duration="881000" />
+      <workItem from="1772301718045" duration="2472000" />
+      <workItem from="1772337216283" duration="4041000" />
+      <workItem from="1772347796489" duration="4011000" />
+      <workItem from="1772355567271" duration="5454000" />
+      <workItem from="1772363535283" duration="3085000" />
+      <workItem from="1772369396325" duration="9909000" />
+      <workItem from="1772379856543" duration="2960000" />
+      <workItem from="1772459221397" duration="1531000" />
+      <workItem from="1772464936763" duration="5121000" />
+      <workItem from="1772506421421" duration="1590000" />
+      <workItem from="1772516130615" duration="6941000" />
+      <workItem from="1772523641457" duration="5066000" />
+      <workItem from="1772545647166" duration="2359000" />
+      <workItem from="1772550133269" duration="6419000" />
+      <workItem from="1772640210912" duration="1362000" />
+    </task>
+    <task id="LOCAL-00001" summary="Stat + AttackAction">
+      <option name="closed" value="true" />
+      <created>1769987062378</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1769987062378</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityProjectDiscoverer">
+    <option name="hasUnityReference" value="true" />
+    <option name="unityProject" value="true" />
+    <option name="unityProjectFolder" value="true" />
+  </component>
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Stat + AttackAction" />
+    <option name="LAST_COMMIT_MESSAGE" value="Stat + AttackAction" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
