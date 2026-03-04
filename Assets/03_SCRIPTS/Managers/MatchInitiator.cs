@@ -50,7 +50,14 @@ namespace MADP.Managers
         private void OnDestroy()
         {
             if (SceneController.Instance != null)
+            {
                 SceneController.Instance.OnLoadingFinished -= StartMatch;
+            }
+                
+            if (AudioController.Instance != null)
+            {
+                AudioController.Instance.DisconnectFromMatch();
+            }
         }
 
         private void StartMatch()
@@ -76,6 +83,12 @@ namespace MADP.Managers
             
             
             //CONTROLLERS
+            
+            if (AudioController.Instance != null)
+            {
+                AudioController.Instance.ConnectToMatch(_goldService);
+            }
+            
             _boardController.Initialize(
                 _goldService, 
                 _pathfindingService, 

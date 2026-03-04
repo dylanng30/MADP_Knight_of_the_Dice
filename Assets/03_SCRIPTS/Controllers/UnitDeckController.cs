@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MADP.Models;
 using MADP.Services.Gold.Interfaces;
+using MADP.Settings;
 using MADP.Views;
 using UnityEngine;
 

@@ -315,6 +315,11 @@ namespace MADP.Controllers
                     unitView.Collider.enabled = false;
                 }
                 
+                if (AudioController.Instance != null)
+                {
+                    AudioController.Instance.PlayUISound(SoundKey.SFX_BuySuccess);    
+                }
+                
                 OnComplete?.Invoke();
             }
             else

@@ -18,9 +18,27 @@ namespace MADP.Views
         [SerializeField] private Image frameImage;
         
         [SerializeField] private TextMeshProUGUI goldText;
+
+        [SerializeField] private Button rotateButton;
         
-        public void Setup(TeamColor team, Color uiColor, Color frameColor, string avatarPath)
+        public int _index;
+        public Action<int> OnClicked;
+
+        private void OnEnable()
         {
+            if(rotateButton != null) 
+                rotateButton.onClick.AddListener(() => OnClicked?.Invoke(_index));
+        }
+
+        private void OnDisable()
+        {
+            if(rotateButton != null) 
+                rotateButton.onClick.RemoveListener(() => OnClicked?.Invoke(_index));
+        }
+
+        public void Setup(int index, Color uiColor, Color frameColor, string avatarPath)
+        {
+            _index = index;
             
             if (bgImage) bgImage.color = uiColor;
             if (frameImage) frameImage.color = frameColor;

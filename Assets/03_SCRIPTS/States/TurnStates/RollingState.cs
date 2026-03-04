@@ -23,8 +23,11 @@ namespace MADP.States.TurnStates
         {
             if (_turnController.IsPlayerTurn)
             {
-                if(Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.Space) && !_roled)
+                {
                     _turnController.RollDice();
+                    _roled = true;
+                }
             }
             else
             {
@@ -42,7 +45,6 @@ namespace MADP.States.TurnStates
 
             _roled = true;
             _turnController.RollDice();
-            _turnController.SetRollButtonVisibility(false);
         }
 
         private bool CanBotRole()
