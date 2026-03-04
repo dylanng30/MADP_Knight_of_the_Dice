@@ -13,12 +13,8 @@ namespace MADP.Views
 {
     public class GoldView : MonoBehaviour
     {
-        [SerializeField] private Image avatar;
-        [SerializeField] private Image bgImage;
-        [SerializeField] private Image frameImage;
-        
+        [SerializeField] private Image teamColorImage;
         [SerializeField] private TextMeshProUGUI goldText;
-
         [SerializeField] private Button rotateButton;
         
         public int _index;
@@ -40,8 +36,7 @@ namespace MADP.Views
         {
             _index = index;
             
-            if (bgImage) bgImage.color = uiColor;
-            if (frameImage) frameImage.color = frameColor;
+            if (teamColorImage) teamColorImage.color = uiColor;
             //if (goldText) goldText.color = uiColor;
             
             //Load Avatar

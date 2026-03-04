@@ -17,7 +17,7 @@ namespace MADP.Controllers
 
         private int lastIndex;
         
-        private void Awake()
+        private void Start()
         {
             transform.eulerAngles = defaultRotation;
             
