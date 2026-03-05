@@ -34,7 +34,6 @@ namespace MADP.Services.GameSettings
         public GameSettingsService(AudioMixer audioMixer)
         {
             _audioMixer = audioMixer;
-            LoadSettings();
         }
 
         public void LoadSettings()

@@ -1,4 +1,5 @@
-﻿using MADP.Services.GameSettings;
+﻿using System;
+using MADP.Services.GameSettings;
 using MADP.Services.GameSettings.Interfaces;
 using MADP.Utilities;
 using MADP.Views.GameSettings;
@@ -18,13 +19,7 @@ namespace MADP.Controllers
         {
             base.Awake();
             _service = new GameSettingsService(_audioMixer);
-            var resolutionOptions = _service.GetResolutionOptions();
-            var windowModeOptions = _service.GetWindowModeOptions();
-
-            _view.Initialize(_service.CurrentSettings);
             
-            _view.GeneralPanel.Setup(_service.CurrentSettings, resolutionOptions, windowModeOptions);
-
             _view.SoundPanel.OnMasterVolumeChanged += HandleMasterVolumeChanged;
             _view.SoundPanel.OnMusicVolumeChanged += HandleMusicVolumeChanged;
             _view.SoundPanel.OnSfxVolumeChanged += HandleSfxVolumeChanged;
@@ -39,7 +34,18 @@ namespace MADP.Controllers
             _view.OnSaveClicked += HandleSave;
             _view.OnCloseClicked += HideGameSettings;
         }
-        
+
+        private void Start()
+        {
+            _service.LoadSettings();
+            
+            var resolutionOptions = _service.GetResolutionOptions();
+            var windowModeOptions = _service.GetWindowModeOptions();
+            
+            _view.Initialize(_service.CurrentSettings);
+            _view.GeneralPanel.Setup(_service.CurrentSettings, resolutionOptions, windowModeOptions);
+        }
+
         #region --- HANDLERS ---
         //MASTER
         private void HandleMasterVolumeChanged(float volume)

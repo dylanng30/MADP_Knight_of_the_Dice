@@ -67,14 +67,14 @@ namespace MADP.Views.GameSettings
 
         public void UpdateMusicUI(float volume, bool isMuted)
         {
-            musicText.text = isMuted ? "Tắt" : $"SFX Volume: {Mathf.RoundToInt(volume * 100)}%";
+            musicText.text = isMuted ? "Tắt" : $"Music Volume: {Mathf.RoundToInt(volume * 100)}%";
             musicSlider.interactable = !isMuted;
             musicToggle.SetIsOnWithoutNotify(!isMuted);
         }
 
         public void UpdateSfxUI(float volume, bool isMuted)
         {
-            sfxText.text = isMuted ? "Tắt" : $"Music Volume: {Mathf.RoundToInt(volume * 100)}%";
+            sfxText.text = isMuted ? "Tắt" : $"SFX Volume: {Mathf.RoundToInt(volume * 100)}%";
             sfxSlider.interactable = !isMuted;
             sfxToggle.SetIsOnWithoutNotify(!isMuted);
         }
