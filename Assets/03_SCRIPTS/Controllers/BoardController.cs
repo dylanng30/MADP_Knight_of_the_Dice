@@ -19,7 +19,6 @@ namespace MADP.Controllers
     public class BoardController : MonoBehaviour
     {
         [SerializeField] private TeamStatDatabaseSO teamStatDB;
-        [SerializeField] private BoardSetting boardSetting;
         [SerializeField] private BoardView boardView;
         
         //Data

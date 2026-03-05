@@ -28,6 +28,8 @@ namespace MADP.Managers
                 teamButton.onClick.RemoveAllListeners();
                 teamButton.onClick.AddListener(SwitchActiveGoldViewsVisibility);
             }
+
+            SwitchActiveGoldViewsVisibility();
         }
 
         public void Initialize(IGoldService goldService, 

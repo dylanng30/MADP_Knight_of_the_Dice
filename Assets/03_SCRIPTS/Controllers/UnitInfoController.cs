@@ -9,11 +9,12 @@ namespace MADP.Controllers
     public class UnitInfoController : MonoBehaviour
     {
         [SerializeField] private UnitInfoView unitInfoView;
+        [SerializeField] private UnitAvatarDatabaseSO unitAvatarDB;
         
         //Test
         [SerializeField] private ItemDataSO testItemSO;
         private UnitModel _selectedUnit;
-
+        
         private void Awake()
         {
             unitInfoView.HideAction += Clear;
@@ -42,7 +43,8 @@ namespace MADP.Controllers
                     if (cellView != null && cellView.Model.HasUnit)
                     {
                         _selectedUnit = cellView.Model.Unit;
-                        unitInfoView.Show(_selectedUnit);
+                        Sprite avatar = unitAvatarDB.GetAvatar(_selectedUnit.TeamOwner, _selectedUnit.Id);
+                        unitInfoView.Show(_selectedUnit, avatar);
                         return;
                     }
                 }

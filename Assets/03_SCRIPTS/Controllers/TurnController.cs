@@ -97,16 +97,7 @@ namespace MADP.Controllers
                     IBotBrain botBrain;
                     
                     BotProfileSO profile = botDB != null ? botDB.GetProfile(slot.BotType) : null;
-
-                    if (profile != null)
-                    {
-                        botBrain = new SmartBotBrain(boardController, profile);
-                    }
-                    else
-                    {
-                        botBrain = new RandomBotBrain(boardController);
-                    }
-
+                    botBrain = profile != null ? new SmartBotBrain(boardController, profile) : new RandomBotBrain(boardController);
                     //Debug.Log($"Bot team {slot.TeamColor}: {slot.BotType} / {botBrain.GetType().Name}");
                     _botDecisionService.RegisterBotStrategy(slot.TeamColor, botBrain);
                 }
@@ -115,8 +106,6 @@ namespace MADP.Controllers
             LoadTurnStates();
             _currentTeamIndex = 0;
             StartTurnProcess();
-
-            //Time.timeScale = 2;
         }
         
         private void Update()
@@ -167,6 +156,11 @@ namespace MADP.Controllers
         
         private void StartTurnProcess()
         {
+            _currentTurnState?.ExitTurn();
+            _currentTurnState = null; 
+    
+            DeselectCurrent();
+            
             _currentTurnTimer = _timePerTurn;
             turnView.UpdateTimer(_currentTurnTimer);
             
@@ -187,14 +181,9 @@ namespace MADP.Controllers
             if (CurrentDiceValue == 6 && IsPlayerTurn)
             {
                 DeselectCurrent();
-                SetEndTurnButtonVisibility(true);
-        
-                Debug.Log("Xúc xắc là 6: Vui lòng bấm End Turn để tiếp tục gieo.");
             }
-            else
-            {
-                EndTurn();
-            }
+            
+            EndTurn();
         }
         public void SwitchState(TurnState newState)
         {
@@ -239,6 +228,7 @@ namespace MADP.Controllers
             if(unit.TeamOwner != CurrentTeam)
                 return;
             
+            SetEndTurnButtonVisibility(false);
             boardController.SpawnUnit(unit, OnTurnActionCompleted);
         }
         

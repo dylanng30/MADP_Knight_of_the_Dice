@@ -9,6 +9,7 @@ namespace MADP.Controllers
 {
     public class UnitDeckController : MonoBehaviour
     {
+        [SerializeField] private UnitAvatarDatabaseSO unitAvatarDB;
         [SerializeField] private UnitCardView cardPrefab;
         [SerializeField] private Transform cardContainer;
         [SerializeField] private GameObject CardViews;
@@ -68,7 +69,7 @@ namespace MADP.Controllers
             foreach (var unit in _currentUnits)
             {
                 UnitCardView card = Instantiate(cardPrefab, cardContainer);
-                Sprite avatar = null; // Resources.Load<Sprite>($"Avatars/{unit.RoleType}");
+                Sprite avatar = unitAvatarDB.GetAvatar(unit.TeamOwner, unit.Id);
                 card.Setup(unit, avatar, OnCardClicked);
                 _spawnedCards.Add(card);
             }
