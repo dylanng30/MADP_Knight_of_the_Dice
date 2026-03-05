@@ -62,7 +62,7 @@ Mở project bằng Unity Hub.
 
 Import thư viện TextMeshPro (nếu có popup yêu cầu).
 
-Bắt đầu: * Mở scene Lobby (hoặc MainMenu).
+Bắt đầu: * Mở scene Loading.
 
 Thêm Bot, tùy chỉnh Settings và nhấn Start Game để trải nghiệm!
 
