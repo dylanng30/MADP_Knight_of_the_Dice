@@ -5,177 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/AudioController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/AudioController.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/AudioService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/AudioService.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/Interfaces.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/Interfaces/IAudioService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/Audio/Interfaces/IAudioService.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/AudioDatabaseSO.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/AudioDatabaseSO.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GameSettingButtonView.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GameSettingButtonView.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/UnitAvatarDatabaseSO.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/UnitAvatarDatabaseSO.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv1.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv1/Level_01.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv1/Level_01.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv1/Lv1.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv1/Lv1.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv2.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv2/Level_02.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv2/Level_02.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv2/Lv2.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv2/Lv2.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv3.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv3/Level_03.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv3/Level_03.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv3/Lv3.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv3/Lv3.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv4.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv4/Level_04.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv4/Level_04.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv4/Lv4.controller" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Characters/Lv4/Lv4.controller.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Dice.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Dice/dice.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Dice/dice.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Brick cot.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Brick cot.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Brick.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Brick.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Lane.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Lane.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Sand.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/Sand.mat.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/brick cot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/brick cot.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/brick.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/brick.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/lane.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/lane.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/o.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/o.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/sand.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/sand.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/sand_normal.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/sand_normal.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/test1.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/3D/Map/Desert/test1.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Fonts.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Fonts/Bungee-Regular SDF.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Fonts/Bungee-Regular SDF.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Fonts/Bungee-Regular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Fonts/Bungee-Regular.ttf.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Loading.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Loading/Asset 1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Loading/Asset 1.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Loading/Asset 2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Loading/Asset 2.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/AvatarContainer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/AvatarContainer.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/AvatarFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/AvatarFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/BG.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/BG.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/ChoosenModeSign.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/ChoosenModeSign.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/GamesettingIcon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/GamesettingIcon.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/InformationPlayerArea.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/InformationPlayerArea.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarContainer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarContainer.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame_02_Blue.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame_02_Blue.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame_02_Orange.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/AvatarFrame_02_Orange.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/EmptyFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/EmptyFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/Op_01_Blue.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/Op_01_Blue.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/Op_01_Orange.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/Op_01_Orange.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleContainer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleContainer.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Bar.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Bar.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/ChooseColorFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/ChooseColorFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Exit.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Exit.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Role_Frame_Blue.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Role_Frame_Blue.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Role_Frame_Orange.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/Role_Frame_Orange.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SaveButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SaveButton.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SaveButton_02.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SaveButton_02.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SlotSettingFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/SlotSettingFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/TickerBox.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleDisplaySetting/TickerBox.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/RoleFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/SlotBG.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/SlotBG.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/SlotFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/SlotFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/removeButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/Lol/removeButton.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/ReadyArea.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/ReadyArea.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/RoleButton.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/RoleButton.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/SlotFrame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/SlotFrame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/robot_11007101.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Lobby/robot_11007101.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/MainMixer.mixer" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/MainMixer.mixer.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_AvatarBG.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_AvatarBG.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_BG.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_BG.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_Frame.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/GoldUI_Frame.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_ATK.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_ATK.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_DEF.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_DEF.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_HP.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/01_ART/Match/UnitCardView/UnitCardView_HP.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv1/Lv1.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv1/Lv1.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv2/Lv2.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv2/Lv2.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv3/Lv3.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv3/Lv3.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv4/Lv4.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_ASSETS/3D/Characters/Lv4/Lv4.controller" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01_ASSETS/MainMixer.mixer" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01_ASSETS/MainMixer.mixer" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02_PREFABS/UnitCardView.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/02_PREFABS/UnitCardView.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/CameraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/CameraController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/GameSettingsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/GameSettingsController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/NavigationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/NavigationController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/UnitDeckController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/UnitDeckController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/UnitInfoController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/UnitInfoController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/ChoosingState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/ChoosingState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/RollingState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/RollingState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GameSettingView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/GameSettingView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GoldView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/SoundSettingsView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/GameSettings/SoundSettingsView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/UnitInfo/UnitInfoView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/UnitInfo/UnitInfoView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/04_SOs/TeamColorDB.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/04_SOs/TeamColorDB.asset.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Loading.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Loading.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Menu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Menu.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -246,6 +95,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ItemDataSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/ShopDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/TeamColorDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/UnitAvatarDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" root0="FORCE_HIGHLIGHTING" />
@@ -293,7 +143,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Duy&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -426,6 +276,9 @@
       <workItem from="1772523641457" duration="5066000" />
       <workItem from="1772545647166" duration="2359000" />
       <workItem from="1772550133269" duration="6419000" />
+      <workItem from="1772640210912" duration="1362000" />
+      <workItem from="1772722021451" duration="3603000" />
+      <workItem from="1772726121383" duration="1284000" />
     </task>
     <task id="LOCAL-00001" summary="Stat + AttackAction">
       <option name="closed" value="true" />

@@ -27,7 +27,7 @@ namespace MADP.States.TurnStates
         public override void ExecuteTurn()
         {
             base.ExecuteTurn();
-            if (_turnController.IsPlayerTurn)
+            if (_turnController.IsPlayerTurn && !ActionSystem.Instance.IsPerforming)
             {
                 HandleInput();
             }
