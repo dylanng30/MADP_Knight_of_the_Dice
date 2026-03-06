@@ -13,7 +13,6 @@ using UnityEngine.SceneManagement;
 
 namespace MADP.Controllers
 {
-    // Đổi thành PersistentSingleton để sống qua các Scene
     public class AudioController : PersistentSingleton<AudioController>
     {
         [Header("Settings")]

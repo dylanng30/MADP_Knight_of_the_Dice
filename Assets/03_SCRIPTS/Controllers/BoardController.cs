@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using MADP.Models;
+using MADP.Models.CellEvents;
 using MADP.Models.UnitActions;
 using MADP.Services;
 using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat.Interfaces;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.Pathfinding.Interfaces;
+using MADP.Services.VFX.Interfaces;
 using MADP.Settings;
 using MADP.Systems;
 using MADP.Views;
@@ -34,6 +36,7 @@ namespace MADP.Controllers
         private IGoldService _goldService;
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
+        private IVFXService _vfxService;
 
         //Events
         public Action<BoardModel> OnBoardGenerated;
@@ -53,6 +56,7 @@ namespace MADP.Controllers
             IPathfindingService pathfindingService,
             ICombatService combatService,
             ICellEventService cellEventService, 
+            IVFXService vfxService,
             int redCells,
             int yellowCells,
             int purpleCells,
@@ -67,6 +71,8 @@ namespace MADP.Controllers
             PathfindingService = pathfindingService;
             _combatService = combatService;
             _cellEventService = cellEventService;
+            _vfxService = vfxService;
+            
             _activeSlots = activeSlots;
             _currentMapType = mapType;
             
@@ -119,7 +125,7 @@ namespace MADP.Controllers
         public void MoveUnit(UnitModel unitModel, CellModel targetCellModel, int diceValue, Action onMoveCompleted)
         {
             CellModel currentCellModel = GetCurrentCellOfUnit(unitModel);
-            boardView.ClearAllHighlights();
+            boardView.ClearAllHighlightsHints();
 
             if (targetCellModel.Structure == CellStructure.Home && targetCellModel.TeamOwner == unitModel.TeamOwner)
             {
@@ -171,7 +177,6 @@ namespace MADP.Controllers
             Debug.Log($"Unit {unitModel.Id} đã về tới chuồng của team {unitModel.TeamOwner}");
             List<CellModel> homePath = PathfindingService.GetPathToHome(_boardModel, currentCellModel, diceValue);
             List<Vector3> homeVisualPath = boardView.GetPath(homePath);
-
 
             ExecuteMoveSuccess(unitModel, currentCellModel, targetCellModel);
             Vector3 forwarDirection = GetForwardDirection(targetCellModel);
@@ -472,12 +477,17 @@ namespace MADP.Controllers
         
         public void HighlightCells(List<CellModel> cellModels)
         {
-            boardView.HighlightCells(cellModels);
+            boardView.HighlightHints(cellModels);
+        }
+        public void HighlightSelection(CellModel cellModel)
+        {
+            boardView.HighlightSelection(cellModel);
         }
 
         public void ClearAllHighlights()
         {
-            boardView.ClearAllHighlights();
+            boardView.ClearAllHighlightsHints();
+            boardView.ClearSelectionHighlight();
         }
         public List<UnitModel> GetAllUnitsByColor(TeamColor teamColor)
         {
@@ -572,7 +582,7 @@ namespace MADP.Controllers
             unit.AddSteps(distance);
         }
 
-        private CellModel GetCurrentCellOfUnit(UnitModel unit)
+        public CellModel GetCurrentCellOfUnit(UnitModel unit)
         {
             //Trong aroundCells 
             var cell = _boardModel.AroundCells.FirstOrDefault(c => c.Unit == unit);

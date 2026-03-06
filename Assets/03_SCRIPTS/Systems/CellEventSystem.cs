@@ -1,5 +1,9 @@
 ﻿using System.Collections;
+using MADP.Models;
 using MADP.Models.UnitActions;
+using MADP.Views;
+using MADP.Views.Unit;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace MADP.Systems
@@ -18,7 +22,11 @@ namespace MADP.Systems
 
         private IEnumerator ExecuteCellEvent(CellEventUA cellEventUA)
         {
-            cellEventUA.CellEvent.Execute(cellEventUA.UnitModel, cellEventUA.CellModel);
+            UnitModel unitModel = cellEventUA.UnitModel;
+            UnitView unitView = cellEventUA.UnitView;
+            CellModel cellModel = cellEventUA.CellModel;
+            CellView cellView = cellEventUA.CellView;
+            cellEventUA.CellEvent.Execute(unitModel, unitView, cellModel, cellView);
             yield return new WaitForEndOfFrame();
         }
     }

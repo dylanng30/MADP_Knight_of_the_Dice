@@ -62,14 +62,14 @@ MonoBehaviour:
     UnitId: 3
     Avatar: {fileID: 21300000, guid: 2fc9561785cec934290143565cd01c96, type: 3}
   - Team: 5
-    UnitId: 3
-    Avatar: {fileID: 21300000, guid: 2fc9561785cec934290143565cd01c96, type: 3}
+    UnitId: 0
+    Avatar: {fileID: 21300000, guid: 69e70b3a8b2288a4fba14d987ebea73f, type: 3}
+  - Team: 5
+    UnitId: 1
+    Avatar: {fileID: 21300000, guid: a07d8680a81048942a879723674278f8, type: 3}
+  - Team: 5
+    UnitId: 2
+    Avatar: {fileID: 21300000, guid: a5bb3cfe72226d041941eded24a1433f, type: 3}
   - Team: 5
     UnitId: 3
-    Avatar: {fileID: 21300000, guid: 2fc9561785cec934290143565cd01c96, type: 3}
-  - Team: 5
-    UnitId: 3
-    Avatar: {fileID: 21300000, guid: 2fc9561785cec934290143565cd01c96, type: 3}
-  - Team: 5
-    UnitId: 3
-    Avatar: {fileID: 21300000, guid: 2fc9561785cec934290143565cd01c96, type: 3}
+    Avatar: {fileID: 21300000, guid: da85036a9f6e8c741b76748495b3326d, type: 3}

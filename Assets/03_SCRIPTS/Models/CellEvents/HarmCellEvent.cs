@@ -1,4 +1,6 @@
 ﻿using MADP.Models.CellEvents.Interfaces;
+using MADP.Views;
+using MADP.Views.Unit;
 using UnityEngine;
 
 namespace MADP.Models.CellEvents
@@ -14,7 +16,7 @@ namespace MADP.Models.CellEvents
             return cell.Attribute == CellAttribute.Harm;
         }
 
-        public void Execute(UnitModel unit, CellModel cell)
+        public void Execute(UnitModel unit, UnitView unitView, CellModel cell, CellView cellView)
         {
             
         }

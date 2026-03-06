@@ -106,6 +106,8 @@ namespace MADP.Controllers
             LoadTurnStates();
             _currentTeamIndex = 0;
             StartTurnProcess();
+
+            Time.timeScale = 2;
         }
         
         private void Update()
@@ -241,6 +243,7 @@ namespace MADP.Controllers
                     if (cell == clickedCell)
                     {
                         ExecuteMove(_selectedUnit, clickedCell);
+                        DeselectCurrent();
                         return;
                     }
                 }
@@ -251,13 +254,8 @@ namespace MADP.Controllers
                 if (boardController.CanInteract(clickedCell.Unit, CurrentDiceValue))
                 {
                     SelectUnit(clickedCell.Unit);
+                    return;
                 }
-                else
-                {
-                    Debug.Log("Unit này không thể di chuyển (đang trong chuồng mà không có 6, hoặc bị chặn)");
-                    DeselectCurrent();
-                }
-                return;
             }
             
             DeselectCurrent();
@@ -269,13 +267,19 @@ namespace MADP.Controllers
             _selectedUnit = unit;
             
             _potentialDestination = boardController.GetPotentialDestinationCell(unit, CurrentDiceValue);
-            
             boardController.HighlightCells(_potentialDestination);
+            
+            CellModel currentCell = boardController.GetCurrentCellOfUnit(unit);
+            if (currentCell != null)
+            {
+                boardController.HighlightSelection(currentCell);
+            }
         }
 
         public void DeselectCurrent()
         {
             boardController.ClearAllHighlights();
+            
             _selectedUnit = null;
             _potentialDestination = null;
         }

@@ -5,6 +5,7 @@ using MADP.Models.CellEvents;
 using MADP.Models.CellEvents.Interfaces;
 using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Gold.Interfaces;
+using MADP.Services.VFX.Interfaces;
 
 namespace MADP.Services.CellEvent
 {
@@ -12,12 +13,12 @@ namespace MADP.Services.CellEvent
     {
         private readonly List<ICellEvent> _events;
         
-        public CellEventService(IGoldService goldService)
+        public CellEventService(IGoldService goldService, IVFXService vfxService)
         {
             _events = new List<ICellEvent>
             {
                 new GoldCellEvent(goldService),
-                new HealCellEvent(),
+                new HealCellEvent(vfxService),
                 new MythCellEvent(goldService),
                 new HarmCellEvent()
             };

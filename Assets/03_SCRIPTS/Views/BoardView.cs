@@ -31,6 +31,7 @@ namespace MADP.Views
         private Dictionary<UnitModel, UnitView> _unitMap = new();
 
         private List<CellView> _currentHighlightedCells = new();
+        private CellView _currentSelectedCell; 
         private MapType _currentMapType;
         private TeamColorDatabaseSO _teamColorDB;
 
@@ -69,9 +70,12 @@ namespace MADP.Views
             _unitMap.Clear();
         }
 
-        public void HighlightCells(List<CellModel> cellModels)
+
+        #region ---HIGHLIGHT---
+
+        public void HighlightHints(List<CellModel> cellModels)
         {
-            ClearAllHighlights();
+            ClearAllHighlightsHints();
 
             if (cellModels.Count <= 0)
                 return;
@@ -80,18 +84,40 @@ namespace MADP.Views
             {
                 var cellView = GetCellView(cellModel);
                 _currentHighlightedCells.Add(cellView);
-                cellView.SetHighlight(true);
+                cellView.SetHighlightHint(true);
             }
         }
-
-        public void ClearAllHighlights()
+        public void ClearAllHighlightsHints()
         {
             foreach (var cellView in _currentHighlightedCells)
             {
-                cellView.SetHighlight(false);
+                cellView.SetHighlightHint(false);
             }
             _currentHighlightedCells.Clear();
         }
+        
+        public void HighlightSelection(CellModel cellModel)
+        {
+            ClearSelectionHighlight();
+
+            var cellView = GetCellView(cellModel);
+            if (cellView != null)
+            {
+                _currentSelectedCell = cellView;
+                _currentSelectedCell.SetSelectionSignal(true);
+            }
+        }
+        
+        public void ClearSelectionHighlight()
+        {
+            if (_currentSelectedCell != null)
+            {
+                _currentSelectedCell.SetSelectionSignal(false);
+                _currentSelectedCell = null;
+            }
+        }
+        #endregion
+        
         
         public CellView GetCellView(CellModel cellModel) 
             => _cellMap.ContainsKey(cellModel) ? _cellMap[cellModel] : null;

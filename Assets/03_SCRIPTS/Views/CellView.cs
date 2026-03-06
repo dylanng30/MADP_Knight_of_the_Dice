@@ -10,7 +10,8 @@ namespace MADP.Views
     {
         [SerializeField] private Renderer _renderer;
         [SerializeField] private Transform _unitAnchor;
-        [SerializeField] private Transform _selectedSignal;
+        [SerializeField] private Transform _hintSignal;
+        [SerializeField] private Transform _selectionSignal;
         
         [Header("VFX")]
         [SerializeField] private ParticleSystem _particleSystem;
@@ -41,9 +42,15 @@ namespace MADP.Views
             return _unitAnchor != null ?  _unitAnchor.position : transform.position;
         }
 
-        public void SetHighlight(bool state)
+        public void SetHighlightHint(bool state)
         {
-            _selectedSignal.gameObject.SetActive(state);
+            if (_hintSignal != null) 
+                _hintSignal.gameObject.SetActive(state);
+        }
+        public void SetSelectionSignal(bool state)
+        {
+            if (_selectionSignal != null) 
+                _selectionSignal.gameObject.SetActive(state);
         }
 
         private void SetupStructure()
