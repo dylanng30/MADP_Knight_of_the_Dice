@@ -21,16 +21,23 @@ namespace MADP.Services.Shop
             if (item == null || playerInventory == null) return false;
 
             int currentGold = _goldService.GetGold(playerInventory.Team);
-            if (currentGold < item.Price) return false;
+            if (currentGold < item.Price)
+            {
+                Debug.Log("Khong du tien");
+                return false;
+            }
 
             var paymentSuccess = playerInventory.TryAddItem(item);
 
             if (paymentSuccess)
             {
                 //UI Noti
+                _goldService.TrySpendGold(playerInventory.Team, item.Price);
+                Debug.Log("Mua thành công");
             }
             else
             {
+                Debug.Log("Het cho");
                 //UI Noti
             }
             
@@ -55,6 +62,22 @@ namespace MADP.Services.Shop
             }
 
             return result;
+        }
+        
+        public void ProcessBotShopping(LobbySlotModel botSlot, List<ItemDataSO> shopItems)
+        {
+            if (botSlot.PlayerType != PlayerType.Bot || botSlot.Inventory == null) return;
+
+            foreach (var item in shopItems)
+            {
+                int currentGold = _goldService.GetGold(botSlot.TeamColor);
+                if (currentGold >= item.Price && botSlot.Inventory.Items.Count < PlayerInventoryModel.ItemSlots)
+                {
+                    _goldService.TrySpendGold(botSlot.TeamColor, item.Price);
+                    botSlot.Inventory.TryAddItem(item);
+                    Debug.Log($"Bot {botSlot.TeamColor} đã mua: {item.ItemName}");
+                }
+            }
         }
     }
 }

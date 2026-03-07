@@ -42,6 +42,11 @@ namespace MADP.Views.UnitInfo
 
         public void Show(UnitModel model, Sprite avatarSprite)
         {
+            if (unitModel != null)
+            {
+                unitModel.OnStatsChanged -= UpdateUI;
+            }
+            
             unitModel = model;
             
             if (avatar != null) 
@@ -49,6 +54,7 @@ namespace MADP.Views.UnitInfo
             
             UpdateTeamColor();
             UpdateUI();
+            
             unitModel.OnStatsChanged += UpdateUI;
             
             if (inventoryView != null)
@@ -69,6 +75,9 @@ namespace MADP.Views.UnitInfo
 
         public void UpdateUI()
         {
+            if (unitModel == null) 
+                return;
+            
             healthBar.fillAmount = (float)unitModel.CurrentHealth / unitModel.MaxHealth;
             healthRatioTxt.text = $"{unitModel.CurrentHealth}/{unitModel.MaxHealth}";
             damageTxt.text = unitModel.Damage.ToString();

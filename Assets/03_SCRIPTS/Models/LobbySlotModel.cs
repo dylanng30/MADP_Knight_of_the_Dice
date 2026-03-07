@@ -37,7 +37,7 @@ namespace MADP.Models
             PlayerName = "Empty";
             RoleType = RoleType.Random;
             BotType = BotDifficulty.Medium;
-            Inventory = new PlayerInventoryModel();
+            Inventory = new PlayerInventoryModel(color);
         }
     }
 }

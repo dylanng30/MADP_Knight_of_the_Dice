@@ -8,9 +8,9 @@ namespace MADP.Services.Combat
     {
         public CombatResult SimulateCombat(UnitModel attacker, UnitModel victim)
         {
-            int rawDamage = attacker.Stat.Damage - victim.Stat.Armor;
+            int rawDamage = attacker.Damage - victim.Armor;
             int finalDamage = Mathf.Max(0, rawDamage);
-            bool isDead = (victim.Stat.CurrentHealth - finalDamage) <= 0;
+            bool isDead = (victim.CurrentHealth - finalDamage) <= 0;
                 
             return new CombatResult
             {

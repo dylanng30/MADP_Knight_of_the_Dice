@@ -59,6 +59,11 @@ namespace MADP.Models.Inventory
             foreach (var item in _items) total += item.BonusArmor;
             return total;
         }
+
+        public void Clear()
+        {
+            _items.Clear();
+        }
         
     }
 }

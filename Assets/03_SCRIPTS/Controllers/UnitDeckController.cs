@@ -34,7 +34,7 @@ namespace MADP.Controllers
             _goldService = goldService;
             _currentUnits = playerUnits;
             
-            ShowViews(false);
+            SetViewState(false);
             
             GenerateCards();
             
@@ -56,7 +56,7 @@ namespace MADP.Controllers
             }
         }
 
-        public void ShowViews(bool isShown)
+        private void SetViewState(bool isShown)
         {
             CardViews.SetActive(isShown);
         }
@@ -82,7 +82,7 @@ namespace MADP.Controllers
                 RefreshCardStates();
             }
             
-            ShowViews(_turnController.IsPlayerTurn && diceValue == 6);
+            SetViewState(_turnController.IsPlayerTurn && diceValue == 6);
         }
         private void HandleGoldChanged(TeamColor team, int amount)
         {
@@ -114,7 +114,7 @@ namespace MADP.Controllers
             if (_turnController.IsPlayerTurn)
             {
                 _turnController.HandleUnitClicked(unit);
-                ShowViews(false);
+                SetViewState(false);
             }
         }
     }

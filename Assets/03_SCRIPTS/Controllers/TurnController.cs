@@ -19,7 +19,7 @@ namespace MADP.Controllers
 {
     public enum TurnState
     {
-        Rolling, Choosing, WaitingForActions
+        Rolling, Choosing, Shopping, WaitingForActions
     }
     public class TurnController : MonoBehaviour
     {
@@ -43,7 +43,7 @@ namespace MADP.Controllers
         private DiceView _diceView;
         
         [Header("Phase Settings")]
-        [SerializeField] private ShoppingPhaseController shoppingPhaseController;
+        private ShoppingPhaseController _shoppingController;
         private int _currentRound = 1;
         private const int SHOPPING_PHASE_INTERVAL = 5;
         
@@ -78,11 +78,13 @@ namespace MADP.Controllers
         }
         
         public void Initialize(
+            ShoppingPhaseController shoppingController,
             IGoldService goldService, 
             List<LobbySlotModel> activeSlots, 
             DiceView diceView,
             float timePerTurn)
         {
+            _shoppingController = shoppingController;
             _goldService = goldService;
             _activeSlots = activeSlots;
             _diceView = diceView;
@@ -291,6 +293,7 @@ namespace MADP.Controllers
             SetEndTurnButtonVisibility(false);
             boardController.MoveUnit(unitModel, destination, CurrentDiceValue, OnTurnActionCompleted);
         }
+        
         public void EndTurn()
         {
             //Reset
@@ -305,16 +308,26 @@ namespace MADP.Controllers
                 {
                     _currentRound++;
                     _goldService.ApplyRoundBonus();
-                    /*if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
+                    if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
                     {
-                        turnView.AnimateShopPhaseNotification();
-                        shoppingPhaseController.ShowPhaseShop(EndTurn);
+                        SwitchState(TurnState.Shopping);
                         return;
-                    }*/
+                    }
                 }
             }
             
             
+            StartTurnProcess();
+        }
+        
+        //SHOPPING PHASE
+        public void StartShoppingPhase()
+        {
+            turnView.AnimateTurnNotification(TeamColor.None, false, null);
+            _shoppingController.ShowPhaseShop(OnShoppingPhaseCompleted);
+        }
+        private void OnShoppingPhaseCompleted()
+        {
             StartTurnProcess();
         }
         
@@ -324,6 +337,7 @@ namespace MADP.Controllers
             {
                 { TurnState.Rolling, new RollingState(this) },
                 { TurnState.Choosing, new ChoosingState(this) },
+                { TurnState.Shopping, new ShoppingState(this) },
                 { TurnState.WaitingForActions, new WinState(this) }
             };
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using MADP.Views;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace MADP.Controllers
 {
@@ -16,6 +17,8 @@ namespace MADP.Controllers
         [SerializeField] private List<GoldView> goldViews;
 
         private int lastIndex;
+        
+        private bool _isInteractingWithUI = false;
         
         private void Start()
         {
@@ -37,7 +40,28 @@ namespace MADP.Controllers
 
         private void Update()
         {
+            if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
+            {
+                _isInteractingWithUI = CheckIfPointerOverUI();
+            }
+            if (Input.GetMouseButtonUp(0) || (Input.touchCount > 0 && (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled)))
+            {
+                _isInteractingWithUI = false;
+            }
+            if (_isInteractingWithUI) return;
+            
             HandleRotationInput();
+        }
+        private bool CheckIfPointerOverUI()
+        {
+            if (EventSystem.current == null) return false;
+            
+            if (Input.touchCount > 0)
+            {
+                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+            }
+            
+            return EventSystem.current.IsPointerOverGameObject();
         }
 
         private void HandleRotationInput()

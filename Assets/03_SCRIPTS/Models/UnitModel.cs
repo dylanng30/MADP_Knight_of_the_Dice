@@ -72,6 +72,7 @@ namespace MADP.Models
             Stat.CurrentHealth = Stat.MaxHealth;
             State = UnitState.InNest;
             StepsMoved = 0;
+            Inventory.Clear();
         }
     }
 }

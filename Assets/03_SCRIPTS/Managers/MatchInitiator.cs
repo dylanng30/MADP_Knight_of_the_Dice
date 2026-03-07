@@ -10,6 +10,7 @@ using MADP.Services.Gold;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.Pathfinding;
 using MADP.Services.Pathfinding.Interfaces;
+using MADP.Services.Shop;
 using MADP.Services.VFX;
 using MADP.Services.VFX.Interfaces;
 using MADP.Settings;
@@ -28,6 +29,7 @@ namespace MADP.Managers
         [SerializeField] private BoardController _boardController;
         [SerializeField] private TurnController _turnController;
         [SerializeField] private UnitDeckController _unitDeckController;
+        [SerializeField] private ShoppingPhaseController _shoppingController;
         
         [Header("---COLOR DB---")]
         [SerializeField] private TeamColorDatabaseSO teamColorDB;
@@ -37,6 +39,7 @@ namespace MADP.Managers
         private ICombatService _combatService;
         private ICellEventService _cellEventService;
         private IVFXService _vfxService;
+        private ShopService _shopService;
         
         private void Awake()
         {
@@ -89,6 +92,7 @@ namespace MADP.Managers
             _pathfindingService = new PathfindingService();
             _combatService = new CombatService();
             _cellEventService = new CellEventService(_goldService, _vfxService);
+            _shopService = new ShopService(_goldService);
             
             //CONTROLLERS
             
@@ -96,6 +100,9 @@ namespace MADP.Managers
             {
                 AudioController.Instance.ConnectToMatch(_goldService);
             }
+            
+            _shoppingController.Initialize(_shopService, _goldService, activePlayers);
+            _shoppingController.SetTimePerTurn(settings.TimePerTurn);
             
             _boardController.Initialize(
                 _goldService, 
@@ -110,10 +117,11 @@ namespace MADP.Managers
                 activePlayers, 
                 settings.SelectedMap, 
                 teamColorDB);
-            _turnController.Initialize(_goldService, activePlayers, diceView, settings.TimePerTurn);
+            _turnController.Initialize(_shoppingController, _goldService, activePlayers, diceView, settings.TimePerTurn);
             _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
             _vfxService.Initialize(vfxContainer.transform);
             _goldService.Initialize(Constants.InitialGold, activePlayers);
+            
             
             if (localPlayerSlot != null && _unitDeckController != null)
             {

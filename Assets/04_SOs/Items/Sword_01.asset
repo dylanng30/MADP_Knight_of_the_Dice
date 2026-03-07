@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3995db02ad748e9b22b4c13f0cbc1e2, type: 3}
-  m_Name: NewItem
+  m_Name: Sword_01
   m_EditorClassIdentifier: 
-  ItemName: 
-  Icon: {fileID: 21300000, guid: 9ec83b7ff9eb8594d914706585bf0482, type: 3}
+  ItemName: Sword_01
+  Icon: {fileID: 21300000, guid: cd3f2af170876e648ad867293ad444d0, type: 3}
   Description: 
-  BonusHealth: 2
-  BonusDamage: 2
-  BonusArmor: 2
+  BonusHealth: 0
+  BonusDamage: 1
+  BonusArmor: 0
+  Price: 1

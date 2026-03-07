@@ -10,19 +10,10 @@ namespace MADP.Views.Shop
     {
         [SerializeField] private Transform itemContainer;
         [SerializeField] private ShopItemSlotView shopItemSlotPrefab;
-
-        [SerializeField] private Button exitButton;
         
         public Action<ItemDataSO> OnItemPurchaseRequested;
-        public Action OnCloseRequested;
-        
         private List<ShopItemSlotView> _spawnedSlots = new ();
-        
-        private void Awake()
-        {
-            exitButton.onClick.AddListener(() => OnCloseRequested?.Invoke());
-        }
-        
+
         public void Setup(List<ItemDataSO> items)
         {
             foreach (var slot in _spawnedSlots) 
@@ -36,6 +27,25 @@ namespace MADP.Views.Shop
                 slotView.OnBuyClicked += (selectedItem) => OnItemPurchaseRequested?.Invoke(selectedItem);
                 
                 _spawnedSlots.Add(slotView);
+            }
+        }
+        public void RefreshAffordability(int currentGold)
+        {
+            foreach (var slot in _spawnedSlots)
+            {
+                slot.UpdateAffordability(currentGold);
+            }
+        }
+        
+        public void MarkItemAsPurchased(ItemDataSO item)
+        {
+            foreach (var slot in _spawnedSlots)
+            {
+                if (slot.CurrentItem == item)
+                {
+                    slot.SetPurchased();
+                    break;
+                }
             }
         }
 

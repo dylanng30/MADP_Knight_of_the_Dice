@@ -213,7 +213,6 @@ namespace MADP.Controllers
                 Debug.Log($"Unit {victim.Id} cua team {victim.TeamOwner} chết. Unit {attacker.Id} cua team {attacker.TeamOwner} chuẩn bị chiếm ô.");
                 boardView.UnitReturnNest(victim);
                 victim.Revive();
-                victimView.Collider.enabled = true;
                 victimView.PlayAnimation("Idle");
             };
 
@@ -322,7 +321,7 @@ namespace MADP.Controllers
                     unitView.Spawn(targetPos);
                     var direction = GetForwardDirection(spawnCell);
                     unitView.Rotate(direction);
-                    unitView.Collider.enabled = false;
+                    //unitView.Collider.enabled = false;
                 }
                 
                 if (AudioController.Instance != null)
@@ -429,10 +428,10 @@ namespace MADP.Controllers
             //Nhảy cóc
             if (diceValue == 1)
             {
-                var pathToGate = PathfindingService.GetPathToGate(_boardModel, currentCell);
-                if (pathToGate.Count > 0 && !IsPathBlocked(pathToGate, unit.TeamOwner))
+                var forwardPathToGate = PathfindingService.GetPathToGate(_boardModel, currentCell);
+                if (forwardPathToGate.Count > 0 && !IsPathBlocked(forwardPathToGate, unit.TeamOwner))
                 {
-                    results.Add(pathToGate.Last());
+                    results.Add(forwardPathToGate.Last());
                     return;
                 }
             }

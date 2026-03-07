@@ -15,29 +15,34 @@ namespace MADP.Views
     {
         [SerializeField] private Image teamColorImage;
         [SerializeField] private TextMeshProUGUI goldText;
-        [SerializeField] private Button rotateButton;
+        [SerializeField] private Button teamButton;
         
-        public int _index;
+        private int _index;
         public Action<int> OnClicked;
 
         private void OnEnable()
         {
-            if(rotateButton != null) 
-                rotateButton.onClick.AddListener(() => OnClicked?.Invoke(_index));
+            if(teamButton != null) 
+                teamButton.onClick.AddListener(OnTeamButtonClicked);
         }
 
         private void OnDisable()
         {
-            if(rotateButton != null) 
-                rotateButton.onClick.RemoveListener(() => OnClicked?.Invoke(_index));
+            if(teamButton != null) 
+                teamButton.onClick.RemoveListener(OnTeamButtonClicked);
         }
 
-        public void Setup(int index, Color uiColor, Color frameColor, string avatarPath)
+        private void OnTeamButtonClicked()
+        {
+            OnClicked?.Invoke(_index);
+        }
+
+        public void Setup(int index, Color uiColor)
         {
             _index = index;
             
             if (teamColorImage) teamColorImage.color = uiColor;
-            //if (goldText) goldText.color = uiColor;
+            if (goldText) goldText.color = index == 0 ? Color.white : Color.black;
             
             //Load Avatar
 
