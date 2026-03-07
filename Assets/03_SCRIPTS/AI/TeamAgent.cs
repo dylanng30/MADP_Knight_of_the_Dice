@@ -31,7 +31,9 @@ namespace _03_SCRIPTS.AI
         [SerializeField] public float attackFailReward;
         [SerializeField] public float moveToHomeReward = 0.2f;
         [SerializeField] public float moveInsideHomeReward;
-        [SerializeField] public float winGameReward = 1;
+        [SerializeField] public float firstRankReward = 1;
+        [SerializeField] public float secondRankReward = 0.35f;
+        [SerializeField] public float thirdRankReward = -0.35f;
         [SerializeField] public float loseGameReward = -1;
         
 
@@ -220,6 +222,18 @@ namespace _03_SCRIPTS.AI
                 case 5:
                     boardController.MoveInsideHomeOnly(_units[unitIdx], _diceValue, turnController.EndTurn);
                     break;
+            }
+        }
+        
+        public float GetRankReward(int rank)
+        {
+            switch (rank)
+            {
+                case 1: return firstRankReward;
+                case 2: return secondRankReward;
+                case 3: return thirdRankReward;
+                case 4: return loseGameReward;
+                default: return 0f;
             }
         }
 

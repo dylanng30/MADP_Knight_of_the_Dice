@@ -244,29 +244,52 @@ namespace MADP.Controllers
         {
             boardController.MoveUnit(unitModel, destination, CurrentDiceValue, () =>
             {
-                if (boardController.CheckWinCondition(CurrentTeam))
+                // if (boardController.CheckWinCondition(CurrentTeam))
+                // {
+                //     foreach (var kvp in _agents)
+                //     {
+                //         if (kvp.Key == CurrentTeam)
+                //             kvp.Value.AddReward(kvp.Value.winGameReward);
+                //         else
+                //             kvp.Value.AddReward(kvp.Value.loseGameReward);
+                //     }
+                //
+                //     foreach (var agent in _agents.Values)
+                //     {
+                //         agent.EndEpisode();
+                //     }
+                //
+                //     return;
+                //     //GameManager.Instance.HandleVictory(CurrentTeam);
+                //     SwitchState(TurnState.WaitingForActions);
+                // }
+                // else
+                // {
+                //     EndTurn();
+                // }
+                
+                // Agent
+                if (boardController.TryRegisterTeamRank(CurrentTeam))
                 {
-                    foreach (var kvp in _agents)
+                    int rank = boardController.GetTeamRank(CurrentTeam);
+
+                    _agents[CurrentTeam].AddReward(_agents[CurrentTeam].GetRankReward(rank));
+
+                    // Nếu tất cả team đã xếp hạng → kết thúc episode
+                    if (boardController.IsGameFinished())
                     {
-                        if (kvp.Key == CurrentTeam)
-                            kvp.Value.AddReward(kvp.Value.winGameReward);
-                        else
-                            kvp.Value.AddReward(kvp.Value.loseGameReward);
+                        foreach (var agent in _agents.Values)
+                            agent.EndEpisode();
+
+                        return;
                     }
 
-                    foreach (var agent in _agents.Values)
-                    {
-                        agent.EndEpisode();
-                    }
-
-                    return;
-                    //GameManager.Instance.HandleVictory(CurrentTeam);
-                    SwitchState(TurnState.WaitingForActions);
-                }
-                else
-                {
+                    // Team này đã về đích → bỏ lượt sau
                     EndTurn();
+                    return;
                 }
+
+                EndTurn();
             });
         }
 
@@ -285,7 +308,14 @@ namespace MADP.Controllers
             
             if (CurrentDiceValue != 6)
             {
-                _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
+                // _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
+               
+                // Agent
+                do
+                {
+                    _currentTeamIndex = (_currentTeamIndex + 1) % _activeSlots.Count;
+                }
+                while (boardController.GetTeamRank(CurrentTeam) != -1);
 
                 if (_currentTeamIndex == 0)
                 {

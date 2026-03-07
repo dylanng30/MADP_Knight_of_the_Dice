@@ -24,6 +24,7 @@ namespace MADP.Controllers
         [SerializeField] private BoardView boardView;
 
         private Dictionary<TeamColor, TeamAgent> _agents;
+        private List<TeamColor> _winningOrder = new();
 
         //Data
         private BoardModel _boardModel;
@@ -101,10 +102,9 @@ namespace MADP.Controllers
                     }
                 }
             }
-
+            
             return unitsInWinningPosition == 4;
         }
-
 
         #region --- MOVEMENT & COMBAT ---
 
@@ -774,6 +774,33 @@ namespace MADP.Controllers
         public void SetAgents(Dictionary<TeamColor, TeamAgent> agents)
         {
             _agents = agents;
+        }
+        
+        public bool TryRegisterTeamRank(TeamColor teamColor)
+        {
+            // đã có rank rồi thì bỏ qua
+            if (_winningOrder.Contains(teamColor))
+                return false;
+
+            if (!CheckWinCondition(teamColor))
+                return false;
+
+            _winningOrder.Add(teamColor);
+
+            Debug.Log($"Team {teamColor} finished at rank {_winningOrder.Count}");
+
+            return true;
+        }
+        
+        public int GetTeamRank(TeamColor teamColor)
+        {
+            int index = _winningOrder.IndexOf(teamColor);
+            return index >= 0 ? index + 1 : -1;
+        }
+        
+        public bool IsGameFinished()
+        {
+            return _winningOrder.Count == _activeSlots.Count;
         }
 
         private Vector3 GetForwardDirection(CellModel cell)
