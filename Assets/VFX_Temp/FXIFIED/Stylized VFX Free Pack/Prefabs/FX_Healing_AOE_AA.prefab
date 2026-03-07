@@ -29016,7 +29016,7 @@ GameObject:
   - component: {fileID: 6809944706259094416}
   - component: {fileID: 6809944706259094417}
   - component: {fileID: 6809944706259094418}
-  - component: {fileID: 9222311602043563911}
+  - component: {fileID: 6516555779514730107}
   m_Layer: 0
   m_Name: FX_Healing_AOE_AA
   m_TagString: Untagged
@@ -33857,7 +33857,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &9222311602043563911
+--- !u!114 &6516555779514730107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33866,10 +33866,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6809944706259094419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15b953137a474e5f99232dac2779947a, type: 3}
+  m_Script: {fileID: 11500000, guid: fc39cafbc099463d82dfa7d1b6f2c6bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _particleSystems:
+  - {fileID: 6809944706259094417}
   - {fileID: 2626158323887347549}
   - {fileID: 5074345953122049583}
   - {fileID: 6809944706098951783}

@@ -47,12 +47,12 @@ namespace MADP.Managers
             for (int i = 0; i < activePlayers.Count; i++)
             {
                 if (i >= goldViews.Count) break; 
-
+                
                 TeamColor team = activePlayers[i].TeamColor;
                 GoldView view = goldViews[i];
                 Color teamColorUI = _teamColorDB.GetTeamColor(team, Priority.Primary);
                 Color frameColorUI = _teamColorDB.GetTeamColor(team, Priority.Tertiary);
-                view.Setup(i, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
+                view.Setup(activePlayers[i].SlotIndex, teamColorUI, frameColorUI, activePlayers[i].AvatarPath);
                 _activeViews.Add(team, view);
             }
         }

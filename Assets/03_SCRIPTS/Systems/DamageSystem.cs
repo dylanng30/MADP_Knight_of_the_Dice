@@ -34,7 +34,7 @@ namespace MADP.Systems
             attacker.PlayAnimation("Attack");
             //victim.PlayAnimation("Attack");
             
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             attackUA.OnHit?.Invoke();
             
             if (attackUA.IsDead)

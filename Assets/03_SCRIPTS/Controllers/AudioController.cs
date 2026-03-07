@@ -48,7 +48,7 @@ namespace MADP.Controllers
             UnregisterMatchEvents();
         }
         
-        public void PlayUISound(SoundKey key)
+        public void PlaySound(SoundKey key)
         {
             _audioService?.PlaySFX(key);
         }

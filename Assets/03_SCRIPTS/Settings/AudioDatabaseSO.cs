@@ -12,7 +12,7 @@ namespace MADP.Settings
         
         //SFX
         SFX_ButtonClick = 20, SFX_DiceRoll = 21,SFX_Attack = 22, SFX_Die = 23,
-        SFX_Heal = 24, SFX_Hurt = 25, SFX_BuySuccess = 26,
+        SFX_Heal = 24, SFX_Hurt = 25, SFX_BuySuccess = 26, SFX_GetGold
     }
 
     [Serializable]

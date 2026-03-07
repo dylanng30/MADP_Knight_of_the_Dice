@@ -4,6 +4,7 @@ using System.Linq;
 using MADP.Models;
 using MADP.Models.CellEvents;
 using MADP.Models.UnitActions;
+using MADP.Models.VFX;
 using MADP.Services;
 using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat.Interfaces;
@@ -200,6 +201,11 @@ namespace MADP.Controllers
             CombatResult result = _combatService.SimulateCombat(attacker, victim);
             
             Action onHit = () => {
+                //VFX
+                Vector3 vfxPos = victimView.transform.position + Vector3.up * 2;
+                NumberVFXPayload numberVFXPayload = new NumberVFXPayload(result.DamageDealt, Color.red, "-");
+                _vfxService.PlayVFX(VFXType.FloatingDamage, vfxPos, numberVFXPayload);
+                
                 victim.TakeDamage(result.DamageDealt);
             };
             
@@ -321,7 +327,7 @@ namespace MADP.Controllers
                 
                 if (AudioController.Instance != null)
                 {
-                    AudioController.Instance.PlayUISound(SoundKey.SFX_BuySuccess);    
+                    AudioController.Instance.PlaySound(SoundKey.SFX_BuySuccess);    
                 }
                 
                 OnComplete?.Invoke();

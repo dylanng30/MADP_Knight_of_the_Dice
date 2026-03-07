@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using UnityEngine;
 
 namespace MADP.Utilities
@@ -41,7 +42,6 @@ namespace MADP.Utilities
             
             seq.Append(dice.DOLocalMoveY(initialPos.y, duration / 2).SetEase(Ease.OutBounce)); 
             seq.Join(dice.DORotate(targetRotation, duration / 2).SetEase(Ease.OutQuad));
-            
             return seq;
         }
     }

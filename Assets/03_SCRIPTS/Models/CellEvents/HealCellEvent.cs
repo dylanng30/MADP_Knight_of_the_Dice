@@ -1,4 +1,5 @@
 ﻿using MADP.Models.CellEvents.Interfaces;
+using MADP.Models.VFX;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.VFX.Interfaces;
 using MADP.Settings;
@@ -25,7 +26,11 @@ namespace MADP.Models.CellEvents
             int healAmount = 10;
             unit.Heal(healAmount);
             _vfxService.PlayVFX(VFXType.Heal, cellView.GetUnitPosition());
-            Debug.Log($"Unit {unit.Id} của tea {unit.TeamOwner} vừa được hồi {healAmount} máu");
+
+            NumberVFXPayload payload = new NumberVFXPayload(healAmount, Color.green, "+");
+            
+            Vector3 numberPos = cellView.GetUnitPosition() + Vector3.up * 2f;
+            _vfxService.PlayVFX(VFXType.FloatingHealth, numberPos, payload);
         }
     }
 }

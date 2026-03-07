@@ -107,7 +107,7 @@ namespace MADP.Controllers
             _currentTeamIndex = 0;
             StartTurnProcess();
 
-            Time.timeScale = 2;
+            Time.timeScale = 5;
         }
         
         private void Update()
@@ -204,7 +204,9 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
+            CurrentDiceValue = CurrentDiceValue <= 3 ? 1 : 6;
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
+            
             SetRollButtonVisibility(false);
         }
 

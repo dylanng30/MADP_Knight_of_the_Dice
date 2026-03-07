@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using MADP.Controllers;
+using MADP.Settings;
 using MADP.Utilities;
 using TMPro;
 using UnityEngine;
@@ -45,9 +47,16 @@ namespace MADP.Views
             transform.localRotation = finalQuat;
             UIAnimator.RoleDice(transform, targetRotation, jumpHeight, rotateDuration).OnComplete(() =>
             {
-                onCompleted?.Invoke();
+                PlaySound();
                 transform.position = originalPos;
+                onCompleted?.Invoke();
             });
+        }
+
+        private void PlaySound()
+        {
+            if(AudioController.Instance != null)
+                AudioController.Instance.PlaySound(SoundKey.SFX_DiceRoll);
         }
     }
 }

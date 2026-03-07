@@ -5,39 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1230a9ba-b1e3-4b35-84f9-ec9360dbb842" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/Interfaces.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/Interfaces/IVFXService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/Interfaces/IVFXService.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/VFXService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/VFXService.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/VFXDatabaseSO.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/VFXDatabaseSO.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/VFXView.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/VFXView.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/Interfaces.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/Interfaces/IVFXPayload.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/Interfaces/IVFXPayload.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/NumberVFXPayload.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/NumberVFXPayload.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/BaseVFXView.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/BaseVFXView.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/StaticVFXView.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/StaticVFXView.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/TextVFXView.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/TextVFXView.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MADP_Knight_of_the_Dice_Git/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/02_PREFABS/CellView.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/02_PREFABS/CellView.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/AudioController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/AudioController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/BoardController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Controllers/TurnController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/MatchInitiator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/GoldCellEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/GoldCellEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HarmCellEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HarmCellEvent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Managers/GoldUIManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HealCellEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/HealCellEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/Interfaces/ICellEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/Interfaces/ICellEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/MythCellEvent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/CellEvents/MythCellEvent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitActions/CellEventUA.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitActions/CellEventUA.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/CellEvent/CellEventService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/CellEvent/CellEventService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Systems/CellEventSystem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Systems/CellEventSystem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/CellView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/CellView.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/04_SOs/UnitAvatarDB.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/04_SOs/UnitAvatarDB.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Desert.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Loading.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Loading.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/Interfaces/IVFXService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/Interfaces/IVFXService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/VFXService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Services/VFX/VFXService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/AudioDatabaseSO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/AudioDatabaseSO.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/VFXDatabaseSO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/VFXDatabaseSO.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Systems/DamageSystem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Systems/DamageSystem.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/DiceView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/DiceView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/VFXView.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/VFXView.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/04_SOs/AudioDB.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/04_SOs/AudioDB.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/VFXDatabase.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/VFXDatabase.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/VFX_Temp/FXIFIED/Stylized VFX Free Pack/Prefabs/FX_Healing_AOE_AA.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/VFX_Temp/FXIFIED/Stylized VFX Free Pack/Prefabs/FX_Healing_AOE_AA.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +83,10 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbyModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/LobbySlotModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/Menu/Tutorial/TutorialStepModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitActions/AttackUA.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/UnitActions/CellEventUA.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/Interfaces/IVFXPayload.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Models/VFX/NumberVFXPayload.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/Interfaces/IBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/RandomBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Services/AI/SmartBotBrain.cs" root0="FORCE_HIGHLIGHTING" />
@@ -112,6 +113,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/UnitAvatarDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Settings/VFXDatabaseSO.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/States/TurnStates/WinState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Systems/DamageSystem.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/PlaySoundOnClick.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Utilities/UIAnimator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/BoardView.cs" root0="FORCE_HIGHLIGHTING" />
@@ -137,7 +139,9 @@
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/TurnView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/Unit/UnitView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/UnitCardView.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/VFXView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/BaseVFXView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/StaticVFXView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/03_SCRIPTS/Views/VFX/TextVFXView.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -299,6 +303,10 @@
       <workItem from="1772734576089" duration="190000" />
       <workItem from="1772766374491" duration="1837000" />
       <workItem from="1772768260615" duration="2041000" />
+      <workItem from="1772786913688" duration="3907000" />
+      <workItem from="1772805886477" duration="581000" />
+      <workItem from="1772814854929" duration="4464000" />
+      <workItem from="1772820653620" duration="136000" />
     </task>
     <task id="LOCAL-00001" summary="Stat + AttackAction">
       <option name="closed" value="true" />

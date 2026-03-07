@@ -5,19 +5,13 @@ using UnityEngine;
 
 namespace MADP.Views.VFX
 {
-    public class VFXView : MonoBehaviour
+    public class StaticVFXView : BaseVFXView
     {
         [SerializeField] private List<ParticleSystem>  _particleSystems;
         
-        private Action<VFXView> _onCompleteCallback;
-
-        public void Play(Vector3 position, Action<VFXView> onComplete)
+        public override void Play(Vector3 position, Action<BaseVFXView> onComplete)
         {
-            transform.position = position;
-            _onCompleteCallback = onComplete;
-            gameObject.SetActive(true);
-            
-            
+            base.Play(position, onComplete);
             
             if (_particleSystems != null)
             {
@@ -29,7 +23,7 @@ namespace MADP.Views.VFX
             }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             if (_particleSystems != null)
             {
@@ -38,6 +32,7 @@ namespace MADP.Views.VFX
                     ps.Stop();
                 }
             }
+            
             ReturnToPool();
         }
 
@@ -45,12 +40,6 @@ namespace MADP.Views.VFX
         {
             yield return new WaitForSeconds(duration);
             ReturnToPool();
-        }
-
-        private void ReturnToPool()
-        {
-            gameObject.SetActive(false);
-            _onCompleteCallback?.Invoke(this);
         }
     }
 }

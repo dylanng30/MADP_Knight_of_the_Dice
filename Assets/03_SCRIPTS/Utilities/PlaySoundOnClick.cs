@@ -18,7 +18,7 @@ namespace MADP.Utilities
         private void PlaySound()
         {
             if (AudioController.Instance != null) 
-                AudioController.Instance.PlayUISound(soundKey);
+                AudioController.Instance.PlaySound(soundKey);
         }
     }
 }

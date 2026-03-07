@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vfxList:
   - Type: 0
-    Prefab: {fileID: 9222311602043563911, guid: 0a3972e964dcd2b47b2a3bc58d35d554, type: 3}
+    Prefab: {fileID: 6516555779514730107, guid: 0a3972e964dcd2b47b2a3bc58d35d554, type: 3}
+  - Type: 1
+    Prefab: {fileID: 1235718506988060142, guid: c6cb9b1bbcbc5124097f34e39a62e6e4, type: 3}
+  - Type: 2
+    Prefab: {fileID: 1235718506988060142, guid: c6cb9b1bbcbc5124097f34e39a62e6e4, type: 3}

@@ -7,7 +7,7 @@ namespace MADP.Settings
 {
     public enum VFXType
     {
-        Heal
+        Heal, FloatingHealth, FloatingDamage
     }
     
     [CreateAssetMenu(fileName = "VFXDatabase", menuName = "MADP/Settings/VFX Database")]
@@ -17,12 +17,12 @@ namespace MADP.Settings
         public struct VFXData
         {
             public VFXType Type;
-            public VFXView Prefab;
+            public BaseVFXView Prefab;
         }
 
         public List<VFXData> vfxList;
 
-        public VFXView GetPrefab(VFXType type)
+        public BaseVFXView GetPrefab(VFXType type)
         {
             foreach (var data in vfxList)
             {
