@@ -2,12 +2,15 @@
 using System.Linq;
 using MADP.Controllers;
 using MADP.Models;
+using MADP.Services.AI;
 using MADP.Services.CellEvent;
 using MADP.Services.CellEvent.Interfaces;
 using MADP.Services.Combat;
 using MADP.Services.Combat.Interfaces;
 using MADP.Services.Gold;
 using MADP.Services.Gold.Interfaces;
+using MADP.Services.Inventory;
+using MADP.Services.Inventory.Interfaces;
 using MADP.Services.Pathfinding;
 using MADP.Services.Pathfinding.Interfaces;
 using MADP.Services.Shop;
@@ -40,6 +43,8 @@ namespace MADP.Managers
         private ICellEventService _cellEventService;
         private IVFXService _vfxService;
         private ShopService _shopService;
+        private BotDecisionService _botDecisionService;
+        private IItemService _itemService;
         
         private void Awake()
         {
@@ -93,6 +98,8 @@ namespace MADP.Managers
             _combatService = new CombatService();
             _cellEventService = new CellEventService(_goldService, _vfxService);
             _shopService = new ShopService(_goldService);
+            _botDecisionService = new BotDecisionService();
+            _itemService = new ItemService();
             
             //CONTROLLERS
             
@@ -101,7 +108,7 @@ namespace MADP.Managers
                 AudioController.Instance.ConnectToMatch(_goldService);
             }
             
-            _shoppingController.Initialize(_shopService, _goldService, activePlayers);
+            _shoppingController.Initialize(_shopService, _goldService, _botDecisionService ,activePlayers);
             _shoppingController.SetTimePerTurn(settings.TimePerTurn);
             
             _boardController.Initialize(
@@ -117,7 +124,16 @@ namespace MADP.Managers
                 activePlayers, 
                 settings.SelectedMap, 
                 teamColorDB);
-            _turnController.Initialize(_shoppingController, _goldService, activePlayers, diceView, settings.TimePerTurn);
+            
+            _turnController.Initialize(
+                _shoppingController, 
+                _goldService, 
+                _botDecisionService, 
+                _itemService,
+                activePlayers, 
+                diceView, 
+                settings.TimePerTurn);
+            
             _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
             _vfxService.Initialize(vfxContainer.transform);
             _goldService.Initialize(Constants.InitialGold, activePlayers);

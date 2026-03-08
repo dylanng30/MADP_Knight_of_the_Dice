@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MADP.Controllers;
 using MADP.Models;
 using MADP.Services.AI.Interfaces;
@@ -18,6 +19,7 @@ namespace MADP.Services.AI
             _profile = profile;
         }
 
+        #region ---LOGIC DI CHUYEN---
         public (UnitModel Unit, CellModel Destination) DecideMove(TeamColor team, int diceValue, BoardModel board)
         {
             List<UnitModel> allUnits = _boardController.GetAllUnitsByColor(team);
@@ -129,5 +131,63 @@ namespace MADP.Services.AI
 
             return expectedDanger;
         }
+
+        #endregion
+
+
+        #region ---LOGIC MUA DO---
+        public List<ItemDataSO> DecidePurchases(TeamColor team, int currentGold, int availableSlots, List<ItemDataSO> shopItems)
+        {
+            List<ItemDataSO> itemsToBuy = new List<ItemDataSO>();
+            int remainingGold = currentGold;
+            int remainingSlots = availableSlots;
+            
+            var sortedItems = shopItems.OrderByDescending(i => i.Price).ToList();
+
+            foreach (var item in sortedItems)
+            {
+                if (remainingSlots > 0 && remainingGold >= item.Price)
+                {
+                    itemsToBuy.Add(item);
+                    remainingGold -= item.Price;
+                    remainingSlots--;
+                }
+            }
+
+            return itemsToBuy;
+        }
+        #endregion
+        
+        #region ---LOGIC TRANG BI VAT PHAM---
+        public List<(ItemDataSO Item, UnitModel TargetUnit)> DecideItemUsage(TeamColor team, List<ItemDataSO> inventory, BoardModel board)
+        {
+            var usageDecisions = new List<(ItemDataSO, UnitModel)>();
+            if (inventory == null || inventory.Count == 0) return usageDecisions;
+
+            //Chỉ lấy các unit đang trên bàn cờ và không bị đầy đồ
+            List<UnitModel> activeUnits = _boardController.GetAllUnitsByColor(team)
+                .Where(u => u.State == UnitState.Moving && !u.Inventory.IsFull).ToList();
+
+            if (activeUnits.Count == 0) return usageDecisions;
+
+            List<ItemDataSO> itemsToEquip = new List<ItemDataSO>(inventory);
+
+            foreach (var item in itemsToEquip)
+            {
+                //Ưu tiên buff cho quân đang gần đích nhất
+                UnitModel bestTarget = activeUnits
+                    .OrderByDescending(u => u.StepsMoved)
+                    .FirstOrDefault(); 
+
+                if (bestTarget != null)
+                {
+                    usageDecisions.Add((item, bestTarget));
+                    activeUnits.Remove(bestTarget); 
+                }
+            }
+
+            return usageDecisions;
+        }
+        #endregion
     }
 }

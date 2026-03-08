@@ -64,7 +64,7 @@ namespace MADP.Services.Shop
             return result;
         }
         
-        public void ProcessBotShopping(LobbySlotModel botSlot, List<ItemDataSO> shopItems)
+        /*public void ProcessBotShopping(LobbySlotModel botSlot, List<ItemDataSO> shopItems)
         {
             if (botSlot.PlayerType != PlayerType.Bot || botSlot.Inventory == null) return;
 
@@ -78,6 +78,6 @@ namespace MADP.Services.Shop
                     Debug.Log($"Bot {botSlot.TeamColor} đã mua: {item.ItemName}");
                 }
             }
-        }
+        }*/
     }
 }

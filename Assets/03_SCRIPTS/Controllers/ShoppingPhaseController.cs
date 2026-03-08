@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using MADP.Models;
+using MADP.Models.Inventory;
+using MADP.Services.AI;
 using MADP.Services.Gold.Interfaces;
 using MADP.Services.Shop;
 using MADP.Settings;
@@ -22,6 +24,7 @@ namespace MADP.Controllers
         
         private ShopService _shopService;
         private IGoldService _goldService;
+        private BotDecisionService _botDecisionService;
 
         private float _timePerTurn;
         private List<LobbySlotModel> _activePlayers;
@@ -36,10 +39,15 @@ namespace MADP.Controllers
             toggleButton.onClick.AddListener(ToggleShopPanel);
         }
 
-        public void Initialize(ShopService shopService, IGoldService goldService, List<LobbySlotModel> activePlayers)
+        public void Initialize(
+            ShopService shopService, 
+            IGoldService goldService, 
+            BotDecisionService botDecisionService,
+            List<LobbySlotModel> activePlayers)
         {
             _shopService = shopService;
             _goldService = goldService;
+            _botDecisionService = botDecisionService;
             _activePlayers = activePlayers;
             
             _localPlayer = _activePlayers.Find(p => p.PlayerType == PlayerType.Human);
@@ -72,10 +80,19 @@ namespace MADP.Controllers
                 }
                 else if (player.PlayerType == PlayerType.Bot)
                 {
-                    _shopService.ProcessBotShopping(player, generatedItems);
+                    int currentGold = _goldService.GetGold(player.TeamColor);
+                    int availableSlots = PlayerInventoryModel.ItemSlots - player.Inventory.Items.Count;
+                    
+                    List<ItemDataSO> itemsToBuy = _botDecisionService.GetShoppingList(player.TeamColor, currentGold, availableSlots, generatedItems);
+                    
+                    foreach (var item in itemsToBuy)
+                    {
+                        _shopService.TryBuyItem(item, player.Inventory);
+                        Debug.Log($"Bot {player.TeamColor} đã quyết định mua: {item.ItemName}");
+                    }
                 }
             }
-            
+    
             StartCoroutine(StartPhaseShopTimer(onPhaseCompleted));
         }
         

@@ -7,6 +7,7 @@ using MADP.Services;
 using MADP.Services.AI;
 using MADP.Services.AI.Interfaces;
 using MADP.Services.Gold.Interfaces;
+using MADP.Services.Inventory.Interfaces;
 using MADP.Settings;
 using MADP.States.TurnStates;
 using MADP.States.TurnStates.Interfaces;
@@ -37,6 +38,7 @@ namespace MADP.Controllers
         //Services
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
+        private IItemService _itemService;
         
         private List<LobbySlotModel> _activeSlots = new ();
         private Dictionary<TurnState, ITurnState> _turnStates;
@@ -56,6 +58,7 @@ namespace MADP.Controllers
         [Header("UI Settings")]
         [SerializeField] private RollButtonView rollButtonView;
         [SerializeField] private EndTurnButtonView endTurnButtonView;
+        [SerializeField] private GameEndView gameEndView;
         
         public float CurrentTurnTimer => _currentTurnTimer;
         
@@ -80,17 +83,21 @@ namespace MADP.Controllers
         public void Initialize(
             ShoppingPhaseController shoppingController,
             IGoldService goldService, 
+            BotDecisionService botDecisionService,
+            IItemService itemService,
             List<LobbySlotModel> activeSlots, 
             DiceView diceView,
             float timePerTurn)
         {
             _shoppingController = shoppingController;
+            
             _goldService = goldService;
+            _botDecisionService = botDecisionService;
+            _itemService = itemService;
+            
             _activeSlots = activeSlots;
             _diceView = diceView;
             _timePerTurn = timePerTurn;
-            
-            _botDecisionService = new BotDecisionService();
             
             foreach (var slot in activeSlots)
             {
@@ -206,7 +213,7 @@ namespace MADP.Controllers
         public void RollDice()
         {
             CurrentDiceValue = Random.Range(1, 7);
-            CurrentDiceValue = CurrentDiceValue <= 3 ? 1 : 6;
+            //CurrentDiceValue = CurrentDiceValue <= 3 ? 1 : 6;
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
             
             SetRollButtonVisibility(false);
@@ -342,6 +349,25 @@ namespace MADP.Controllers
             };
         }
         
+        public void TriggerGameEnd(TeamColor winningTeam)
+        {
+            bool isLocalPlayerWin = false;
+            
+            foreach (var slot in _activeSlots)
+            {
+                if (slot.TeamColor == winningTeam && slot.PlayerType == PlayerType.Human)
+                {
+                    isLocalPlayerWin = true;
+                    break;
+                }
+            }
+            
+            if (gameEndView != null) 
+                gameEndView.Show(isLocalPlayerWin);
+            else 
+                Debug.LogWarning("Chưa gán GameEndView vào TurnController!");
+        }
+        
         //BOT - Temp
         public void HandleBotTurn()
         {
@@ -349,8 +375,29 @@ namespace MADP.Controllers
         }
         private IEnumerator BotThinkingProcecss()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             
+            //AI trang bị đồ
+            var botSlot = _activeSlots[_currentTeamIndex];
+            if (botSlot.Inventory != null && botSlot.Inventory.Items.Count > 0)
+            {
+                var usageDecisions = _botDecisionService.GetItemUsageDecisions(CurrentTeam, botSlot.Inventory.Items, boardController.Board);
+        
+                foreach (var decision in usageDecisions)
+                {
+                    bool success = _itemService.TryEquipItem(botSlot.Inventory, decision.TargetUnit, decision.Item);
+                    
+                    if (success)
+                    {
+                        Debug.Log($"Bot {CurrentTeam} đã gắn {decision.Item.ItemName} cho Unit {decision.TargetUnit.Id}");
+                        yield return new WaitForSeconds(0.5f);
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(0.5f);
+
+            //AI quyết định di chuyển
             var bestMove = _botDecisionService.GetBestMove(CurrentTeam, CurrentDiceValue, boardController.Board);
 
             if (bestMove.Unit != null)
@@ -371,7 +418,7 @@ namespace MADP.Controllers
             }
             else
             {
-                Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ (Bị chặn hoặc kẹt).");
+                Debug.Log($"Bot {CurrentTeam} không có nước đi nào hợp lệ.");
                 EndTurn();
             }
         }
