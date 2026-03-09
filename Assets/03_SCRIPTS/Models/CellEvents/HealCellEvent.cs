@@ -23,12 +23,13 @@ namespace MADP.Models.CellEvents
 
         public void Execute(UnitModel unit, UnitView unitView, CellModel cell, CellView cellView)
         {
-            int healAmount = 10;
+            int baseAmount = 10;
+            int randomBonus = Random.Range(0, 6);
+            int healAmount = baseAmount + randomBonus;
             unit.Heal(healAmount);
             _vfxService.PlayVFX(VFXType.Heal, cellView.GetUnitPosition());
 
             NumberVFXPayload payload = new NumberVFXPayload(healAmount, Color.green, "+");
-            
             Vector3 numberPos = cellView.GetUnitPosition() + Vector3.up * 2f;
             _vfxService.PlayVFX(VFXType.FloatingHealth, numberPos, payload);
         }

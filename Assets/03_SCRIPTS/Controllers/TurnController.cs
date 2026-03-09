@@ -116,7 +116,7 @@ namespace MADP.Controllers
             _currentTeamIndex = 0;
             StartTurnProcess();
 
-            Time.timeScale = 5;
+            //Time.timeScale = 5;
         }
         
         private void Update()

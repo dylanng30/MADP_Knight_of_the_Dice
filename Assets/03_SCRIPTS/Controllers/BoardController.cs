@@ -364,17 +364,20 @@ namespace MADP.Controllers
             var currentCell = homeCells.FirstOrDefault(c => c.Unit == unit);
             if (currentCell == null) return;
 
-            int nextIndex = currentCell.Index + 1; //Tính index của ô tiếp theo
-            if (nextIndex >= homeCells.Count) return;
+            int targetIndex = diceValue - 1;
 
-            if ((nextIndex + 1) == diceValue) //Kiểm tra thứ tự của ô tiếp theo có đúng với giá trị xúc xắc không
+            //Chỉ cho phép đi tiến lên ô cao hơn, không được lùi hoặc đứng yên
+            if (targetIndex > currentCell.Index && targetIndex < homeCells.Count)
             {
-                var targetCell = homeCells[nextIndex];
-
-                if (!targetCell.HasUnit) //Kiểm tra ô đích có trống không
+                //Kiểm tra đường đi từ ô kế tiếp đến ô đích xem có bị chặn không
+                for (int i = currentCell.Index + 1; i <= targetIndex; i++)
                 {
-                    results.Add(targetCell);
+                    var cell = homeCells[i];
+                    //Có quân cản
+                    if (cell.HasUnit) return;
                 }
+                
+                results.Add(homeCells[targetIndex]);
             }
         }
 
@@ -400,7 +403,7 @@ namespace MADP.Controllers
         private void GetGateEntryOptions(UnitModel unit, int diceValue, List<CellModel> results)
         {
             if (!_boardModel.HomeCells.TryGetValue(unit.TeamOwner, out var homeCells)) return;
-
+            
             //Kiểm tra đường đi trong nhà có bị chặn không
             for (int i = 0; i < diceValue; i++)
             {
