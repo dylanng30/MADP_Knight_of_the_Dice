@@ -361,7 +361,7 @@ namespace _03_SCRIPTS.MLAgent
         {
             if (unit.TeamOwner == teamOwner)
             {
-                AddReward(0.25f); // Thưởng lết qua Cửa 
+                AddReward(0.15f); // Giảm từ 0.25 để tránh học lệch chỉ tập trung về cửa
             }
         }
 
@@ -400,8 +400,15 @@ namespace _03_SCRIPTS.MLAgent
 
             // Chốt hạ ván đấu cho ML-Agent
             EndEpisode();
-            Debug.Log(
-                $"[MLAgent] Team {teamOwner} kết thúc với Hạng {(rankIndex == -1 ? "N/A" : (rankIndex + 1).ToString())}. Reward: {reward}");
+            
+            if (rankIndex != -1)
+            {
+                Debug.Log($"[MLAgent] Team {teamOwner} kết thúc với Hạng {rankIndex + 1}. Reward: {reward}");
+            }
+            else
+            {
+                Debug.Log($"[MLAgent] Team {teamOwner} kết thúc do Timeout/Draw. Reward: {reward}");
+            }
         }
 
         #endregion

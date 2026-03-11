@@ -364,15 +364,8 @@ namespace MADP.Controllers
                         {
                             Debug.Log($"[Timeout] Game reached maxRound {maxRound}. Ending episode.");
                             
-                            // Đảm bảo tất cả các đội đều có trong danh sách xếp hạng để tất cả Agent đều gọi EndEpisode
-                            foreach (var slot in _activeSlots)
-                            {
-                                if (!_finishedTeams.Contains(slot.TeamColor))
-                                {
-                                    _finishedTeams.Add(slot.TeamColor);
-                                }
-                            }
-                            
+                            // Kết thúc game với danh sách rỗng để báo hiệu Timeout/Hòa
+                            // Agent sẽ nhận reward -0.5 (theo logic HandleGameRanked trong TeamAgent)
                             TriggerGameEnd(TeamColor.None);
                             return;
                         }
