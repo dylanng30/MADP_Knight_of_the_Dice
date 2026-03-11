@@ -1,4 +1,4 @@
-﻿using MADP.Controllers;
+using MADP.Controllers;
 using UnityEngine;
 
 namespace MADP.States.TurnStates

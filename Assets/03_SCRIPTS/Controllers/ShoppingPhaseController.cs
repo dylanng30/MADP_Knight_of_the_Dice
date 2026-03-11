@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using MADP.Models;
@@ -15,13 +15,14 @@ namespace MADP.Controllers
 {
     public class ShoppingPhaseController : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private ShopView phaseShopView;
+        [Header("References")] [SerializeField]
+        private ShopView phaseShopView;
+
         [SerializeField] private ShopDatabaseSO shopDB;
 
         [SerializeField] private Transform shopPanel;
         [SerializeField] private Button toggleButton;
-        
+
         private ShopService _shopService;
         private IGoldService _goldService;
         private BotDecisionService _botDecisionService;
@@ -30,7 +31,7 @@ namespace MADP.Controllers
         private List<LobbySlotModel> _activePlayers;
         private LobbySlotModel _localPlayer;
         private bool _isOpened;
-        
+
         private Action _cachedCompletionCallback;
 
         private void Awake()
@@ -40,8 +41,8 @@ namespace MADP.Controllers
         }
 
         public void Initialize(
-            ShopService shopService, 
-            IGoldService goldService, 
+            ShopService shopService,
+            IGoldService goldService,
             BotDecisionService botDecisionService,
             List<LobbySlotModel> activePlayers)
         {
@@ -49,10 +50,11 @@ namespace MADP.Controllers
             _goldService = goldService;
             _botDecisionService = botDecisionService;
             _activePlayers = activePlayers;
-            
+
             _localPlayer = _activePlayers.Find(p => p.PlayerType == PlayerType.Human);
 
             phaseShopView.OnItemPurchaseRequested += HandleLocalPlayerPurchase;
+            _agentShops.Clear();
         }
 
         private void ToggleShopPanel()
@@ -63,11 +65,12 @@ namespace MADP.Controllers
 
         public void SetTimePerTurn(float timePerTurn)
         {
-            _timePerTurn = timePerTurn;   
+            _timePerTurn = timePerTurn;
         }
 
         public void ShowPhaseShop(Action onPhaseCompleted)
         {
+            _agentShops.Clear();
             foreach (var player in _activePlayers)
             {
                 var generatedItems = _shopService.GenerateRandomShop(shopDB);
@@ -82,34 +85,47 @@ namespace MADP.Controllers
                 {
                     int currentGold = _goldService.GetGold(player.TeamColor);
                     int availableSlots = PlayerInventoryModel.ItemSlots - player.Inventory.Items.Count;
-                    
-                    List<ItemDataSO> itemsToBuy = _botDecisionService.GetShoppingList(player.TeamColor, currentGold, availableSlots, generatedItems);
-                    
+
+                    List<ItemDataSO> itemsToBuy = _botDecisionService.GetShoppingList(player.TeamColor, currentGold,
+                        availableSlots, generatedItems);
+
                     foreach (var item in itemsToBuy)
                     {
                         _shopService.TryBuyItem(item, player.Inventory);
                         Debug.Log($"Bot {player.TeamColor} đã quyết định mua: {item.ItemName}");
                     }
                 }
+                else if (player.PlayerType == PlayerType.MLAgent)
+                {
+                    // Store items for the agent to observe
+                    _agentShops[player.TeamColor] = generatedItems;
+
+                    // Trigger agent turn
+                    var turnCtrl = GetComponentInParent<TurnController>();
+                    if (turnCtrl != null)
+                    {
+                        turnCtrl.OnMLAgentShoppingTurn?.Invoke(player.TeamColor, generatedItems);
+                    }
+                }
             }
-    
+
             StartCoroutine(StartPhaseShopTimer(onPhaseCompleted));
         }
-        
+
         private void HandleLocalPlayerPurchase(ItemDataSO item)
         {
             if (_localPlayer == null) return;
-            
+
             bool success = _shopService.TryBuyItem(item, _localPlayer.Inventory);
             if (success)
             {
                 phaseShopView.MarkItemAsPurchased(item);
                 int updatedGold = _goldService.GetGold(_localPlayer.TeamColor);
                 phaseShopView.RefreshAffordability(updatedGold);
-                
+
                 if (AudioController.Instance != null)
                 {
-                    AudioController.Instance.PlaySound(SoundKey.SFX_BuySuccess);    
+                    AudioController.Instance.PlaySound(SoundKey.SFX_BuySuccess);
                 }
             }
             else
@@ -118,11 +134,38 @@ namespace MADP.Controllers
             }
         }
 
+        #region ML-Agent Integration
+
+        private Dictionary<TeamColor, List<ItemDataSO>> _agentShops = new();
+
+        public bool TryBuyAgentItem(TeamColor team, int itemIndex)
+        {
+            if (!_agentShops.TryGetValue(team, out var items) || itemIndex >= items.Count) return false;
+
+            var player = _activePlayers.Find(p => p.TeamColor == team);
+            if (player == null) return false;
+
+            var item = items[itemIndex];
+            if (item == null) return false; // Item already bought or empty
+
+            bool success = _shopService.TryBuyItem(item, player.Inventory);
+
+            if (success)
+            {
+                items[itemIndex] = null;
+                Debug.Log($"[MLAgent] Team {team} đã mua {item.ItemName} qua ML-Agent Action");
+            }
+
+            return success;
+        }
+
+        #endregion
+
         private IEnumerator StartPhaseShopTimer(Action onPhaseCompleted)
         {
             _cachedCompletionCallback = onPhaseCompleted;
             yield return new WaitForSeconds(_timePerTurn);
-            
+
             ClosePhase();
         }
 

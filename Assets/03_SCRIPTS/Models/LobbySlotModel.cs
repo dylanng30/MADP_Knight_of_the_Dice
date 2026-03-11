@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MADP.Models.Inventory;
 using MADP.Settings;
 
@@ -6,13 +6,21 @@ namespace MADP.Models
 {
     public enum PlayerType
     {
-        Empty, Human, Bot
+        Empty,
+        Human,
+        Bot,
+        MLAgent
     }
 
     public enum RoleType
     {
-        Random, Attacker, Defender, Speller, Miner
+        Random,
+        Attacker,
+        Defender,
+        Speller,
+        Miner
     }
+
     [Serializable]
     public class LobbySlotModel
     {
@@ -24,9 +32,9 @@ namespace MADP.Models
         public string PlayerName;
         public string AvatarPath;
         public bool IsHost = false;
-        
+
         public PlayerInventoryModel Inventory { get; private set; }
-        
+
         public bool HasPlayer => PlayerType != PlayerType.Empty;
 
         public LobbySlotModel(int index, TeamColor color)

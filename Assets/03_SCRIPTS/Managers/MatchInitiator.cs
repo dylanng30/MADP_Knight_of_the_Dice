@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using MADP.Controllers;
 using MADP.Models;
@@ -156,8 +156,10 @@ namespace MADP.Managers
             {
                 Slots = new[]
                 {
-                    new LobbySlotModel(0, TeamColor.Red) { PlayerType = PlayerType.Human },
-                    new LobbySlotModel(1, TeamColor.Blue) { PlayerType = PlayerType.Bot }
+                    new LobbySlotModel(0, TeamColor.Red) { PlayerType = PlayerType.MLAgent },
+                    new LobbySlotModel(1, TeamColor.Blue) { PlayerType = PlayerType.MLAgent },
+                    new LobbySlotModel(2, TeamColor.Green) { PlayerType = PlayerType.MLAgent },
+                    new LobbySlotModel(3, TeamColor.Yellow) { PlayerType = PlayerType.MLAgent }
                 }
             };
         }

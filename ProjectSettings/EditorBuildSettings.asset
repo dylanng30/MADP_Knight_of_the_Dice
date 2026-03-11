@@ -18,3 +18,4 @@ EditorBuildSettings:
     path: Assets/Scenes/Snow.unity
     guid: 3e718bdd10fac8d4584670a1a4621194
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

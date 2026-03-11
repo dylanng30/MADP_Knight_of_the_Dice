@@ -53,7 +53,9 @@ namespace MADP.Views.Unit
             Rotate(moveDirection);
             while (Vector3.Distance(transform.position, targetPosition) > 0.05f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, Constants.UnitSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                    //Constants.UnitSpeed * Time.deltaTime);
+                    10);
                 yield return null;
             }
             
