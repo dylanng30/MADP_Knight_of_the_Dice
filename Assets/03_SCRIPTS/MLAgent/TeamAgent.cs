@@ -40,7 +40,7 @@ namespace _03_SCRIPTS.MLAgent
 
             // 2. Vòng đấu - 1 sensor
             var currentRound = turnController.CurrentRound;
-            var normalizedCurrentRound = (float)currentRound / maxRound;
+            var normalizedCurrentRound = Mathf.Clamp01((float)currentRound / turnController.MaxRound);
             sensor.AddObservation(normalizedCurrentRound);
 
             // 3. Vàng - 4 sensor
@@ -326,7 +326,7 @@ namespace _03_SCRIPTS.MLAgent
             // Vì Game được Reload bằng SceneManager.LoadScene trong TurnController khi end game, 
             // toàn bộ Object sẽ tự động được khởi tạo lại ở Episode mới nên không cần code reset biến/chỉ số ở đây.
             Debug.Log($"[MLAgent] Bắt đầu Episode mới cho đội {teamOwner}");
-            Time.timeScale = 100f; 
+            Time.timeScale = 100f;
             _isShoppingPhase = false;
             _currentShopItems.Clear();
         }
@@ -377,22 +377,31 @@ namespace _03_SCRIPTS.MLAgent
         {
             // Tìm xem mình đứng hạng mấy?
             int rankIndex = ranking.IndexOf(teamOwner);
-            if (rankIndex == -1) return;
 
             float reward = 0;
-            switch (rankIndex)
+            if (rankIndex != -1)
             {
-                case 0: reward = 1.0f; break; // Hạng 1 (Top 1)
-                case 1: reward = 0.35f; break; // Hạng 2
-                case 2: reward = -0.35f; break; // Hạng 3
-                case 3: reward = -1.0f; break; // Hạng 4 (Bét)
-            }
+                switch (rankIndex)
+                {
+                    case 0: reward = 1.0f; break; // Hạng 1 (Top 1)
+                    case 1: reward = 0.35f; break; // Hạng 2
+                    case 2: reward = -0.35f; break; // Hạng 3
+                    case 3: reward = -1.0f; break; // Hạng 4 (Bét)
+                }
 
-            AddReward(reward);
+                AddReward(reward);
+            }
+            else
+            {
+                // Nếu không có trong hạng (hòa hoặc ván đấu bị hủy/timeout mà không xếp hạng)
+                // Có thể phạt nhẹ hoặc không thưởng
+                AddReward(-0.5f);
+            }
 
             // Chốt hạ ván đấu cho ML-Agent
             EndEpisode();
-            Debug.Log($"[MLAgent] Team {teamOwner} kết thúc với Hạng {rankIndex + 1}. Reward: {reward}");
+            Debug.Log(
+                $"[MLAgent] Team {teamOwner} kết thúc với Hạng {(rankIndex == -1 ? "N/A" : (rankIndex + 1).ToString())}. Reward: {reward}");
         }
 
         #endregion
@@ -422,9 +431,10 @@ namespace _03_SCRIPTS.MLAgent
                 {
                     AddReward(-0.001f); // Phạt nhẹ nếu mua lỗi (không đủ tiền, hết chỗ, hoặc item rỗng)
                 }
+
                 return;
             }
-            
+
             // Branch 0: Chọn Quân Cờ (0: Skip, 1-4: Unit Index)
             int unitBranch = actions.DiscreteActions[0];
             if (unitBranch == 0)
@@ -543,6 +553,7 @@ namespace _03_SCRIPTS.MLAgent
                     bool itemExists = i - 1 < _currentShopItems.Count && _currentShopItems[i - 1] != null;
                     if (!itemExists) actionMask.SetActionEnabled(3, i, false);
                 }
+
                 return;
             }
 

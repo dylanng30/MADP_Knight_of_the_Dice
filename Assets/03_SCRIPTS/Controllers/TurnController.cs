@@ -359,6 +359,24 @@ namespace MADP.Controllers
                     {
                         _currentRound++;
                         _goldService.ApplyRoundBonus();
+
+                        if (isTrainingMode && _currentRound > maxRound)
+                        {
+                            Debug.Log($"[Timeout] Game reached maxRound {maxRound}. Ending episode.");
+                            
+                            // Đảm bảo tất cả các đội đều có trong danh sách xếp hạng để tất cả Agent đều gọi EndEpisode
+                            foreach (var slot in _activeSlots)
+                            {
+                                if (!_finishedTeams.Contains(slot.TeamColor))
+                                {
+                                    _finishedTeams.Add(slot.TeamColor);
+                                }
+                            }
+                            
+                            TriggerGameEnd(TeamColor.None);
+                            return;
+                        }
+
                         if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
                         {
                             SwitchState(TurnState.Shopping);
@@ -398,6 +416,8 @@ namespace MADP.Controllers
 
         [Header("ML-Agent Settings")]
         [SerializeField] public bool isTrainingMode;
+        [SerializeField] private int maxRound = 500;
+        public int MaxRound => maxRound;
 
         public Action<TeamColor> OnMLAgentTurn;
         public Action<TeamColor, List<ItemDataSO>> OnMLAgentShoppingTurn;

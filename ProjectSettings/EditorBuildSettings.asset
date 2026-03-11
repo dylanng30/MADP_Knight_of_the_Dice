@@ -5,17 +5,17 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Loading.unity
     guid: 14fd2c3f9900a3a4ebc0d2fcc8b84f5e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menu.unity
     guid: b7757e0fa53c4e9428a47747d133707c
   - enabled: 1
     path: Assets/Scenes/Desert.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Snow.unity
-    guid: 3e718bdd10fac8d4584670a1a4621194
+    guid: fe7c7ca390ae0be44b203a741f8b9699
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

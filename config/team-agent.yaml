@@ -11,7 +11,7 @@ behaviors:
       num_epoch: 3
       learning_rate_schedule: linear
     network_settings:
-      normalize: true
+      normalize: false
       hidden_units: 512
       num_layers: 3
       vis_encode_type: simple
@@ -32,4 +32,4 @@ behaviors:
     summary_freq: 10000
     keep_checkpoints: 5
     checkpoint_interval: 500000
-    threaded: true
+    threaded: false
