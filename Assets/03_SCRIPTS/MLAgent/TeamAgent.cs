@@ -349,11 +349,11 @@ namespace _03_SCRIPTS.MLAgent
         {
             if (attacker.TeamOwner == teamOwner)
             {
-                AddReward(0.05f); // Thưởng mình vì đã đá bay màu địch
+                AddReward(0.01f); // Giảm từ 0.05 xuống 0.01 để tránh farm mạng
             }
             else if (victim.TeamOwner == teamOwner)
             {
-                AddReward(-0.05f); // Phạt mình vì bị địch đá bay màu
+                AddReward(-0.01f); // Giảm phạt tương ứng
             }
         }
 
@@ -424,12 +424,12 @@ namespace _03_SCRIPTS.MLAgent
                 bool success = turnController.TryBuyItemForAgent(itemIndex);
                 if (success)
                 {
-                    AddReward(0.005f); // Thưởng vì đã mua được đồ
+                    AddReward(0.001f); // Giảm từ 0.005 để tránh farm mua đồ
                     RequestDecision(); // Có thể mua tiếp
                 }
                 else
                 {
-                    AddReward(-0.001f); // Phạt nhẹ nếu mua lỗi (không đủ tiền, hết chỗ, hoặc item rỗng)
+                    AddReward(-0.001f); // Giữ nguyên phạt nhẹ
                 }
 
                 return;
@@ -439,7 +439,7 @@ namespace _03_SCRIPTS.MLAgent
             int unitBranch = actions.DiscreteActions[0];
             if (unitBranch == 0)
             {
-                AddReward(-1.0f / maxRound); // Phạt lười biếng bỏ lượt
+                AddReward(-2.0f / maxRound); // Phạt nặng hơn khi bỏ lượt không lý do
                 turnController.EndTurn();
                 return;
             }
@@ -467,35 +467,35 @@ namespace _03_SCRIPTS.MLAgent
             UnitModel targetUnit = myUnits[unitIndex];
             int diceValue = turnController.CurrentDiceValue;
 
-            // Trừ điểm Zero-Sum thời gian. Cứ có hành động là mất điểm để ép chốt Game.
-            AddReward(-1.0f / maxRound);
+            // Trừ điểm Zero-Sum thời gian. Tăng nhẹ hình phạt để ép chốt Game.
+            AddReward(-1.5f / maxRound);
 
             // Xử lý các lệnh Hành Động dựa trên Branch 1
             // Cộng thưởng trực tiếp tại các hành động (Dense Reward được phân loại)
             switch (commandBranch)
             {
                 case 1: // Xuất quân
-                    AddReward(0.005f);
+                    AddReward(0.001f); // Giảm Reward nhỏ
                     boardController.SpawnUnitForAgent(targetUnit, () => turnController.EndTurn());
                     break;
                 case 2: // Đi thẳng
-                    AddReward(0.001f);
+                    AddReward(0.0005f);
                     boardController.NormalMoveForwardForAgent(targetUnit, diceValue, () => turnController.EndTurn());
                     break;
                 case 3: // Đá tiến
-                    AddReward(0.008f); // Đá quân rất đáng khích lệ
+                    AddReward(0.002f); 
                     boardController.AttackForwardForAgent(targetUnit, diceValue, () => turnController.EndTurn());
                     break;
                 case 4: // Đá hậu
-                    AddReward(0.008f);
+                    AddReward(0.002f);
                     boardController.AttackBackwardForAgent(targetUnit, diceValue, () => turnController.EndTurn());
                     break;
                 case 5: // Nhảy cóc (xúc xắc 1)
-                    AddReward(0.002f);
+                    AddReward(0.001f);
                     boardController.JumpOverNormalMoveForAgent(targetUnit, () => turnController.EndTurn());
                     break;
                 case 6: // Lên điểm Cửa chuồng
-                    AddReward(0.005f); // Bò về nhà tốt
+                    AddReward(0.005f); 
                     boardController.EnterGateForAgent(targetUnit, diceValue, () => turnController.EndTurn());
                     break;
                 case 7: // Di chuyển trong chuồng
@@ -503,7 +503,7 @@ namespace _03_SCRIPTS.MLAgent
                     boardController.MoveInHomeForAgent(targetUnit, diceValue, () => turnController.EndTurn());
                     break;
                 case 8: // Sử dụng Item
-                    AddReward(0.002f);
+                    AddReward(0.001f);
                     int itemSlotBranch = actions.DiscreteActions[2]; // Branch 2: Item Slot
                     HandleItemUsage(targetUnit, itemSlotBranch);
                     break;
