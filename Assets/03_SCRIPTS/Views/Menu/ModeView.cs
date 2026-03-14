@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MADP.Controllers;
 using MADP.Models.Menu.Tutorial;
 using MADP.Views.Menu.BotMode;
@@ -60,6 +60,7 @@ namespace MADP.Views.Menu
         {
             gameObject.SetActive(true);
             SwitchMode(tutorialModeView.gameObject,  tutorialModeButton.ChosenSign);
+            OnTutorialModeTabClicked?.Invoke();
         }
 
         public void Hide()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MADP.Controllers;
 using MADP.States.TurnStates.Interfaces;
 using MADP.Systems;
@@ -20,6 +20,11 @@ namespace MADP.States.TurnStates
             base.EnterTurn();
             if (!_turnController.IsPlayerTurn)
             {
+                if (_turnController.IsTutorialMode)
+                {
+                    _turnController.EndTurn();
+                    return;
+                }
                 _turnController.HandleBotTurn();
             }
         }

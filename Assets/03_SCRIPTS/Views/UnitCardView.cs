@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MADP.Models;
 using TMPro;
 using UnityEngine;
@@ -22,6 +22,8 @@ namespace MADP.Views
         [SerializeField] private Color expensiveColor = Color.red;
 
         private UnitModel _model;
+        // Trả về Model dữ liệu của quân cờ đang hiển thị trên thẻ bài.
+        public UnitModel Model => _model;
         private Action<UnitModel> _onClicked;
 
         public void Setup(UnitModel model, Sprite avatar, Action<UnitModel> onClicked)

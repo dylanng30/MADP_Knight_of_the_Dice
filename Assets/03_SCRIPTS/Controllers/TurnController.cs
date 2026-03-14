@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using MADP.Managers;
@@ -28,8 +28,14 @@ namespace MADP.Controllers
         [SerializeField] private BotProfileDatabaseSO botDB;
         [SerializeField] private BoardController boardController;
         [SerializeField] private UIManager _uiManager;
+        [SerializeField] private GoldUIManager _goldUIManager;
+        [SerializeField] private UnitDeckController _unitDeckController;
         
         public int CurrentDiceValue { get; private set; }
+        
+        public bool IsTutorialMode { get; private set; }
+        private int _forcedDiceValue = -1;
+        private bool _inputLocked = false;
         
         private UnitModel _selectedUnit;
         private List<CellModel> _potentialDestination;
@@ -66,8 +72,10 @@ namespace MADP.Controllers
         public bool IsPlayerTurn => _activeSlots[_currentTeamIndex].PlayerType == PlayerType.Human;
         
         //Events
+        // Sự kiện thông báo khi xúc xắc được gieo
         public Action<int> OnDiceRolled;
-        //public event Action<TeamColor> OnTurnChanged;
+        // Sự kiện thông báo khi một hành động trong lượt hoàn thành
+        public Action OnTurnActionCompletedEvent;
         
         private void Start()
         {
@@ -87,8 +95,10 @@ namespace MADP.Controllers
             IItemService itemService,
             List<LobbySlotModel> activeSlots, 
             DiceView diceView,
-            float timePerTurn)
+            float timePerTurn,
+            bool isTutorial = false)
         {
+            IsTutorialMode = isTutorial;
             _shoppingController = shoppingController;
             
             _goldService = goldService;
@@ -141,11 +151,15 @@ namespace MADP.Controllers
         
         private void HandleInteractInput()
         {
+            if (_inputLocked) return;
             if (IsPlayerTurn && _currentTurnState != null && !ActionSystem.Instance.IsPerforming)
             {
                 _currentTurnState.OnInteract();
             }
         }
+        
+        public void ForceNextDiceValue(int value) => _forcedDiceValue = value;
+        public void SetInputLocked(bool locked) => _inputLocked = locked;
         
         public void SetRollButtonVisibility(bool isVisible)
         {
@@ -164,6 +178,31 @@ namespace MADP.Controllers
                 endTurnButtonView.SetInteractable(isVisible);
             }
         }
+        // Lấy vùng RectTransform của nút gieo xúc xắc.
+        public RectTransform GetRollButtonRect() => rollButtonView != null ? rollButtonView.Rect : null;
+
+        // Lấy vùng RectTransform của nút kết thúc lượt.
+        public RectTransform GetEndTurnButtonRect() => endTurnButtonView != null ? endTurnButtonView.Rect : null;
+        
+        // Lấy vùng RectTransform của icon hiển thị vàng của một đội.
+        public RectTransform GetGoldIconRect(TeamColor team) => _goldUIManager != null ? _goldUIManager.GetGoldViewRect(team) : null;
+
+        // Lấy vùng RectTransform của một vật phẩm trong cửa hàng theo chỉ số.
+        public RectTransform GetShopItemRect(int index) => _shoppingController != null ? _shoppingController.GetShopItemRect(index) : null;
+
+        // Lấy vùng RectTransform của thẻ bài quân cờ theo ID unit.
+        public RectTransform GetUnitCardRect(int unitId) => _unitDeckController != null ? _unitDeckController.GetCardRect(unitId) : null;
+
+        // Lấy tọa độ thế giới của một ô trên bàn cờ theo chỉ số.
+        public Vector3 GetCellWorldPos(int cellIndex)
+        {
+            var cell = boardController.Board.AroundCells.Find(c => c.Index == cellIndex);
+            if (cell == null) return Vector3.zero;
+            return boardController.GetCellView(cell).transform.position;
+        }
+
+        public ShoppingPhaseController GetShoppingController() => _shoppingController;
+        public IItemService GetItemService() => _itemService;
         
         private void StartTurnProcess()
         {
@@ -193,7 +232,6 @@ namespace MADP.Controllers
             {
                 DeselectCurrent();
             }
-            
             EndTurn();
         }
         public void SwitchState(TurnState newState)
@@ -212,7 +250,8 @@ namespace MADP.Controllers
         
         public void RollDice()
         {
-            CurrentDiceValue = Random.Range(1, 7);
+            CurrentDiceValue = (_forcedDiceValue > 0) ? _forcedDiceValue : Random.Range(1, 7);
+            _forcedDiceValue = -1;
             //CurrentDiceValue = CurrentDiceValue <= 3 ? 1 : 6;
             _diceView.Roll(CurrentDiceValue, OnDiceRollCompleted);
             
@@ -238,6 +277,7 @@ namespace MADP.Controllers
 
         public void HandleUnitClicked(UnitModel unit)
         {
+            if (_inputLocked) return;
             if(unit.TeamOwner != CurrentTeam)
                 return;
             
@@ -247,6 +287,7 @@ namespace MADP.Controllers
         
         public void HandleCellClicked(CellModel clickedCell)
         {
+            if (_inputLocked) return;
             if (_selectedUnit != null)
             {
                 foreach (var cell in _potentialDestination)
@@ -303,6 +344,7 @@ namespace MADP.Controllers
         
         public void EndTurn()
         {
+            OnTurnActionCompletedEvent?.Invoke();
             //Reset
             _selectedUnit = null;
             OnDiceRolled?.Invoke(0);
@@ -315,7 +357,8 @@ namespace MADP.Controllers
                 {
                     _currentRound++;
                     _goldService.ApplyRoundBonus();
-                    if (_currentRound % SHOPPING_PHASE_INTERVAL == 0)
+                    
+                    if (!IsTutorialMode && _currentRound % SHOPPING_PHASE_INTERVAL == 0)
                     {
                         SwitchState(TurnState.Shopping);
                         return;

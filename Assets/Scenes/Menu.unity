@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -20225,7 +20225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stepContainer: {fileID: 1557991977}
   stepItemPrefab: {fileID: 5538281242165285660, guid: 94682a48d3e47d0459380b09164f6699, type: 3}
-  confirmButton: {fileID: 0}
+  confirmButton: {fileID: 1911991683}
 --- !u!1 &1708272868
 GameObject:
   m_ObjectHideFlags: 0
@@ -21708,23 +21708,23 @@ MonoBehaviour:
   routeModel:
     Steps:
     - IsOpened: 1
-      TutorialMap: 
+      TutorialMap: TutorialDesert
       Description: Step_01
       MapAvatar: {fileID: 0}
-    - IsOpened: 1
-      TutorialMap: 
+    - IsOpened: 0
+      TutorialMap: TutorialDesert
       Description: Step_02
       MapAvatar: {fileID: 0}
     - IsOpened: 0
-      TutorialMap: 
+      TutorialMap: TutorialDesert
       Description: Step_03
       MapAvatar: {fileID: 0}
     - IsOpened: 0
-      TutorialMap: 
+      TutorialMap: TutorialDesert
       Description: Step_04
       MapAvatar: {fileID: 0}
     - IsOpened: 0
-      TutorialMap: 
+      TutorialMap: TutorialDesert
       Description: Step_05
       MapAvatar: {fileID: 0}
   tutorialModeView: {fileID: 1705363254}

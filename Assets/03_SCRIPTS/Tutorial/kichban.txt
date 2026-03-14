@@ -1,0 +1,174 @@
+================================================================
+  KỊCH BẢN TUTORIAL — MADP: KNIGHT OF THE DICE
+  (Phiên bản đã điều chỉnh theo logic code thực tế)
+================================================================
+
+[LƯU Ý KỸ THUẬT]
+- Ô Vàng  (Gold)  = CellAttribute.Gold  → Cho vàng ngẫu nhiên 1–5
+- Ô Xanh  (Heal)  = CellAttribute.Heal  → Hồi máu ngẫu nhiên 10–15
+- Ô Tím   (Myth)  = CellAttribute.Myth  → Random 1 trong 3: cho Vàng / hồi Máu / gây Damage
+- Ô Đỏ   (Harm)  = CellAttribute.Harm  → Gây sát thương 5–10 cho quân bước vào
+- Shop    = Xuất hiện TỰ ĐỘNG sau mỗi 5 vòng (SHOPPING_PHASE_INTERVAL = 5 trong TurnController)
+
+================================================================
+MÀN 1 — THỨC TỈNH (Di chuyển & Bị chặn)
+================================================================
+Mục tiêu: Làm quen gieo xúc xắc, di chuyển quân cờ, và hiểu luật bị chặn.
+
+[Bối cảnh]
+Camera lướt qua "Bàn Cờ Tử Thần" (Isometric 3D). Game Master xuất hiện:
+"Chào mừng linh hồn nhỏ bé! Ta là Game Master. Muốn thoát khỏi đây?
+Hãy đưa 4 quân cờ của ngươi về Đích ở trung tâm... nếu ngươi sống sót."
+
+[Cài đặt bàn cờ]
+- 1 quân của người chơi đứng tại ô Spawn
+- 1 quân địch đứng tại ô Spawn+4 (làm vật cản)
+- Vàng ban đầu: 0
+
+--- Bước 1 — Gieo Xúc Xắc ---
+Hệ thống: Pointer chỉ vào nút [Gieo Xúc Xắc]. Ép xúc xắc ra mặt 3.
+Action: Người chơi bấm nút → Xúc xắc ra 3.
+
+--- Bước 2 — Di Chuyển ---
+Hệ thống: Highlight quân cờ và ô đích cách đó 3 bước.
+Action: Người chơi click vào quân cờ → click ô được highlight → Quân tiến 3 bước.
+
+--- Bước 3 — Bị Chặn (Nhận Vàng bù đắp) ---
+Bối cảnh: Lượt tiếp theo. Quân địch đang đứng chặn ngay trước mặt.
+Hệ thống: Pointer chỉ vào nút [Gieo Xúc Xắc]. Ép xúc xắc ra mặt 4.
+Action: Người chơi gieo → Ra 4. Hệ thống kiểm tra: không thể di chuyển.
+Kết quả: Tự động cộng +1 Vàng (luật bù đắp khi bị chặn hoàn toàn).
+Hiển thị: Pop-up "Đường bị chặn! Nhận +1 Vàng bù đắp."
+
+--- Bước 4 — Mục Tiêu Tổng Thể ---
+Hệ thống giải thích: "Mục tiêu là đưa đủ 4 quân cờ về các ô Đích.
+Ai đưa đủ trước sẽ là người chiến thắng!"
+
+================================================================
+MÀN 2 — TRIỆU HỒI (Xuất quân & Lượt thưởng)
+================================================================
+Mục tiêu: Hiểu luật ra quân (cần số 6 + đủ Vàng) và thưởng lượt khi đổ 6.
+
+[Bối cảnh]
+Bàn cờ trống. Toàn bộ quân lực đang ở trong Nest (bệ phóng).
+Hệ thống: "Mỗi Hiệp Sĩ cần Vàng và sự may mắn (số 6) để xuất trận."
+
+[Cài đặt bàn cờ]
+- 0 quân trên bàn, tất cả trong Nest
+- Vàng ban đầu = giá quân rẻ nhất + 1 (vừa đủ mua)
+
+--- Bước 1 — Đổ Số 6 ---
+Hệ thống: Pointer chỉ vào nút [Gieo Xúc Xắc]. Ép xúc xắc ra mặt 6.
+Action: Người chơi bấm → Ra 6. Nút [Xuất Quân] sáng lên.
+
+--- Bước 2 — Chọn Quân ---
+Hệ thống: Bảng chọn quân cờ hiện ra (4 quân, giá khác nhau).
+Highlight quân rẻ nhất. Giải thích: "Ngươi vừa đủ tiền — hãy chọn quân này!"
+Action: Người chơi click quân rẻ nhấtMÀN 4: KHÁM PHÁ Ô ĐẶC BIỆT
+@Mô tả: Giới thiệu 4 ô (Hồi máu, Nhận vàng, Bí ẩn, Gây sát thương)
+- Bước 1 (Ô Hồi máu): Ép gieo xúc xắc 2, di chuyển vào ô xanh lá
+- Bước 2 (Ô Nhận vàng): Ép gieo xúc xắc 2, di chuyển vào ô vàng
+- Bước 3 (Ô Bí ẩn): Ép gieo xúc xắc 2, di chuyển vào ô tím
+- Bước 4 (Ô Gây sát thương): Ép gieo xúc xắc 2, di chuyển vào ô đỏ -> Kết thúc tutorial.
+
+================================================================
+MÀN 3 — CHẠM TRÁN (Chỉ số chiến đấu, Tấn công & Đá hậu)
+================================================================
+Mục tiêu: Hiểu HP/Khiên/Sát thương, luật tấn công thành công/thất bại, và cơ chế Đá hậu.
+
+[Cài đặt bàn cờ]
+- Quân ta @ ô A+5 (HP=10, khiên=1)
+- Địch-1 @ ô A+9 (HP=10, khiên=1)   ← Phía trước (cách 4 bước)
+- Địch-2 @ ô A+2 (HP=2)            ← Phía sau (cách lùi 3 bước)
+
+--- Bước 0 — Kiểm tra Chỉ số ---
+Hệ thống: Pointer chỉ vào quân cờ và giải thích.
+Giải thích: "🩸 Máu (đỏ) — về 0 là tử trận. 🛡️ Khiên (xanh) — giảm sát thương nhận."
+Action: Người chơi xem thông tin xong bấm [Tiếp tục].
+
+--- Bước 1 — Cách xem Thông tin ---
+Hệ thống: Giải thích thao tác.
+Giải thích: "Hãy thử Click Chuột Phải vào quân cờ bất kỳ để xem bảng thông tin chi tiết của Hiệp Sĩ."
+Action: Người chơi bấm [Tiếp tục] để thử thao tác.
+
+--- Bước 2 — Tấn Công Thất Bại (Phía Trước) ---
+Action: Ép xúc xắc ra 4. Pointer chỉ vào Địch-1.
+Người chơi click vào Địch-1 để tấn công.
+Kết quả: Địch còn quá khỏe → Quân ta tấn công không chết và phải lùi về ô cũ.
+Hệ thống: "Địch chưa bị hạ gục! Ngươi phải quay về vị trí ban đầu."
+
+--- Bước 2 — Đá Hậu (Tiêu Diệt) ---
+Bối cảnh: Địch-2 đang đứng sát sau lưng (ô Đá Hậu).
+Hệ thống: Pointer chỉ vào Địch-2. Ép xúc xắc ra 3.
+Action: Người chơi click vào Địch-2 để thực hiện Đá Hậu.
+Kết quả: Do Địch-2 yếu máu → Bị tiêu diệt → Quân ta lùi về chiếm ô và nhận Vàng.
+Hệ thống: "Kỹ năng Đá Hậu thật tuyệt vời! Ngươi vừa tiêu diệt kẻ địch và nhận Vàng."
+
+================================================================
+MÀN 4 — MA TRẬN BÀN CỜ (Các Ô Đặc Biệt)
+================================================================
+Mục tiêu: Hiểu rõ 4 loại ô Đặc biệt và hiệu ứng thực tế của chúng.
+
+[Bối cảnh]
+Bàn cờ phía trước bừng sáng nhiều màu. Hệ thống giải thích:
+"4 loại ô đặc biệt ngươi sẽ gặp trên đường:
+ 🟢 Ô Xanh (Heal)   — Hồi máu cho quân bước vào
+ 🟡 Ô Vàng (Gold)   — Nhận Vàng ngẫu nhiên (1–5)
+ 🟣 Ô Tím  (Myth)   — Bí ẩn! Ngẫu nhiên: Nhận Vàng, Hồi máu, hoặc Nhận damage
+ 🔴 Ô Đỏ   (Harm)   — Nguy hiểm! Gây sát thương cho quân bước vào"
+
+[Cài đặt bàn cờ]
+- Quân ta (máu ~50%) đứng gần ô Heal
+- Trên đường đi có đủ 4 loại ô: Heal, Gold, Myth, Harm
+
+--- Bước 1 — Ô Xanh (Heal) ---
+Action: Ép xúc xắc vào đúng ô Xanh. Người chơi di chuyển.
+Kết quả: HealCellEvent kích hoạt → Hồi máu 10–15 → VFX +HP hiện lên màu xanh.
+
+--- Bước 2 — Ô Vàng (Gold) ---
+Action: Ép xúc xắc vào đúng ô Vàng. Người chơi di chuyển.
+Kết quả: GoldCellEvent → Nhận Vàng ngẫu nhiên 1–5 → VFX số vàng bay lên màu vàng.
+(Nếu quân có RoleType.Miner thì nhận thêm +2)
+
+--- Bước 3 — Ô Tím (Myth) ---
+Action: Ép xúc xắc vào đúng ô Tím. Người chơi di chuyển.
+Kết quả: MythCellEvent → Ngẫu nhiên một trong ba: +Vàng / +Max / -Máu.
+Hệ thống: "Ô bí ẩn! Kết quả mỗi lần là một bất ngờ."
+
+--- Bước 4 — Ô Đỏ (Harm) ---
+Hệ thống cảnh báo: "Ô Đỏ gây sát thương! Tránh nó nếu có thể."
+Action: Ép xúc xắc vào đúng ô Đỏ (demo bắt buộc).
+Kết quả: HarmCellEvent → Mất máu 5–10 → VFX số đỏ bay lên.
+
+================================================================
+MÀN 5 — TRANG BỊ & SINH TỬ (Shop & Rớt đồ)
+================================================================
+Mục tiêu: Hiểu cơ chế Cửa Hàng (Shop theo round) và quy tắc rớt đồ khi tử trận.
+
+[Bối cảnh]
+Lượt chơi mới. Hệ thống thông báo: "Cửa Hàng xuất hiện sau mỗi 5 vòng!"
+
+[Cài đặt bàn cờ]
+- 1 quân người chơi @ ô baseIdx + 10
+- Vàng ban đầu: 200 (đủ mua đồ)
+
+--- Bước 1 — Cửa Hàng Mở ---
+Hệ thống force kích hoạt ShoppingPhase.
+Giao diện Shop hiện ra. 
+Hướng dẫn: "Hãy dùng vàng mua 1 Trang Bị để tăng sức mạnh cho quân."
+Action: Người chơi chọn và mua ít nhất 1 Trang Bị.
+Kết quả: Hệ thống tự động đóng Shop sau khi mua.
+
+--- Bước 2 — Gắn Trang Bị ---
+Hướng dẫn: "Hãy click vào biểu tượng SỐ VÀNG để mở túi đồ, sau đó kéo trang bị thả vào quân cờ."
+Action: Người chơi mở túi đồ → Gắn trang bị lên quân Red.
+Kết quả: Chỉ số quân cờ tăng lên. Tutorial chuyển sang kết thúc.
+
+--- Bước 3 — Kết Thúc Tutorial ---
+Hệ thống: "🎉 CHÚC MỪNG! Ngươi đã hoàn thành toàn bộ hướng dẫn."
+"Giờ hãy bước vào Bàn Cờ Tử Thần thật sự... và chứng minh bản thân!"
+Action: Người chơi bấm [Bắt đầu chơi thật]. → Quay về Menu.
+
+================================================================
+  KẾT THÚC KỊCH BẢN
+================================================================

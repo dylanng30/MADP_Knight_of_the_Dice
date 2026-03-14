@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MADP.Models;
 using MADP.Services.Gold.Interfaces;
 using MADP.Settings;
@@ -107,6 +107,13 @@ namespace MADP.Controllers
 
                 card.SetInteractable(canSpawn, myGold);
             }
+        }
+
+        // Lấy vùng RectTransform của một thẻ bài quân cờ dựa trên ID của unit.
+        public RectTransform GetCardRect(int unitId)
+        {
+            var card = _spawnedCards.Find(c => c.Model.Id == unitId);
+            return card != null ? card.GetComponent<RectTransform>() : null;
         }
 
         private void OnCardClicked(UnitModel unit)

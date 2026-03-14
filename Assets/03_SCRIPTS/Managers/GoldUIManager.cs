@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MADP.Models;
 using MADP.Services.Gold.Interfaces;
+using MADP.Services.Inventory.Interfaces;
 using MADP.Settings;
 using MADP.Views;
 using MADP.Views.Inventory;
@@ -18,6 +19,7 @@ namespace MADP.Managers
         [SerializeField] private PlayerInventoryView playerInventoryView;
         
         private IGoldService _goldService;
+        private IItemService _itemService;
         
         private Dictionary<TeamColor, GoldView> _activeViews = new ();
         private TeamColorDatabaseSO _teamColorDB;
@@ -42,10 +44,12 @@ namespace MADP.Managers
         }
 
         public void Initialize(IGoldService goldService, 
+            IItemService itemService,
             List<LobbySlotModel> activePlayers, 
             TeamColorDatabaseSO teamColorDB)
         {
             _goldService = goldService;
+            _itemService = itemService;
             _teamColorDB = teamColorDB;
             _activePlayers = activePlayers;
             _localHumanPlayer = _activePlayers.Find(p => p.PlayerType == PlayerType.Human);
@@ -106,10 +110,13 @@ namespace MADP.Managers
                 return;
             }
             
-            if (inventoryOwner.Inventory.RemoveItem(item))
+            if (inventoryOwner.Inventory.Items.Contains(item))
             {
-                targetUnit.Inventory.AddItem(item);
-                Debug.Log($"Đã trang bị {item.ItemName} cho Unit ID: {targetUnit.Id}");
+                bool success = _itemService.TryEquipItem(inventoryOwner.Inventory, targetUnit, item);
+                if (success)
+                {
+                    Debug.Log($"Đã trang bị {item.ItemName} cho Unit ID: {targetUnit.Id} thông qua ItemService");
+                }
             }
         }
         
@@ -143,6 +150,17 @@ namespace MADP.Managers
             {
                 view.gameObject.SetActive(isVisiable);
             }
+        }
+        
+        // Trả về RectTransform của GoldView tương ứng với một đội.
+        // Dùng để hiển thị pointer chỉ dẫn trong tutorial.
+        public RectTransform GetGoldViewRect(TeamColor team)
+        {
+            if (_activeViews.TryGetValue(team, out GoldView view))
+            {
+                return view.GetComponent<RectTransform>();
+            }
+            return null;
         }
         
         private void UpdateUI(TeamColor team, int amount)

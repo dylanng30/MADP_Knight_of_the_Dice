@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MADP.Settings;
 using UnityEngine;
@@ -47,6 +47,16 @@ namespace MADP.Views.Shop
                     break;
                 }
             }
+        }
+
+        // Lấy vùng RectTransform của một ô chứa vật phẩm dựa trên chỉ số (index).
+        public RectTransform GetItemSlotRect(int index)
+        {
+            if (index >= 0 && index < _spawnedSlots.Count)
+            {
+                return _spawnedSlots[index].GetComponent<RectTransform>();
+            }
+            return null;
         }
 
         public void Show()

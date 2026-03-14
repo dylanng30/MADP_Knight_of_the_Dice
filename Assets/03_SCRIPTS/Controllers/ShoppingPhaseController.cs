@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using MADP.Models;
@@ -32,6 +32,7 @@ namespace MADP.Controllers
         private bool _isOpened;
         
         private Action _cachedCompletionCallback;
+        public Action<ItemDataSO> OnItemPurchased;
 
         private void Awake()
         {
@@ -111,6 +112,7 @@ namespace MADP.Controllers
                 {
                     AudioController.Instance.PlaySound(SoundKey.SFX_BuySuccess);    
                 }
+                OnItemPurchased?.Invoke(item);
             }
             else
             {
@@ -124,6 +126,18 @@ namespace MADP.Controllers
             yield return new WaitForSeconds(_timePerTurn);
             
             ClosePhase();
+        }
+
+        public void ForceCloseShop()
+        {
+            StopAllCoroutines();
+            ClosePhase();
+        }
+
+        // Lấy vùng RectTransform của một ô vật phẩm trong cửa hàng.
+        public RectTransform GetShopItemRect(int index)
+        {
+            return phaseShopView != null ? phaseShopView.GetItemSlotRect(index) : null;
         }
 
         private void ClosePhase()

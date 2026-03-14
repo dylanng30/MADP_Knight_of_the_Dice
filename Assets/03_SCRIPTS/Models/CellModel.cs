@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System;
+using UnityEngine;
 
 namespace MADP.Models
 {
@@ -25,6 +26,8 @@ namespace MADP.Models
         public UnitModel Unit { get; private set; }
         public bool HasUnit => Unit != null;
 
+        public Action OnAttributeUpdated;
+        
         public CellModel(int index, CellStructure structure, CellAttribute attribute, TeamColor teamOwner = TeamColor.None)
         {
             Index = index;
@@ -43,6 +46,11 @@ namespace MADP.Models
 
             Unit = unit;
             //Debug.Log($"Unit {Unit.Id} cua team {Unit.TeamOwner.ToString()} vao o {Index}");
+        }
+        public void SetAttribute(CellAttribute attribute)
+        {
+            Attribute = attribute;
+            OnAttributeUpdated?.Invoke();
         }
         public void Clear()
         {

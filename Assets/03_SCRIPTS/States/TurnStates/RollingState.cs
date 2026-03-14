@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using MADP.Controllers;
 using UnityEngine;
 
@@ -17,6 +17,11 @@ namespace MADP.States.TurnStates
             base.EnterTurn();
             _timer = 1f;
             _roled =  false;
+
+            if (!_turnController.IsPlayerTurn && _turnController.IsTutorialMode)
+            {
+                _turnController.EndTurn();
+            }
         }
 
         public override void ExecuteTurn()

@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Snow.unity
     guid: 3e718bdd10fac8d4584670a1a4621194
+  - enabled: 1
+    path: Assets/Scenes/TutorialDesert.unity
+    guid: d501f50fc87582545afd0d8d272e2b00
   m_configObjects: {}

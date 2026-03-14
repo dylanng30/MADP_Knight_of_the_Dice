@@ -58,6 +58,14 @@ namespace MADP.Models
             OnStatsChanged?.Invoke();
         }
 
+        public void SetHealth(int amount)
+        {
+            Stat.CurrentHealth = amount;
+            if (Stat.CurrentHealth > Stat.MaxHealth)
+                Stat.CurrentHealth = Stat.MaxHealth;
+            OnStatsChanged?.Invoke();
+        }
+
         public void Heal(int amount)
         {
             Stat.CurrentHealth += amount;

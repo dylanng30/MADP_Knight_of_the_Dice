@@ -1,4 +1,4 @@
-﻿using MADP.Models;
+using MADP.Models;
 using MADP.Utilities;
 using TMPro;
 using UnityEngine;
@@ -35,6 +35,14 @@ namespace MADP.Views
             
             SetupStructure();
             SetupAttribute();
+
+            Model.OnAttributeUpdated += SetupAttribute;
+        }
+
+        private void OnDestroy()
+        {
+            if (Model != null)
+                Model.OnAttributeUpdated -= SetupAttribute;
         }
 
         public Vector3 GetUnitPosition()

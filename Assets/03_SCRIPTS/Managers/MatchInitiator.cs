@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using MADP.Controllers;
 using MADP.Models;
@@ -17,6 +17,7 @@ using MADP.Services.Shop;
 using MADP.Services.VFX;
 using MADP.Services.VFX.Interfaces;
 using MADP.Settings;
+using MADP.Tutorial;
 using MADP.Utilities;
 using MADP.Views;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace MADP.Managers
         [SerializeField] private TurnController _turnController;
         [SerializeField] private UnitDeckController _unitDeckController;
         [SerializeField] private ShoppingPhaseController _shoppingController;
+        [SerializeField] private TutorialDirector _tutorialDirector;
         
         [Header("---COLOR DB---")]
         [SerializeField] private TeamColorDatabaseSO teamColorDB;
@@ -80,6 +82,11 @@ namespace MADP.Managers
             List<LobbySlotModel> activePlayers = settings.Slots
                 .Where(slot => slot.PlayerType != PlayerType.Empty)
                 .ToList();
+
+            if (settings.IsTutorial && !activePlayers.Any(x => x.TeamColor == TeamColor.Blue))
+            {
+                activePlayers.Add(new LobbySlotModel(1, TeamColor.Blue) { PlayerType = PlayerType.Bot });
+            }
             
             var localPlayerSlot = activePlayers.FirstOrDefault(x => x.PlayerType == PlayerType.Human);
             
@@ -132,9 +139,10 @@ namespace MADP.Managers
                 _itemService,
                 activePlayers, 
                 diceView, 
-                settings.TimePerTurn);
+                settings.TimePerTurn,
+                settings.IsTutorial);
             
-            _goldUIManager.Initialize(_goldService, activePlayers, teamColorDB);
+            _goldUIManager.Initialize(_goldService, _itemService, activePlayers, teamColorDB);
             _vfxService.Initialize(vfxContainer.transform);
             _goldService.Initialize(Constants.InitialGold, activePlayers);
             
@@ -147,6 +155,16 @@ namespace MADP.Managers
                     _boardController, 
                     _goldService, 
                     myUnits);
+            }
+            
+            if (settings.IsTutorial)
+            {
+                if (_tutorialDirector == null)
+                {
+                    _tutorialDirector = GetComponent<TutorialDirector>() ?? gameObject.AddComponent<TutorialDirector>();
+                }
+                
+                _tutorialDirector.StartTutorial(settings.TutorialStageIndex, _goldService);
             }
         }
         

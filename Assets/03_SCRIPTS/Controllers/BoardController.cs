@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MADP.Models;
@@ -339,6 +339,34 @@ namespace MADP.Controllers
             }
         }
 
+        public void ForceSpawnAtCell(UnitModel unitModel, int cellIndex, Action OnComplete)
+        {
+            CellModel targetCell = _boardModel.AroundCells.FirstOrDefault(c => c.Index == cellIndex);
+            if (targetCell == null)
+            {
+                Debug.LogError($"[BoardController] ForceSpawnAtCell: Cell index {cellIndex} not found.");
+                return;
+            }
+
+            GetCurrentCellOfUnit(unitModel)?.Clear();
+            targetCell.Register(unitModel);
+            unitModel.SetState(UnitState.Moving);
+            
+            UnitView unitView = boardView.GetUnitView(unitModel);
+            CellView cellView = boardView.GetCellView(targetCell);
+            
+            if (unitView != null)
+            {
+                unitView.transform.SetParent(cellView.transform);
+                Vector3 targetPos = boardView.GetCellPosition(targetCell);
+                unitView.Spawn(targetPos);
+                var direction = GetForwardDirection(targetCell);
+                unitView.Rotate(direction);
+            }
+            
+            OnComplete?.Invoke();
+        }
+
         public List<CellModel> GetPotentialDestinationCell(UnitModel unitModel, int diceValue)
         {
             List<CellModel> potentialCells = new List<CellModel>();
@@ -501,6 +529,9 @@ namespace MADP.Controllers
         {
             return _allUnits[teamColor];
         }
+
+        public UnitView GetUnitView(UnitModel unitModel) => boardView.GetUnitView(unitModel);
+        public CellView GetCellView(CellModel cellModel) => boardView.GetCellView(cellModel);
 
         public bool CheckIfAnyMovePossible(TeamColor team, int diceValue)
         {

@@ -1,4 +1,4 @@
-﻿using MADP.Models;
+using MADP.Models;
 using MADP.Models.Inventory;
 using MADP.Services.Inventory.Interfaces;
 using MADP.Settings;
@@ -8,6 +8,8 @@ namespace MADP.Services.Inventory
 {
     public class ItemService : IItemService
     {
+        public System.Action<UnitModel, ItemDataSO> OnItemEquipped { get; set; }
+
         public bool TryEquipItem(PlayerInventoryModel playerInv, UnitModel targetUnit, ItemDataSO item)
         {
             if (playerInv == null || targetUnit == null || item == null) return false;
@@ -23,6 +25,7 @@ namespace MADP.Services.Inventory
             if (isAdded)
             {
                 playerInv.RemoveItem(item);
+                OnItemEquipped?.Invoke(targetUnit, item);
                 return true;
             }
 

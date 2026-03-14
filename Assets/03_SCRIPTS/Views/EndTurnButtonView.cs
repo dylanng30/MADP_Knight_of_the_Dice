@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +9,7 @@ namespace MADP.Views
         [SerializeField] private Button endTurnButton;
 
         public Action OnEndClicked;
+        public RectTransform Rect => transform as RectTransform;
 
         private void Start()
         {
